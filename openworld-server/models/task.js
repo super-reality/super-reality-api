@@ -12,8 +12,7 @@ const taskSchema = new Schema({
     // task name
     name: { 
         type: String, 
-        required: true,
-        index: true
+        required: true
     },
     // task long description
     description: { 

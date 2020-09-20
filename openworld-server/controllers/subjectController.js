@@ -2,7 +2,7 @@ const Subject   = require("../models/subject")
 const Tag       = require("../models/tag")
 const constant  = require("../config/constant")
 
-exports.create = function(request, response){
+const createSubject = function(request, response){
     const { 
         parent, 
         icon, 
@@ -62,3 +62,4 @@ exports.create = function(request, response){
         }
     })
 }
+module.exports ={createSubject}

@@ -1,7 +1,7 @@
 const Tag       = require("../models/tag")
 const constant  = require("../config/constant")
 
-exports.search = function(request, response){
+const searchTag = function(request, response){
     const { query } = request.params;
     
     Tag.find({name: {$regex: query, $options: 'i'}}, 'name').sort({'name': "asc"}).limit(20).exec(function(err, tags) {
@@ -21,3 +21,4 @@ exports.search = function(request, response){
         }
     });
 }
+module.exports = {searchTag}

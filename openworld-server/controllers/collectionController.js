@@ -1,22 +1,22 @@
 // 'user strict';
 
-const Collection    = require('../models/collection')
-const Subject       = require('../models/subject')
-const collection        = require('../models/collection')
-const Step          = require('../models/task')
-const Tag           = require("../models/tag")
+const Collection = require('../models/collection')
+const Subject = require('../models/subject')
+const collection = require('../models/collection')
+const Step = require('../models/task')
+const Tag = require("../models/tag")
 
 const constant = require('../config/constant')
 
-exports.create = function(request, response){
-    const { 
-        icon, 
-        name, 
-        shortDescription, 
-        description, 
-        medias, 
-        tags, 
-        visibility, 
+const createCollection = function (request, response) {
+    const {
+        icon,
+        name,
+        shortDescription,
+        description,
+        medias,
+        tags,
+        visibility,
         entry
     } = request.body;
 
@@ -44,19 +44,20 @@ exports.create = function(request, response){
             });
         } else {
             // save tags to Tag table
-            for (var i = 0; i < tags.length; i++){
+            for (var i = 0; i < tags.length; i++) {
                 const tagName = tags[i]
                 Tag.findOne({name: tagName})
-                .then(result => {
-                    if (result) {
-                    } else {
-                        var tag = Tag()
-                        tag.name = tagName
-                        tag.type = "collection"
-                        tag.save()
-                    }
-                })
-                .catch(error => {})
+                    .then(result => {
+                        if (result) {
+                        } else {
+                            var tag = Tag()
+                            tag.name = tagName
+                            tag.type = "collection"
+                            tag.save()
+                        }
+                    })
+                    .catch(error => {
+                    })
             }
 
             response.json({
@@ -68,13 +69,13 @@ exports.create = function(request, response){
 }
 
 
-exports.find = function(request, response){
-    const { search, category } = request.query
+const findCollection = function (request, response) {
+    const {search, category} = request.query
 
     if (category == null || category == constant.Category.All) {
 
     } else if (category == constant.Category.collection) {
-        
+
 
     } else if (category == constant.Category.Subject) {
 
@@ -95,13 +96,13 @@ exports.find = function(request, response){
     } else if (category == constant.Category.TeacherBot) {
 
     }
-    
+
     if (search == null || search == "") {
 
     } else {
 
     }
-    response.json({ search, category })
+    response.json({search, category})
     // eventModel.getEventByEventId(eventid, function(err, result){
     //   if (err) {
     //     console.log("error ocurred",err);
@@ -130,7 +131,9 @@ exports.find = function(request, response){
     // });
 }
 
-exports.list = function(request, response){
-    const { query } = request.query;
+const getCollectionList = function (request, response) {
+    const {query} = request.query;
     response.json({query})
 }
+
+module.exports = {createCollection, findCollection, getCollectionList}

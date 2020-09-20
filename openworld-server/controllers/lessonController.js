@@ -5,7 +5,7 @@ const Step      = require("../models/step")
 const Tag       = require("../models/tag")
 const constant  = require("../config/constant")
 
-exports.create = function(request, response){
+const createLesson = function(request, response){
     const { 
         parent, 
         icon, 
@@ -103,7 +103,7 @@ exports.create = function(request, response){
     })
 }
 
-exports.searchParent = function(request, response){
+const searchParent = function(request, response){
     const { query } = request.params;
     Subject.find({name: {$regex: query, $options: 'i'}}, 'name parent').sort({'name': "asc"}).limit(100).exec(async function(err, subjects) {
         if (err != null) {
@@ -153,3 +153,4 @@ exports.searchParent = function(request, response){
         }
     });
 }
+module.exports = {createLesson,searchParent}

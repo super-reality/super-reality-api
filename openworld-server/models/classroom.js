@@ -3,7 +3,6 @@ const {Schema, model} = require("mongoose");
 const classroomSchema = new Schema({
     name: {
         type: String,
-        index: true
     }
 });
 

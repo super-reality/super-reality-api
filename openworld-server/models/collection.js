@@ -8,12 +8,10 @@ const collectionSchema = new Schema({
     name: { 
         type: String, 
         required: true,
-        index: true
     },
     // collection short description
     shortDescription: { 
-        type: String, 
-        index: true
+        type: String
     },
     // collection long description
     description: { 

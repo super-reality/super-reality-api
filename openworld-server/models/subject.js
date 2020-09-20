@@ -10,13 +10,11 @@ const subjectSchema = new Schema({
     // subject name
     name: { 
         type: String, 
-        required: true,
-        index: true
+        required: true
     },
     // subject short description
     shortDescription: { 
-        type: String, 
-        index: true
+        type: String
     },
     // subject long description
     description: { 

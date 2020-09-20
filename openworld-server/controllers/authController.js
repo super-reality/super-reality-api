@@ -5,7 +5,7 @@ const User = require("../models/user")
 const { hashDigest, hashSaltDigest } = require("../utilities/hashing")
 const constant = require("../config/constant")
 
-exports.signin = function(request, response){
+const signin = function(request, response){
     const {
         username, 
         password
@@ -30,7 +30,7 @@ exports.signin = function(request, response){
     .catch(error => response.status(constant.ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
 }
 
-exports.signup = function(request, response){
+const signup = function(request, response){
     const {
         username, 
         password, 
@@ -82,6 +82,8 @@ exports.signup = function(request, response){
     .catch(error => response.status(constant.ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
 }
 
-exports.verify = function(request, response) {
+const verify = function(request, response) {
     response.send({err_code: constant.ERR_CODE.success, user : request.user})
 }
+
+module.exports = {signin,signup,verify}

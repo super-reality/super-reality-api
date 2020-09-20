@@ -12,8 +12,7 @@ const stepSchema = new Schema({
     // step name
     name: { 
         type: String, 
-        required: true,
-        index: true
+        required: true
     },
     // step long description
     description: { 
