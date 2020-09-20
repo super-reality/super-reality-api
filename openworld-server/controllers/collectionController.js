@@ -1,12 +1,8 @@
 // 'user strict';
 
-const Collection = require('../models/collection')
-const Subject = require('../models/subject')
-const collection = require('../models/collection')
-const Step = require('../models/task')
-const Tag = require("../models/tag")
+const {Collection,Subject,Step,Tag}= require("../models")
 
-const constant = require('../config/constant')
+const {ERR_STATUS,ERR_CODE,Category} = require('../constants/constant')
 
 const createCollection = function (request, response) {
     const {
@@ -39,7 +35,7 @@ const createCollection = function (request, response) {
     // save collection document
     collection.save(function (err) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -61,7 +57,7 @@ const createCollection = function (request, response) {
             }
 
             response.json({
-                err_code: constant.ERR_CODE.success,
+                err_code: ERR_CODE.success,
                 collection
             })
         }
@@ -72,28 +68,28 @@ const createCollection = function (request, response) {
 const findCollection = function (request, response) {
     const {search, category} = request.query
 
-    if (category == null || category == constant.Category.All) {
+    if (category == null || category == Category.All) {
 
-    } else if (category == constant.Category.collection) {
+    } else if (category == Category.collection) {
 
 
-    } else if (category == constant.Category.Subject) {
+    } else if (category == Category.Subject) {
 
-    } else if (category == constant.Category.Organization) {
+    } else if (category == Category.Organization) {
 
-    } else if (category == constant.Category.Collection) {
+    } else if (category == Category.Collection) {
 
-    } else if (category == constant.Category.Teacher) {
+    } else if (category == Category.Teacher) {
 
-    } else if (category == constant.Category.Student) {
+    } else if (category == Category.Student) {
 
-    } else if (category == constant.Category.JobPost) {
+    } else if (category == Category.JobPost) {
 
-    } else if (category == constant.Category.Project) {
+    } else if (category == Category.Project) {
 
-    } else if (category == constant.Category.Resource) {
+    } else if (category == Category.Resource) {
 
-    } else if (category == constant.Category.TeacherBot) {
+    } else if (category == Category.TeacherBot) {
 
     }
 

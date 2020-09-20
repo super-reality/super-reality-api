@@ -1,4 +1,4 @@
-const Classroom = require("../models/classroom");
+const {Classroom} = require("../models");
 
 const getClassroom = function (request, response) {
     Classroom

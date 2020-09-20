@@ -1,9 +1,6 @@
-const Lesson    = require("../models/lesson")
-const Collection= require("../models/collection")
-const Subject   = require("../models/subject")
-const Step      = require("../models/step")
-const Tag       = require("../models/tag")
-const constant  = require("../config/constant")
+
+const {Lesson,Collection,Subject,Step,Tag} = require("../models")
+const {ERR_STATUS,ERR_CODE}  = require("../constants/constant")
 
 const createLesson = function(request, response){
     const { 
@@ -44,7 +41,7 @@ const createLesson = function(request, response){
     // save lesson document
     lesson.save(async function (err) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -89,12 +86,12 @@ const createLesson = function(request, response){
             lesson.totalSteps = totalSteps
             lesson.save(function (err) {
                 if (err) {
-                    response.status(constant.ERR_STATUS.Bad_Request).json({
+                    response.status(ERR_STATUS.Bad_Request).json({
                         error: err
                     });
                 } else {
                     response.json({
-                        err_code: constant.ERR_CODE.success,
+                        err_code: ERR_CODE.success,
                         lesson
                     });
                 }
@@ -107,7 +104,7 @@ const searchParent = function(request, response){
     const { query } = request.params;
     Subject.find({name: {$regex: query, $options: 'i'}}, 'name parent').sort({'name': "asc"}).limit(100).exec(async function(err, subjects) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -126,7 +123,7 @@ const searchParent = function(request, response){
 
             Lesson.find({name: {$regex: query, $options: 'i'}}, 'name parent').sort({'name': "asc"}).limit(100).exec(async function(err1, lessons) {
                 if (err1 != null) {
-                    response.status(constant.ERR_STATUS.Bad_Request).json({
+                    response.status(ERR_STATUS.Bad_Request).json({
                         error: err1
                     });
                 } else {
@@ -145,7 +142,7 @@ const searchParent = function(request, response){
                     }
 
                     response.json({
-                        err_code: constant.ERR_CODE.success,
+                        err_code: ERR_CODE.success,
                         parents : result
                     });
                 }

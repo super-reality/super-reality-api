@@ -1,6 +1,6 @@
 const {promisify} = require("util");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const {User} = require("../models");
 const jwtVerify = promisify(jwt.verify);
 
 const getJwtFromRequest = request => /Bearer (.*)/.exec(request.headers.authorization)[1];

@@ -1,9 +1,9 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
 const auth = require("../middleware/auth")
-const User = require("../models/user")
+const {User} = require("../models")
 const { hashDigest, hashSaltDigest } = require("../utilities/hashing")
-const constant = require("../config/constant")
+const {ERR_STATUS,ERR_CODE} = require("../constants/constant")
 
 const signin = function(request, response){
     const {
@@ -12,8 +12,8 @@ const signin = function(request, response){
     } = request.body;
 
     User.findOne({username})
-    .then(user => user ? user : response.status(constant.ERR_STATUS.Unauthorized).json({err_code: constant.ERR_CODE.user_name_wrong, msg: "Wrong username"}))
-    .then(user => user.passwordHash === hashSaltDigest(password, user.passwordSalt) ? user : response.status(constant.ERR_STATUS.Unauthorized).json({salt: user.passwordSalt, hash: hashSaltDigest(password, user.passwordSalt),err_code: constant.ERR_CODE.user_password_wrong, msg: "Wrong password"}))
+    .then(user => user ? user : response.status(ERR_STATUS.Unauthorized).json({err_code: ERR_CODE.user_name_wrong, msg: "Wrong username"}))
+    .then(user => user.passwordHash === hashSaltDigest(password, user.passwordSalt) ? user : response.status(ERR_STATUS.Unauthorized).json({salt: user.passwordSalt, hash: hashSaltDigest(password, user.passwordSalt),err_code: ERR_CODE.user_password_wrong, msg: "Wrong password"}))
     .then(user => {
         const token = jwt.sign(
             {},
@@ -25,9 +25,9 @@ const signin = function(request, response){
                 expiresIn: process.env.JWT_EXPIRATION
             }
         );
-        response.send({err_code: constant.ERR_CODE.success, user : user, token: token})
+        response.send({err_code: ERR_CODE.success, user : user, token: token})
     })
-    .catch(error => response.status(constant.ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
+    .catch(error => response.status(ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
 }
 
 const signup = function(request, response){
@@ -43,7 +43,7 @@ const signup = function(request, response){
     User.findOne({username})
     .then(user => {
         if (user) {
-            response.status(constant.ERR_STATUS.Unauthorized).json({err_code: constant.ERR_CODE.user_already_exist, msg: "User already exist"})
+            response.status(ERR_STATUS.Unauthorized).json({err_code: ERR_CODE.user_already_exist, msg: "User already exist"})
         } else {
             var newUser = User()
             newUser.firstname = firstname
@@ -56,7 +56,7 @@ const signup = function(request, response){
 
             newUser.save(function (err) {
                 if (err != null) {
-                    response.status(constant.ERR_STATUS.Unauthorized).json({
+                    response.status(ERR_STATUS.Unauthorized).json({
                         error: err.status ? err.status : 500
                     });
                 } else {
@@ -71,7 +71,7 @@ const signup = function(request, response){
                         }
                     );
                     response.json({
-                        err_code: constant.ERR_CODE.success,
+                        err_code: ERR_CODE.success,
                         user: newUser,
                         token: token
                     });
@@ -79,11 +79,11 @@ const signup = function(request, response){
             });
         }
     })
-    .catch(error => response.status(constant.ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
+    .catch(error => response.status(ERR_CODE.Internal_Server_Error).json({error: error.status ? error.status : 500}))
 }
 
 const verify = function(request, response) {
-    response.send({err_code: constant.ERR_CODE.success, user : request.user})
+    response.send({err_code: ERR_CODE.success, user : request.user})
 }
 
 module.exports = {signin,signup,verify}

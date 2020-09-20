@@ -1,6 +1,6 @@
-const Subject   = require("../models/subject")
-const Tag       = require("../models/tag")
-const constant  = require("../config/constant")
+
+const {Subject,Tag} = require("../models")
+const {ERR_STATUS,ERR_CODE}  = require("../constants/constant")
 
 const createSubject = function(request, response){
     const { 
@@ -35,7 +35,7 @@ const createSubject = function(request, response){
     // save subject document
     subject.save(async function (err) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -56,7 +56,7 @@ const createSubject = function(request, response){
             }
 
             response.json({
-                err_code: constant.ERR_CODE.success,
+                err_code: ERR_CODE.success,
                 subject
             });
         }

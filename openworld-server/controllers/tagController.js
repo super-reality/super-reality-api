@@ -1,12 +1,12 @@
-const Tag       = require("../models/tag")
-const constant  = require("../config/constant")
+const {Tag}  = require("../models")
+const {ERR_CODE,ERR_STATUS}  = require("../constants/constant")
 
 const searchTag = function(request, response){
     const { query } = request.params;
     
     Tag.find({name: {$regex: query, $options: 'i'}}, 'name').sort({'name': "asc"}).limit(20).exec(function(err, tags) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -15,7 +15,7 @@ const searchTag = function(request, response){
                 tagArray.push(tags[i].name)
             }
             response.json({
-                err_code: constant.ERR_CODE.success,
+                err_code: ERR_CODE.success,
                 tags : tagArray
             });
         }
