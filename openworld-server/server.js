@@ -34,4 +34,4 @@ database.on("error", () => console.error("database connection error"));
 
 mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
-module.exports = server
+module.exports = {server}

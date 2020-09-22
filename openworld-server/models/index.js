@@ -21,7 +21,7 @@ const User = require("./user")
 module.exports = {
     Classroom,
     Collection,
-    Collection,
+    CollectionUserRole,
     Events,
     Lesson,
     LessonUserRole,
