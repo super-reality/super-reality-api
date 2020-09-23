@@ -9,7 +9,6 @@ const pointpoolSchema = new Schema({
     name: { 
         type: String, 
         required: true,
-        index: true
     },
     // pointpool long description
     description: { 

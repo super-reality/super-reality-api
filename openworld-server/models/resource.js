@@ -9,7 +9,6 @@ const resourceSchema = new Schema({
     name: { 
         type: String, 
         required: true,
-        index: true
     },
     // resource long description
     description: { 

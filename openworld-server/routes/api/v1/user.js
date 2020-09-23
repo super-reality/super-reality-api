@@ -5,6 +5,11 @@ const router = express.Router();
 const auth = require("../../../middleware/auth")
 const {getUser, createUser, getUserById, deleteUser, updateUser} = require("../../../controllers/userController")
 
+const {bookLesson} = require("../../../controllers/favorController")
+
+router.post("/book-lesson", auth(), function (req, res) {
+    bookLesson(req, res)
+})
 
 router.get("/", auth(), function (req, res) {
     getUser(req, res)

@@ -9,7 +9,6 @@ const projectSchema = new Schema({
     name: { 
         type: String, 
         required: true,
-        index: true
     },
     // project long description
     description: { 

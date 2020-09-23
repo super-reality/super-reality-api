@@ -17,12 +17,14 @@ const SubjectUserRole = require("./subjectUserRole")
 const Tag = require("./tag")
 const Task = require("./task")
 const User = require("./user")
+const Favor = require("./favor")
 
 module.exports = {
     Classroom,
     Collection,
     CollectionUserRole,
     Events,
+    Favor,
     Lesson,
     LessonUserRole,
     Organization,

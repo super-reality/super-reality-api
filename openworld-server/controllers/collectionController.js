@@ -31,6 +31,7 @@ const createCollection = function (request, response) {
     collection.numberOfActivations = 0
     collection.numberOfCompletions = 0
     collection.createdBy = request.user._id
+    collection.created_at = new Date()
 
     // save collection document
     collection.save(function (err) {
@@ -64,6 +65,43 @@ const createCollection = function (request, response) {
     })
 }
 
+
+const collectionDetail = function(request, response){
+    const { id } = request.params;
+
+    Collection.findById(id, async function(err, collection) {
+        if (err != null) {
+            response.status(constant.ERR_STATUS.Bad_Request).json({
+                error: err
+            });
+        } else {
+            if (collection) {
+                // find child subject who have this collection as their parent
+                Subject.find({parent: {_id: id, type: "collection"}}).find(function(err, subjects) {
+                    if (err != null) {
+                        response.json({
+                            err_code: constant.ERR_CODE.success,
+                            collection,
+                            subjects: []
+                        });
+                    } else {
+                        response.json({
+                            err_code: constant.ERR_CODE.success,
+                            collection,
+                            subjects
+                        });
+                    }
+                });
+            } else {
+                response.json({
+                    err_code: constant.ERR_CODE.collection_not_exist,
+                    msg: "Collection is not exist"
+                });
+            }
+
+        }
+    });
+}
 
 const findCollection = function (request, response) {
     const {search, category} = request.query
@@ -127,9 +165,94 @@ const findCollection = function (request, response) {
     // });
 }
 
+const updateCollection = function(request, response){
+    const {
+        _id,
+        icon,
+        name,
+        shortDescription,
+        description,
+        medias,
+        tags,
+        visibility,
+        entry
+    } = request.body;
+
+    Collection.findById(_id, async function(err, collection) {
+        if (err != null) {
+            response.status(constant.ERR_STATUS.Bad_Request).json({
+                error: err
+            });
+        } else {
+            if (collection) {
+                collection.icon = icon
+                collection.name = name
+                collection.shortDescription = shortDescription
+                collection.description = description
+                collection.medias = medias
+                collection.tags = tags
+                collection.visibility = visibility
+                collection.entry = entry
+
+                // save collection document
+                collection.save(function (err) {
+                    if (err != null) {
+                        response.status(constant.ERR_STATUS.Bad_Request).json({
+                            error: err
+                        });
+                    } else {
+                        // save tags to Tag table
+                        for (var i = 0; i < tags.length; i++){
+                            const tagName = tags[i]
+                            Tag.findOne({name: tagName})
+                            .then(result => {
+                                if (result) {
+                                } else {
+                                    var tag = Tag()
+                                    tag.name = tagName
+                                    tag.type = "collection"
+                                    tag.save()
+                                }
+                            })
+                            .catch(error => {})
+                        }
+
+                        response.json({
+                            err_code: constant.ERR_CODE.success,
+                            collection
+                        })
+                    }
+                })
+            } else {
+                response.json({
+                    err_code: constant.ERR_CODE.collection_not_exist,
+                    msg: "Collection is not exist"
+                });
+            }
+
+        }
+    });
+}
+
 const getCollectionList = function (request, response) {
     const {query} = request.query;
     response.json({query})
 }
+const deleteCollection = function(request, response){
+    const { id } = request.params;
 
-module.exports = {createCollection, findCollection, getCollectionList}
+    Collection.deleteOne({_id: id}, function(err) {
+        if (err != null) {
+            response.status(constant.ERR_STATUS.Bad_Request).json({
+                error: err
+            });
+        } else {
+            response.json({
+                err_code: constant.ERR_CODE.success,
+                msg: "Collection deleted successfully"
+            });
+        }
+    });
+}
+
+module.exports = {createCollection, findCollection, getCollectionList,deleteCollection,collectionDetail,updateCollection}

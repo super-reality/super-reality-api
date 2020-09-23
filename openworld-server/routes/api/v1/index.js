@@ -38,5 +38,8 @@ router.use("/user", require("./user"))
 // clasroom routes
 router.use("/classroom", require("./classroom"))
 
+//file routes
+router.use("/file", require("./file"))
+
 
 module.exports = router

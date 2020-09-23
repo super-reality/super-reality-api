@@ -1,6 +1,4 @@
-const express = require("express")
 const jwt = require("jsonwebtoken")
-const auth = require("../middleware/auth")
 const {User} = require("../models")
 const { hashDigest, hashSaltDigest } = require("../utilities/hashing")
 const {ERR_STATUS,ERR_CODE} = require("../constants/constant")
