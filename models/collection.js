@@ -8,10 +8,12 @@ const collectionSchema = new Schema({
     name: { 
         type: String, 
         required: true,
+        index: true
     },
     // collection short description
     shortDescription: { 
-        type: String
+        type: String, 
+        index: true
     },
     // collection long description
     description: { 
@@ -25,7 +27,7 @@ const collectionSchema = new Schema({
     // visibility
     visibility: { type: Array },
     // entry
-    entry: { type: String },
+    entry: { type: Number },
     // number of shares
     numberOfShares: { type: Number },
     // number of activations

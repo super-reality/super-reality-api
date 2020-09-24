@@ -11,16 +11,17 @@ const lessonSchema = new Schema({
     // lesson icon url
     icon: { 
         type: String,
-        required: true, 
     },
     // lesson name
     name: { 
         type: String, 
-        required: true
+        required: true,
+        index: true
     },
     // lesson short description
     shortDescription: { 
-        type: String,
+        type: String, 
+        index: true
     },
     // lesson long description
     description: { 

@@ -3,9 +3,9 @@ const ObjectId = Schema.Types.ObjectId
 
 /* *** define favor schema *** */
 const favorSchema = new Schema({
-    // user id
-    user: {
-        type: ObjectId,
+    // user id 
+    user: { 
+        type: ObjectId, 
         required: true,
     },
     // favor lessons id array

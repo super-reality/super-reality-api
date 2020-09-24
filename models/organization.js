@@ -9,6 +9,7 @@ const organizationSchema = new Schema({
     name: { 
         type: String, 
         required: true,
+        index: true
     },
     // organization description
     description: { 

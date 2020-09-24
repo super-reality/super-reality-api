@@ -12,7 +12,8 @@ const userSchema = new Schema({
         type: Boolean
     },
     username: {
-        type: String
+        type: String,
+        index: true
     },
     firstname: { type: String },
     lastname: { type: String },

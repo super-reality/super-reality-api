@@ -13,6 +13,7 @@ const eventSchema = new Schema({
     name: { 
         type: String, 
         required: true,
+        index: true
     },
     // event long description
     description: { 

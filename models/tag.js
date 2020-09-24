@@ -6,7 +6,8 @@ const tagSchema = new Schema({
     // tag name
     name: { 
         type: String, 
-        required: true
+        required: true,
+        index: true
     },
     // tag type : either of collection, subject, lesson, organization
     type: { 
