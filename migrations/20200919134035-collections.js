@@ -32,7 +32,7 @@ module.exports = {
                         // medias urls
                         medias: {bsonType: "array"},
                         // visibility
-                        visibility: {bsonType: "string"},
+                        visibility: {bsonType: "array"},
                         entry: {bsonType: "string"},
                         // number of shares
                         numberOfShares: {bsonType: "int"},
