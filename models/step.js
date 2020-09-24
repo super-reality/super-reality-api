@@ -25,7 +25,15 @@ const stepSchema = new Schema({
     // user id that created this step
     createdBy: { type: ObjectId },
     // created date
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    cvMatchValue: { type: Number, default: 990},
+    cvCanvas: { type: Number, default: 50},
+    cvDelay: { type: Number, default: 100},
+    cvGrayscale: { type: Boolean, default: true},
+    cvApplyThreshold: { type: Boolean, default: false},
+    cvThreshold: { type: Number, default: 127},
+  
+    
 });
 
 const Step = new model("Step", stepSchema);

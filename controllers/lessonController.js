@@ -96,7 +96,14 @@ const createLesson = async function (request, response) {
                     step.trigger = steps[i].trigger
                     step.description = steps[i].description
                     step.next = steps[i].next
-                    step.createdBy = request.user._id
+                    step.createdBy = steps[i].user._id
+                    step.cvMatchValue = steps[i].cvMatchValue
+                    step.cvCanvas = steps[i].cvCanvas
+                    step.cvDelay = steps[i].cvDelay
+                    step.cvGrayscale = steps[i].cvGrayscale,
+                    step.cvApplyThreshold = steps[i].cvApplyThreshold,
+                    step.cvThreshold = steps[i].cvApplyThreshold
+                  
 
                     await step.save()
                     totalSteps.push(step._id)
@@ -248,6 +255,12 @@ const createLessonWithForm = async function (request, response) {
                     step.description = stepsObject[i].description
                     step.next = stepsObject[i].next
                     step.createdBy = request.user._id
+                    step.cvMatchValue = stepsObject[i].cvMatchValue
+                    step.cvCanvas = stepsObject[i].cvCanvas
+                    step.cvDelay = stepsObject[i].cvDelay
+                    step.cvGrayscale = stepsObject[i].cvGrayscale,
+                    step.cvApplyThreshold = stepsObject[i].cvApplyThreshold,
+                    step.cvThreshold = stepsObject[i].cvApplyThreshold
 
                     await step.save()
                     totalSteps.push(step._id)
@@ -358,6 +371,13 @@ const updateLesson = function (request, response) {
                                             step.description = stepData.description
                                             step.next = stepData.next
                                             step.createdBy = request.user._id
+                                            step.cvMatchValue = stepData.cvMatchValue
+                                            step.cvCanvas = stepData.cvCanvas
+                                            step.cvDelay = stepData.cvDelay
+                                            step.cvGrayscale = stepData.cvGrayscale,
+                                            step.cvApplyThreshold = stepData.cvApplyThreshold,
+                                            step.cvThreshold = stepData.cvApplyThreshold
+                                          
 
                                             step.save()
                                         }
@@ -372,6 +392,15 @@ const updateLesson = function (request, response) {
                                 step.description = steps[i].description
                                 step.next = steps[i].next
                                 step.createdBy = request.user._id
+                                step.cvMatchValue = steps[i].cvMatchValue
+                                step.cvCanvas = steps[i].cvCanvas
+                                step.cvDelay = steps[i].cvDelay
+                                step.cvGrayscale = steps[i].cvGrayscale,
+                                step.cvApplyThreshold = steps[i].cvApplyThreshold,
+                                step.cvThreshold = steps[i].cvApplyThreshold
+                              
+                                
+                                
 
                                 await step.save()
                                 totalSteps.push(step._id)
