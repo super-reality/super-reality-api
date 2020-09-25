@@ -2,7 +2,7 @@
 
 const {Collection,Subject,Step,Tag}= require("../models")
 
-const {ERR_STATUS,ERR_CODE,Category} = require('../constants/constant')
+const {ERR_STATUS,ERR_CODE,Category,Collection_Sort} = require('../constants/constant')
 
 const createCollection = function (request, response) {
     const {
@@ -71,7 +71,7 @@ const collectionDetail = function(request, response){
 
     Collection.findById(id, async function(err, collection) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -80,13 +80,13 @@ const collectionDetail = function(request, response){
                 Subject.find({parent: {_id: id, type: "collection"}}).find(function(err, subjects) {
                     if (err != null) {
                         response.json({
-                            err_code: constant.ERR_CODE.success,
+                            err_code: ERR_CODE.success,
                             collection,
                             subjects: []
                         });
                     } else {
                         response.json({
-                            err_code: constant.ERR_CODE.success,
+                            err_code: ERR_CODE.success,
                             collection,
                             subjects
                         });
@@ -94,7 +94,7 @@ const collectionDetail = function(request, response){
                 });
             } else {
                 response.json({
-                    err_code: constant.ERR_CODE.collection_not_exist,
+                    err_code: ERR_CODE.collection_not_exist,
                     msg: "Collection is not exist"
                 });
             }
@@ -180,7 +180,7 @@ const updateCollection = function(request, response){
 
     Collection.findById(_id, async function(err, collection) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
@@ -197,7 +197,7 @@ const updateCollection = function(request, response){
                 // save collection document
                 collection.save(function (err) {
                     if (err != null) {
-                        response.status(constant.ERR_STATUS.Bad_Request).json({
+                        response.status(ERR_STATUS.Bad_Request).json({
                             error: err
                         });
                     } else {
@@ -218,14 +218,14 @@ const updateCollection = function(request, response){
                         }
 
                         response.json({
-                            err_code: constant.ERR_CODE.success,
+                            err_code: ERR_CODE.success,
                             collection
                         })
                     }
                 })
             } else {
                 response.json({
-                    err_code: constant.ERR_CODE.collection_not_exist,
+                    err_code: ERR_CODE.collection_not_exist,
                     msg: "Collection is not exist"
                 });
             }
@@ -243,13 +243,76 @@ const deleteCollection = function(request, response){
 
     Collection.deleteOne({_id: id}, function(err) {
         if (err != null) {
-            response.status(constant.ERR_STATUS.Bad_Request).json({
+            response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
             response.json({
-                err_code: constant.ERR_CODE.success,
+                err_code: ERR_CODE.success,
                 msg: "Collection deleted successfully"
+            });
+        }
+    });
+}
+
+const search = function(request, response){
+    var { 
+        query,
+        sort,
+        fields,
+    } = request.body;
+
+    var sortField = {"name" : 1}
+    if (sort == null) {
+        sort = Collection_Sort.Newest
+    }
+
+    switch (sort) {
+        case Collection_Sort.Most_Popular:
+            break
+        case Collection_Sort.Most_Lesson:
+            break
+        case Collection_Sort.Newest:
+            sortField = {"createdAt" : -1}
+            break
+        case Collection_Sort.Oldest:
+            sortField = {"createdAt" : 1}
+            break
+        case Collection_Sort.My_Teacher:
+            break
+        case Collection_Sort.Highest_Avg:
+            break
+        case Collection_Sort.Highest_Score:
+            break
+        case Collection_Sort.Highest_Trans:
+            break
+    }
+
+    var condition = {}
+    if (query && query != "") {
+        condition["name"] = {$regex: query, $options: 'i'}
+    }
+    if (fields == null || fields == "") {
+        fields = 'name shortDescription icon medias createdAt'
+    }
+    
+    Collection.find(condition, fields, { sort: sortField}).limit(100).find(async function(err, collections) {
+        if (err != null) {
+            response.status(ERR_STATUS.Bad_Request).json({
+                error: err
+            });
+        } else {
+            var result = []
+            for (var i = 0; i < collections.length; i++){
+                var item = JSON.parse(JSON.stringify(collections[i]))
+                const subjectCount = await Subject.countDocuments({parent: {_id: item._id, type: "collection"}})
+                item.subjectCount = subjectCount
+                result.push(item)
+            }
+
+            response.json({
+                err_code: ERR_CODE.success,
+                collections: result
             });
         }
     });
