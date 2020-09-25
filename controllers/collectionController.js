@@ -256,6 +256,7 @@ const deleteCollection = function(request, response){
 }
 
 const search = function(request, response){
+    console.log(request.body)
     var { 
         query,
         sort,
@@ -318,4 +319,4 @@ const search = function(request, response){
     });
 }
 
-module.exports = {createCollection, findCollection, getCollectionList,deleteCollection,collectionDetail,updateCollection}
+module.exports = {createCollection, findCollection, getCollectionList,deleteCollection,collectionDetail,updateCollection,search}
