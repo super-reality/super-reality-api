@@ -1,12 +1,12 @@
 // 'user strict';
 
-const { Collection, Subject, Step, Tag } = require("../models")
+const {Collection, Subject, Step, Tag} = require("../models")
 
-const { ERR_STATUS, ERR_CODE, Category, Collection_Sort } = require('../constants/constant')
+const {ERR_STATUS, ERR_CODE, Category, Collection_Sort} = require('../constants/constant')
 
 const statusCodes = require("http-status-codes")
 const mongoose = require("mongoose")
-const client = mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection
 let errorStatus = false
 const createCollection = async function (request, response) {
@@ -23,28 +23,43 @@ const createCollection = async function (request, response) {
 
     if (name.length < 4) {
         errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({ err_code: statusCodes.BAD_REQUEST, message: "Name should be atleast 4 character" })
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Name should be atleast 4 character"
+        })
     }
     if (description.length < 4) {
         errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({ err_code: statusCodes.BAD_REQUEST, message: "Description should be atleast 4 character" })
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Description should be atleast 4 character"
+        })
     }
     if (shortDescription.length < 4) {
         errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({ err_code: statusCodes.BAD_REQUEST, message: "Short description should be atleast 4 character" })
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Short description should be atleast 4 character"
+        })
     }
     if (icon.length < 4) {
         errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({ err_code: statusCodes.BAD_REQUEST, message: "Icon url should be atleast 4 character" })
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Icon url should be atleast 4 character"
+        })
     }
     if (medias.length == 0) {
         errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({ err_code: statusCodes.BAD_REQUEST, message: "Atleast one media is required" })
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Atleast one media is required"
+        })
 
 
     }
     const session = await db.startSession();
-    const responses={};
+    const responses = {};
     if (!errorStatus) {
         const collection = Collection()
         collection.icon = icon
@@ -65,48 +80,49 @@ const createCollection = async function (request, response) {
 
         const transactionOptions = {
             readPreference: 'primary',
-            readConcern: { level: 'local' },
-            writeConcern: { w: 'majority' }
+            readConcern: {level: 'local'},
+            writeConcern: {w: 'majority'}
         };
 
 
         try {
             const transactionResults = await session.withTransaction(async () => {
                 // save collection document
-               const createdCollection = await collection.save({ session })
-               responses['collection'] = createdCollection
+                const createdCollection = await collection.save({session})
+                responses['collection'] = createdCollection
 
                 for (var i = 0; i < tags.length; i++) {
                     const tagName = tags[i]
-                    result = await Tag.findOne({ name: tagName })
+                    result = await Tag.findOne({name: tagName})
 
                     if (result) {
                     } else {
                         var tag = Tag()
-                        tag.name =tags[i]
+                        tag.name = tags[i]
                         tag.type = "collection"
-                        createdTags = await tag.save({ session })
+                        createdTags = await tag.save({session})
                     }
 
                 }
-
-
-
             }, transactionOptions)
             if (transactionResults) {
-               responses['err_code']=0
-               response.status(statusCodes.OK).send(responses)
-                
+                responses['err_code'] = 0
+                response.status(statusCodes.OK).send(responses)
+
             } else {
                 console.log("The transaction was intentionally aborted.");
-                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({err_code:statusCodes.INTERNAL_SERVER_ERROR,message:"Sorry we were not able to save this collection"})
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "Sorry we were not able to save this collection"
+                })
             }
-        }
-        catch (err) {
-            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({err_code:statusCodes.INTERNAL_SERVER_ERROR,message:"Sorry we were not able to save this collection"})
+        } catch (err) {
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Sorry we were not able to save this collection"
+            })
             console.log("The transaction was aborted due to an unexpected error: " + err);
-        }
-        finally {
+        } finally {
             session.endSession();
         }
     }
@@ -114,7 +130,7 @@ const createCollection = async function (request, response) {
 
 
 const collectionDetail = function (request, response) {
-    const { id } = request.params;
+    const {id} = request.params;
 
     Collection.findById(id, async function (err, collection) {
         if (err != null) {
@@ -124,7 +140,7 @@ const collectionDetail = function (request, response) {
         } else {
             if (collection) {
                 // find child subject who have this collection as their parent
-                Subject.find({ parent: { _id: id, type: "collection" } }).find(function (err, subjects) {
+                Subject.find({parent: {_id: id, type: "collection"}}).find(function (err, subjects) {
                     if (err != null) {
                         response.json({
                             err_code: ERR_CODE.success,
@@ -151,7 +167,7 @@ const collectionDetail = function (request, response) {
 }
 
 const findCollection = function (request, response) {
-    const { search, category } = request.query
+    const {search, category} = request.query
 
     if (category == null || category == Category.All) {
 
@@ -183,7 +199,7 @@ const findCollection = function (request, response) {
     } else {
 
     }
-    response.json({ search, category })
+    response.json({search, category})
     // eventModel.getEventByEventId(eventid, function(err, result){
     //   if (err) {
     //     console.log("error ocurred",err);
@@ -251,7 +267,7 @@ const updateCollection = function (request, response) {
                         // save tags to Tag table
                         for (var i = 0; i < tags.length; i++) {
                             const tagName = tags[i]
-                            Tag.findOne({ name: tagName })
+                            Tag.findOne({name: tagName})
                                 .then(result => {
                                     if (result) {
                                     } else {
@@ -261,7 +277,8 @@ const updateCollection = function (request, response) {
                                         tag.save()
                                     }
                                 })
-                                .catch(error => { })
+                                .catch(error => {
+                                })
                         }
 
                         response.json({
@@ -282,13 +299,13 @@ const updateCollection = function (request, response) {
 }
 
 const getCollectionList = function (request, response) {
-    const { query } = request.query;
-    response.json({ query })
+    const {query} = request.query;
+    response.json({query})
 }
 const deleteCollection = function (request, response) {
-    const { id } = request.params;
+    const {id} = request.params;
 
-    Collection.deleteOne({ _id: id }, function (err) {
+    Collection.deleteOne({_id: id}, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -310,7 +327,7 @@ const search = function (request, response) {
         fields,
     } = request.body;
 
-    var sortField = { "name": 1 }
+    var sortField = {"name": 1}
     if (sort == null) {
         sort = Collection_Sort.Newest
     }
@@ -321,10 +338,10 @@ const search = function (request, response) {
         case Collection_Sort.Most_Lesson:
             break
         case Collection_Sort.Newest:
-            sortField = { "createdAt": -1 }
+            sortField = {"createdAt": -1}
             break
         case Collection_Sort.Oldest:
-            sortField = { "createdAt": 1 }
+            sortField = {"createdAt": 1}
             break
         case Collection_Sort.My_Teacher:
             break
@@ -338,13 +355,13 @@ const search = function (request, response) {
 
     var condition = {}
     if (query && query != "") {
-        condition["name"] = { $regex: query, $options: 'i' }
+        condition["name"] = {$regex: query, $options: 'i'}
     }
     if (fields == null || fields == "") {
         fields = 'name shortDescription icon medias createdAt'
     }
 
-    Collection.find(condition, fields, { sort: sortField }).limit(100).find(async function (err, collections) {
+    Collection.find(condition, fields, {sort: sortField}).limit(100).find(async function (err, collections) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -353,7 +370,7 @@ const search = function (request, response) {
             var result = []
             for (var i = 0; i < collections.length; i++) {
                 var item = JSON.parse(JSON.stringify(collections[i]))
-                const subjectCount = await Subject.countDocuments({ parent: { _id: item._id, type: "collection" } })
+                const subjectCount = await Subject.countDocuments({parent: {_id: item._id, type: "collection"}})
                 item.subjectCount = subjectCount
                 result.push(item)
             }
@@ -366,4 +383,12 @@ const search = function (request, response) {
     });
 }
 
-module.exports = { createCollection, findCollection, getCollectionList, deleteCollection, collectionDetail, updateCollection, search }
+module.exports = {
+    createCollection,
+    findCollection,
+    getCollectionList,
+    deleteCollection,
+    collectionDetail,
+    updateCollection,
+    search
+}
