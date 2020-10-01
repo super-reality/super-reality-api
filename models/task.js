@@ -49,7 +49,8 @@ const taskSchema = new Schema({
     // user id that created this task
     createdBy: { type: ObjectId },
     // created date
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: {type: Date}
 });
 
 const Task = new model("Task", taskSchema);

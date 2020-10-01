@@ -25,7 +25,7 @@ module.exports = {
                         description: {bsonType: "string",},
                         // CV medias urls
                         cvMedias: {bsonType: "array"},
-                        cvbsonType: {bsonType: "string",},
+                        cvType: {bsonType: "string"},
                         // task number
                         sNumber: {bsonType: "int",},
                         // next task bsonType
