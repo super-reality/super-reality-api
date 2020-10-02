@@ -1,8 +1,11 @@
-const {Lesson, Collection, Subject, Step, Tag} = require("../models")
-const {ERR_STATUS, ERR_CODE,Lesson_Sort} = require("../constants/constant")
+const { Lesson, Collection, Subject, Skill, Step } = require("../models")
+const { ERR_STATUS, ERR_CODE, Lesson_Sort } = require("../constants/constant")
 
 const fileupload = require("../utilities/upload")
 const path = require('path')
+const mongoose = require("mongoose")
+const statusCodes = require("http-status-codes")
+const db = mongoose.connection
 
 const createLesson = async function (request, response) {
     const {
@@ -11,14 +14,58 @@ const createLesson = async function (request, response) {
         name,
         shortDescription,
         description,
+        cost,
         difficulty,
         medias,
-        tags,
+        skills,
         visibility,
-        ownership,
         entry,
-        steps
+        setupScreenshots,
+        setupInstructions,
+        setupFiles,
     } = request.body;
+
+    // Name should be atleast 4 character
+    if (name.length < 4) {
+        errorStatus = true
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Name should be atleast 4 character"
+        })
+    }
+    if (description.length < 4) {
+        errorStatus = true
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Description should be atleast 4 character"
+        })
+    }
+    // Short description should be atleast 4 character
+    if (shortDescription.length < 4) {
+        errorStatus = true
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Short description should be atleast 4 character"
+        })
+    }
+    // Icon url should be atleast 4 character
+    if (icon.length < 4) {
+        errorStatus = true
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Icon url should be atleast 4 character"
+        })
+    }
+    // atleast one media file is required
+    if (medias.length == 0) {
+        errorStatus = true
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "Atleast one media is required"
+        })
+
+
+    }
 
     // check there are parent values
     if (parent.length < 1) {
@@ -38,6 +85,8 @@ const createLesson = async function (request, response) {
         });
         return
     }
+    const session = await db.startSession();
+    const responses = {};
 
     var lesson = Lesson()
     lesson.parent = parent
@@ -45,87 +94,66 @@ const createLesson = async function (request, response) {
     lesson.name = name
     lesson.shortDescription = shortDescription
     lesson.description = description
+    lesson.cost = cost
     lesson.difficulty = difficulty
     lesson.medias = medias
-    lesson.tags = tags
+    lesson.skills = skills
     lesson.visibility = visibility
-    lesson.ownership = ownership
     lesson.entry = entry
-    lesson.totalSteps = []
+    lesson.setupScreenshots = setupScreenshots
+    lesson.setupInstructions = setupInstructions
+    lesson.setupFiles = setupFiles
     lesson.rating = 0
-    lesson.ratingCount = 0
-    lesson.numberOfShares = 0
-    lesson.numberOfActivations = 0
-    lesson.numberOfCompletions = 0
+    lesson.chapters = []
     lesson.createdBy = request.user._id
 
-    // save lesson document
-    lesson.save(async function (err) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            // save collection document
+            const createdLesson = await lesson.save({ session })
+            responses['lesson'] = createdLesson
+
+            for (var i = 0; i < skills.length; i++) {
+                const skillName = skills[i]
+                result = await Skill.findOne({ name: skillName })
+
+                if (result) {
+                } else {
+                    var skill = Skill()
+                    skill.name = skills[i]
+
+                    createdSkills = await skill.save({ session })
+                }
+
+            }
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
+
         } else {
-            // save tags to Tag table
-            for (var i = 0; i < tags.length; i++) {
-                const tagName = tags[i]
-                Tag.findOne({name: tagName})
-                    .then(result => {
-                        if (result) {
-                        } else {
-                            var tag = Tag()
-                            tag.name = tagName
-                            tag.type = "lesson"
-                            tag.save()
-                        }
-                    })
-                    .catch(error => {
-                    })
-            }
-
-            // save steps to Step table
-            var totalSteps = []
-            for (var i = 0; i < steps.length; i++) {
-                if (steps[i]._id) {
-                    totalSteps.push(steps[i]._id)
-                } else {
-                    var step = Step()
-                    step.images = steps[i].images
-                    step.functions = steps[i].functions
-                    step.name = steps[i].name
-                    step.trigger = steps[i].trigger
-                    step.description = steps[i].description
-                    step.next = steps[i].next
-                    step.createdBy = request.user._id
-                    step.cvMatchValue = steps[i].cvMatchValue
-                    step.cvCanvas = steps[i].cvCanvas
-                    step.cvDelay = steps[i].cvDelay
-                    step.cvGrayscale = steps[i].cvGrayscale,
-                    step.cvApplyThreshold = steps[i].cvApplyThreshold,
-                    step.cvThreshold = steps[i].cvApplyThreshold
-                  
-
-                    await step.save()
-                    totalSteps.push(step._id)
-                }
-            }
-
-            // update lesson's totalSteps to steps array
-            lesson.totalSteps = totalSteps
-            lesson.save(function (err) {
-                if (err) {
-                    response.status(ERR_STATUS.Bad_Request).json({
-                        error: err
-                    });
-                } else {
-                    response.json({
-                        err_code: ERR_CODE.success,
-                        lesson
-                    });
-                }
-            });
+            console.log("The transaction was intentionally aborted.");
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Sorry we were not able to create this lesson"
+            })
         }
-    })
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to create this lesson",
+            internalError: err
+
+        })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
+    }
 }
 
 const createLessonWithForm = async function (request, response) {
@@ -198,7 +226,7 @@ const createLessonWithForm = async function (request, response) {
             // save tags to Tag table
             for (var i = 0; i < tagsObject.length; i++) {
                 const tagName = tagsObject[i]
-                Tag.findOne({name: tagName})
+                Tag.findOne({ name: tagName })
                     .then(result => {
                         if (result) {
                         } else {
@@ -259,8 +287,8 @@ const createLessonWithForm = async function (request, response) {
                     step.cvCanvas = stepsObject[i].cvCanvas
                     step.cvDelay = stepsObject[i].cvDelay
                     step.cvGrayscale = stepsObject[i].cvGrayscale,
-                    step.cvApplyThreshold = stepsObject[i].cvApplyThreshold,
-                    step.cvThreshold = stepsObject[i].cvApplyThreshold
+                        step.cvApplyThreshold = stepsObject[i].cvApplyThreshold,
+                        step.cvThreshold = stepsObject[i].cvApplyThreshold
 
                     await step.save()
                     totalSteps.push(step._id)
@@ -310,7 +338,7 @@ const updateLesson = function (request, response) {
         } else {
             if (lesson) {
                 // check parent have already this lesson
-                var lesson_already_exist = await isUniqueInParent(parent, name, {_id: {$ne: lesson._id}})
+                var lesson_already_exist = await isUniqueInParent(parent, name, { _id: { $ne: lesson._id } })
                 if (lesson_already_exist) {
                     response.status(ERR_STATUS.Bad_Request).json({
                         err_code: ERR_CODE.lesson_already_exist_in_parent,
@@ -341,7 +369,7 @@ const updateLesson = function (request, response) {
                         // save tags to Tag table
                         for (var i = 0; i < tags.length; i++) {
                             const tagName = tags[i]
-                            Tag.findOne({name: tagName})
+                            Tag.findOne({ name: tagName })
                                 .then(result => {
                                     if (result) {
                                     } else {
@@ -375,9 +403,9 @@ const updateLesson = function (request, response) {
                                             step.cvCanvas = stepData.cvCanvas
                                             step.cvDelay = stepData.cvDelay
                                             step.cvGrayscale = stepData.cvGrayscale,
-                                            step.cvApplyThreshold = stepData.cvApplyThreshold,
-                                            step.cvThreshold = stepData.cvApplyThreshold
-                                          
+                                                step.cvApplyThreshold = stepData.cvApplyThreshold,
+                                                step.cvThreshold = stepData.cvApplyThreshold
+
 
                                             step.save()
                                         }
@@ -396,11 +424,11 @@ const updateLesson = function (request, response) {
                                 step.cvCanvas = steps[i].cvCanvas
                                 step.cvDelay = steps[i].cvDelay
                                 step.cvGrayscale = steps[i].cvGrayscale,
-                                step.cvApplyThreshold = steps[i].cvApplyThreshold,
-                                step.cvThreshold = steps[i].cvApplyThreshold
-                              
-                                
-                                
+                                    step.cvApplyThreshold = steps[i].cvApplyThreshold,
+                                    step.cvThreshold = steps[i].cvApplyThreshold
+
+
+
 
                                 await step.save()
                                 totalSteps.push(step._id)
@@ -435,13 +463,13 @@ const updateLesson = function (request, response) {
 }
 
 const searchParent = function (request, response) {
-    const {query} = request.params;
+    const { query } = request.params;
     Subject.find({
         name: {
             $regex: query,
             $options: 'i'
         }
-    }, 'name parent').sort({'name': "asc"}).limit(100).exec(async function (err, subjects) {
+    }, 'name parent').sort({ 'name': "asc" }).limit(100).exec(async function (err, subjects) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -471,7 +499,7 @@ const searchParent = function (request, response) {
                     $regex: query,
                     $options: 'i'
                 }
-            }, 'name parent').sort({'name': "asc"}).limit(100).exec(async function (err1, lessons) {
+            }, 'name parent').sort({ 'name': "asc" }).limit(100).exec(async function (err1, lessons) {
                 if (err1 != null) {
                     response.status(ERR_STATUS.Bad_Request).json({
                         error: err1
@@ -515,7 +543,7 @@ const searchLesson = function (request, response) {
         fields,
     } = request.body;
 
-    var sortField = {"name": 1}
+    var sortField = { "name": 1 }
     var difficulty = 0
     if (sort == null) {
         sort = Lesson_Sort.Newest
@@ -523,16 +551,16 @@ const searchLesson = function (request, response) {
 
     switch (sort) {
         case Lesson_Sort.Newest:
-            sortField = {"createdAt": -1}
+            sortField = { "createdAt": -1 }
             break
         case Lesson_Sort.Oldest:
-            sortField = {"createdAt": 1}
+            sortField = { "createdAt": 1 }
             break
         case Lesson_Sort.Highest_Avg:
-            sortField = {"rating": -1}
+            sortField = { "rating": -1 }
             break
         case Lesson_Sort.Lowest_Avg:
-            sortField = {"rating": 1}
+            sortField = { "rating": 1 }
             break
         case Lesson_Sort.Intro:
             difficulty = Difficulty.Intro
@@ -550,7 +578,7 @@ const searchLesson = function (request, response) {
 
     var condition = {}
     if (query && query != "") {
-        condition["name"] = {$regex: query, $options: 'i'}
+        condition["name"] = { $regex: query, $options: 'i' }
     }
     if (difficulty) {
         condition["difficulty"] = difficulty
@@ -562,7 +590,7 @@ const searchLesson = function (request, response) {
         fields = 'name shortDescription icon medias rating createdAt'
     }
 
-    Lesson.find(condition, fields, {sort: sortField}).limit(100).find(function (err, lessons) {
+    Lesson.find(condition, fields, { sort: sortField }).limit(100).find(function (err, lessons) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -577,7 +605,7 @@ const searchLesson = function (request, response) {
 }
 
 const lessonDetail = function (request, response) {
-    const {id} = request.params;
+    const { id } = request.params;
     Lesson.findById(id, async function (err, lesson) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
@@ -591,12 +619,12 @@ const lessonDetail = function (request, response) {
                     if (item.type == "subject") {
                         let subject = await Subject.findById(item._id, "name")
                         if (subject) {
-                            parentArray.push({type: "subject", subjectId: subject._id, subjectName: subject.name})
+                            parentArray.push({ type: "subject", subjectId: subject._id, subjectName: subject.name })
                         }
                     } else if (item.type == "lesson") {
                         let les = await Lesson.findById(item._id, "name")
                         if (les) {
-                            parentArray.push({type: "lesson", lessonId: les._id, lessonName: les.name})
+                            parentArray.push({ type: "lesson", lessonId: les._id, lessonName: les.name })
                         }
                     }
                 }
@@ -629,9 +657,9 @@ const lessonDetail = function (request, response) {
 }
 
 const deleteLesson = function (request, response) {
-    const {id} = request.params;
+    const { id } = request.params;
 
-    Lesson.deleteOne({_id: id}, function (err) {
+    Lesson.deleteOne({ _id: id }, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -648,9 +676,9 @@ const deleteLesson = function (request, response) {
 const isUniqueInParent = async (parents, name, except = null) => {
     const promises = parents.map((item) => {
         return new Promise((resolve, reject) => {
-            var condition = {parent: item, name: name}
+            var condition = { parent: item, name: name }
             if (except) {
-                condition = {parent: item, name: name, except}
+                condition = { parent: item, name: name, except }
             }
             Lesson.findOne(condition, (err, lesson) => {
                 if (err) {

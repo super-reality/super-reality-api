@@ -15,6 +15,7 @@ const Step = require("./step")
 const Subject = require("./subject")
 const SubjectUserRole = require("./subjectUserRole")
 const Tag = require("./tag")
+const Skill = require("./skill")
 const Task = require("./task")
 const User = require("./user")
 const Favor = require("./favor")
@@ -38,6 +39,7 @@ module.exports = {
     Subject,
     SubjectUserRole,
     Tag,
+    Skill,
     Task,
     User
 }
