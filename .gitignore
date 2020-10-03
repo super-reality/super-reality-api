@@ -1,6 +1,7 @@
 ### Node ###
 
 .env
+test.env
 .idea
 .DS_Store
 # Logs

@@ -19,7 +19,9 @@ router.get("/search-parent/:query", auth(), function (req, res) {
 router.post("/search", auth(), function (req, res) {
     searchLesson(req, res)
 })
+
 router.get("/:id", auth(), function (req, res) {
+    console.log('GET LESSON')
     lessonDetail(req, res)
 })
 router.put("/update", auth(), function (req, res) {

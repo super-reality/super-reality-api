@@ -37,6 +37,10 @@ userSchema.methods.checkPassword = function(password) {
     return hashSaltDigest(password, this.passwordSalt) === this.passwordHash;
 }
 
+userSchema.methods.deleteAllUsers = function(request, response) {
+    console.log('DELETING ALL USERS')
+}
+
 const User = new model("User", userSchema);
 
 module.exports = User;

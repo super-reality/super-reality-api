@@ -1,10 +1,40 @@
 // 'user strict';
 
-const {Collection,Subject,Step,Tag}= require("../models")
+const { Collection, Subject, Step, Tag } = require("../models")
+const mongoose = require('mongoose')
 
-const {ERR_STATUS,ERR_CODE,Category,Collection_Sort} = require('../constants/constant')
+const { ERR_STATUS, ERR_CODE, Category, Collection_Sort } = require('../constants/constant')
+
+//ADDED BY MATT --------------------------
+const deleteAllCollection = function (request, response) {
+    console.log('DELETING ALL COLLECTIONS ')
+    try {
+        Collection().remove({}, 
+            function (err) {
+
+                if (err != null) {
+                    console.log('RERROR: ', err)
+                    response.status(ERR_STATUS.Bad_Request).json({
+                        error: err
+                    });
+                } else {
+                    console.log('SUCCESS')
+
+                    response.json({
+                        err_code: ERR_CODE.success,
+                        Collection
+                    })
+
+                }
+            });
+    } catch (e) {
+        console.log('E: ', e)
+    }
+}
+//-----------------------------------------------
 
 const createCollection = function (request, response) {
+console.log('CREATE 0')
     const {
         icon,
         name,
@@ -30,20 +60,26 @@ const createCollection = function (request, response) {
     collection.numberOfShares = 0
     collection.numberOfActivations = 0
     collection.numberOfCompletions = 0
+
+
     collection.createdBy = request.user._id
     collection.created_at = new Date()
 
     // save collection document
     collection.save(function (err) {
+        console.log('CREATE 1')
         if (err != null) {
+            console.log('CREATE 2')
             response.status(ERR_STATUS.Bad_Request).json({
+                
                 error: err
             });
         } else {
+            console.log('CREATE 3')
             // save tags to Tag table
             for (var i = 0; i < tags.length; i++) {
                 const tagName = tags[i]
-                Tag.findOne({name: tagName})
+                Tag.findOne({ name: tagName })
                     .then(result => {
                         if (result) {
                         } else {
@@ -58,6 +94,7 @@ const createCollection = function (request, response) {
             }
 
             response.json({
+                
                 err_code: ERR_CODE.success,
                 collection
             })
@@ -65,11 +102,15 @@ const createCollection = function (request, response) {
     })
 }
 
+const matt = function (req, res) {
 
-const collectionDetail = function(request, response){
+}
+
+
+const collectionDetail = function (request, response) {
     const { id } = request.params;
 
-    Collection.findById(id, async function(err, collection) {
+    Collection.findById(id, async function (err, collection) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -77,7 +118,7 @@ const collectionDetail = function(request, response){
         } else {
             if (collection) {
                 // find child subject who have this collection as their parent
-                Subject.find({parent: {_id: id, type: "collection"}}).find(function(err, subjects) {
+                Subject.find({ parent: { _id: id, type: "collection" } }).find(function (err, subjects) {
                     if (err != null) {
                         response.json({
                             err_code: ERR_CODE.success,
@@ -103,8 +144,11 @@ const collectionDetail = function(request, response){
     });
 }
 
+
+
 const findCollection = function (request, response) {
-    const {search, category} = request.query
+    const { search, category } = request.query
+
 
     if (category == null || category == Category.All) {
 
@@ -114,6 +158,7 @@ const findCollection = function (request, response) {
     } else if (category == Category.Subject) {
 
     } else if (category == Category.Organization) {
+
 
     } else if (category == Category.Collection) {
 
@@ -136,10 +181,10 @@ const findCollection = function (request, response) {
     } else {
 
     }
-    response.json({search, category})
+    response.json({ search, category })
     // eventModel.getEventByEventId(eventid, function(err, result){
     //   if (err) {
-    //     console.log("error ocurred",err);
+    //     
     //     return res.json({
     //       success: false,
     //       msg: err.message,
@@ -161,11 +206,11 @@ const findCollection = function (request, response) {
     //       });
     //     }
     //   }
-    //   console.log('success', result);
+    //   
     // });
 }
 
-const updateCollection = function(request, response){
+const updateCollection = function (request, response) {
     const {
         _id,
         icon,
@@ -178,7 +223,7 @@ const updateCollection = function(request, response){
         entry
     } = request.body;
 
-    Collection.findById(_id, async function(err, collection) {
+    Collection.findById(_id, async function (err, collection) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -202,19 +247,19 @@ const updateCollection = function(request, response){
                         });
                     } else {
                         // save tags to Tag table
-                        for (var i = 0; i < tags.length; i++){
+                        for (var i = 0; i < tags.length; i++) {
                             const tagName = tags[i]
-                            Tag.findOne({name: tagName})
-                            .then(result => {
-                                if (result) {
-                                } else {
-                                    var tag = Tag()
-                                    tag.name = tagName
-                                    tag.type = "collection"
-                                    tag.save()
-                                }
-                            })
-                            .catch(error => {})
+                            Tag.findOne({ name: tagName })
+                                .then(result => {
+                                    if (result) {
+                                    } else {
+                                        var tag = Tag()
+                                        tag.name = tagName
+                                        tag.type = "collection"
+                                        tag.save()
+                                    }
+                                })
+                                .catch(error => { })
                         }
 
                         response.json({
@@ -235,38 +280,50 @@ const updateCollection = function(request, response){
 }
 
 const getCollectionList = function (request, response) {
-    const {query} = request.query;
-    response.json({query})
+    const { query } = request.query;
+    response.json({ query })
 }
-const deleteCollection = function(request, response){
-    const { id } = request.params;
+const deleteCollection = function (request, response) {
 
-    Collection.deleteOne({_id: id}, function(err) {
+    // const { id } = request.params;
+    // new mongoose.Types.ObjectId(request.params)
+    const { id } = new mongoose.Types.ObjectId(request.query.id);
+    let matt = Collection.deleteOne({ entry: '4555566' }, function (err) {
+
+        // 
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
             response.json({
-                err_code: ERR_CODE.success,
+                err_code: ERR_CODE,
                 msg: "Collection deleted successfully"
             });
         }
     });
 }
 
-const search = function(request, response){
-    console.log(request.body)
-    var { 
+
+const search = function (request, response) {
+
+    console.log('request.body: ', request.body);
+
+    var {
         query,
         sort,
         fields,
     } = request.body;
 
-    var sortField = {"name" : 1}
+    var sortField = { "name": 1 }
     if (sort == null) {
         sort = Collection_Sort.Newest
     }
+    console.log('query: ', query);
+    console.log('sort: ', sort);
+    console.log('fields: ', fields);
+
+
 
     switch (sort) {
         case Collection_Sort.Most_Popular:
@@ -274,10 +331,10 @@ const search = function(request, response){
         case Collection_Sort.Most_Lesson:
             break
         case Collection_Sort.Newest:
-            sortField = {"createdAt" : -1}
+            sortField = { "createdAt": -1 }
             break
         case Collection_Sort.Oldest:
-            sortField = {"createdAt" : 1}
+            sortField = { "createdAt": 1 }
             break
         case Collection_Sort.My_Teacher:
             break
@@ -291,22 +348,27 @@ const search = function(request, response){
 
     var condition = {}
     if (query && query != "") {
-        condition["name"] = {$regex: query, $options: 'i'}
+        condition["name"] = { $regex: query, $options: 'i' }
     }
     if (fields == null || fields == "") {
         fields = 'name shortDescription icon medias createdAt'
     }
-    
-    Collection.find(condition, fields, { sort: sortField}).limit(100).find(async function(err, collections) {
+
+    Collection.find(condition, fields, { sort: sortField }).limit(100).find(async function (err, collections) {
+
         if (err != null) {
+            console.log('FIND 2: ', err)
+
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
+            console.log('FIND 3')
+
             var result = []
-            for (var i = 0; i < collections.length; i++){
+            for (var i = 0; i < collections.length; i++) {
                 var item = JSON.parse(JSON.stringify(collections[i]))
-                const subjectCount = await Subject.countDocuments({parent: {_id: item._id, type: "collection"}})
+                const subjectCount = await Subject.countDocuments({ parent: { _id: item._id, type: "collection" } })
                 item.subjectCount = subjectCount
                 result.push(item)
             }
@@ -319,4 +381,4 @@ const search = function(request, response){
     });
 }
 
-module.exports = {createCollection, findCollection, getCollectionList,deleteCollection,collectionDetail,updateCollection,search}
+module.exports = { deleteAllCollection, createCollection, findCollection, getCollectionList, deleteCollection, collectionDetail, updateCollection, search }

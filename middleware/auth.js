@@ -25,7 +25,9 @@ const authenticateUser = token => new Promise((resolve, reject) => {
 const authorizePermissions = (user, permissions) => new Promise((resolve, reject) => resolve());
 
 const auth = (permissions = []) => (request, response, next) => {
+    // console.log('REQ: ', request)
     try {
+        console.log('REQ: ')
         authenticateUser(getJwtFromRequest(request))
             .then(user => {
                 authorizePermissions(user, permissions)

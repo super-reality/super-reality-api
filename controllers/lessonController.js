@@ -577,6 +577,7 @@ const searchLesson = function (request, response) {
 }
 
 const lessonDetail = function (request, response) {
+    console.log('LESSONS')
     const {id} = request.params;
     Lesson.findById(id, async function (err, lesson) {
         if (err != null) {

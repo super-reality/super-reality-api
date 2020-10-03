@@ -50,6 +50,10 @@ const collectionSchema = new Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+
+
+
 const Collection = new model("Collection", collectionSchema);
+
 
 module.exports = Collection

@@ -15,4 +15,6 @@ const collectionUserRoleSchema = new Schema({
 
 const CollectionUserRole = new model("CollectionUserRole", collectionUserRoleSchema);
 
+
+
 module.exports = CollectionUserRole;

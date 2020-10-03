@@ -59,4 +59,5 @@ const deleteUser = function (request, response) {
         .catch(error => response.sendStatus(error.status ? error.status : 500));
 }
 
+
 module.exports = {createUser,getUser,getUserById,updateUser,deleteUser}

@@ -3,13 +3,23 @@ const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
 const {findCollection} = require("../../../controllers/collectionController");
+const {Collection,Subject,Step,Tag}= require("../../../models")
 
 //base route
-router.get('/', function (req, res) {
-    res.json({
-        status: 'Welcome to Open World API',
-        message: 'Open World Rest Api is now working!',
-    })
+router.get('/', async function (req, res) {
+    try {
+        const user = await Collection.find()
+        console.log('USER: ', user)
+        if (!user || !user.avatar) {
+            throw new Error()
+        }
+
+        res.set('Content-Type', 'image/png')
+        res.send(user.avatar)
+    } catch (e) {
+        console.log('ERROR: ', e)
+        res.status(404).send()
+    }
 })
 // find collection route
 router.get("/find", function(req,res)
