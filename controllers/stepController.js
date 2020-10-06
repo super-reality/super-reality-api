@@ -64,6 +64,66 @@ const createStep = async function (request, response) {
     }
 }
 
+const updateStepById = async function (request, response) {
+
+    const session = await db.startSession();
+     const transactionOptions = {
+         readPreference: 'primary',
+         readConcern: { level: 'local' },
+         writeConcern: { w: 'majority' }
+     };
+ 
+     try {
+ 
+         var stepUpdated = false
+         var responses ={}
+ 
+         const transactionResults = await session.withTransaction(async () => {
+ 
+             const currentStep = await Step.findById({ _id: request.body.step_id, session })
+             if (currentStep) {
+                
+                 currentStep.items = request.body.items ? request.body.items : currentStep.items
+                 currentStep.name = request.body.name ? request.body.name : currentStep.name
+                
+                 currentStep.updatedAt =new Date()
+                 updatedStep = await currentStep.save({session})
+                 if (updatedStep) {
+                     stepUpdated = true
+                     responses['step']=updatedStep
+                 }
+                 else {
+                     response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this step" })
+                 }
+             }
+             else {
+                 response.status(200).send({ err_code: 0, "message": "This step does not exist" })
+             }
+             // save collection document
+         }, transactionOptions)
+         if (transactionResults) {
+             responses['err_code'] = 0
+             response.status(statusCodes.OK).send(responses)
+         } else {
+ 
+             console.log("The transaction was intentionally aborted.");
+             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this step" })
+ 
+         }
+     } catch (err) {
+         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+             err_code: statusCodes.INTERNAL_SERVER_ERROR,
+             message: "Sorry we were not able to update this step",
+             internalError: err
+ 
+         })
+         console.log("The transaction was aborted due to an unexpected error: " + err);
+     } finally {
+         session.endSession();
+     }
+ 
+ }
+
 const getsteps = async function (request, response) {
     try {
         steps = await Step.find({})
@@ -98,6 +158,7 @@ const getstepsById = async function (request, response) {
 module.exports = {
     createStep,
     getsteps,
-    getstepsById
+    getstepsById,
+    updateStepById
 
 } 

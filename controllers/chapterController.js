@@ -120,7 +120,7 @@ const updateChapterById = async function (request, response) {
                     responses['chapter']=updatedChapter
                 }
                 else {
-                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not updated this chapter" })
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this chapter" })
                 }
             }
             else {
@@ -134,7 +134,7 @@ const updateChapterById = async function (request, response) {
         } else {
 
             console.log("The transaction was intentionally aborted.");
-            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not updated this chapter" })
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this chapter" })
 
         }
     } catch (err) {
