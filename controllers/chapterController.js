@@ -104,19 +104,20 @@ const addStepToChapter = async function (request, response) {
 
     try {
 
-           const transactionResults = await session.withTransaction(async () => {
+        var stepExistFlag = false
+        const transactionResults = await session.withTransaction(async () => {
 
-            const currentChapter = await Chapter.findById({ _id: request.body.chapter_id ,session})
+            const currentChapter = await Chapter.findById({ _id: request.body.chapter_id, session })
             if (currentChapter) {
                 step = request.body.step_id
                 const stepExist = currentChapter.steps.find(element => element === request.body.step_id);
-    
+
                 if (stepExist) {
+                    stepExistFlag = true
                     session.endSession()
-                    response.status(200).send({ err_code: 0, "message": "This step is already added to this chapter" })
+                    return
                 }
                 else {
-            
                     currentChapter.steps = currentChapter.steps.concat(step)
                     updatedChapter = await currentChapter.save({ session });
                     if (updatedChapter) {
@@ -124,25 +125,34 @@ const addStepToChapter = async function (request, response) {
                     }
                 }
             }
-            else{
+            else {
                 response.status(200).send({ err_code: 0, "message": "This chapter does not exist" })
             }
-                    // save collection document
-                }, transactionOptions)
-                
-                if (transactionResults) {
-                    responses['err_code'] = 0
-                    response.status(statusCodes.OK).send(responses)
+            // save collection document
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
+        } else {
+            if (stepExistFlag) {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "This chapter already added to this chapter"
 
-                } else {
-                    console.log("The transaction was intentionally aborted.");
-                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
-                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
-                        message: "Sorry we were not able to update this chapter"
-                    })
-                }
-        
-      } catch (err) {
+                })
+
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "Sorry we were not able to update this chapter"
+                })
+            }
+
+            console.log("The transaction was intentionally aborted.");
+
+        }
+    } catch (err) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to update this chapter",
@@ -153,7 +163,6 @@ const addStepToChapter = async function (request, response) {
     } finally {
         session.endSession();
     }
-
 }
 
 
