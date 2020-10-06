@@ -5,7 +5,7 @@ var router = express.Router()
 const multer  = require('multer');
 const fileParser  = multer({ storage: multer.memoryStorage() });
 const auth = require("../../../middleware/auth")
-const {createLesson, searchParent, updateLesson, createLessonWithForm, searchLesson, lessonDetail, deleteLesson} = require('../../../controllers/lessonController')
+const {createLesson, searchParent, updateLesson, createLessonWithForm, searchLesson, lessonDetail, deleteLesson,addChapterToLesson} = require('../../../controllers/lessonController')
 router.post("/create", auth(), function (req, res) {
     createLesson(req, res)
 })
@@ -28,5 +28,9 @@ router.put("/update", auth(), function (req, res) {
 router.delete("/:id", auth(), function (req, res) {
     deleteLesson(req, res)
 })
+router.post("/addChapterToLesson", auth(), function (req, res) {
+    addChapterToLesson(req, res)
+})
+
 // router.put("/update/:lesson_id", auth(), lessonController.list)
 module.exports = router

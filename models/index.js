@@ -19,6 +19,7 @@ const Skill = require("./skill")
 const Task = require("./task")
 const User = require("./user")
 const Favor = require("./favor")
+const Chapter = require("./chapter")
 
 module.exports = {
     Classroom,
@@ -39,6 +40,7 @@ module.exports = {
     Subject,
     SubjectUserRole,
     Tag,
+    Chapter,
     Skill,
     Task,
     User

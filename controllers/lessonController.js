@@ -405,8 +405,6 @@ const updateLesson = function (request, response) {
                                             step.cvGrayscale = stepData.cvGrayscale,
                                                 step.cvApplyThreshold = stepData.cvApplyThreshold,
                                                 step.cvThreshold = stepData.cvApplyThreshold
-
-
                                             step.save()
                                         }
                                     })
@@ -426,10 +424,6 @@ const updateLesson = function (request, response) {
                                 step.cvGrayscale = steps[i].cvGrayscale,
                                     step.cvApplyThreshold = steps[i].cvApplyThreshold,
                                     step.cvThreshold = steps[i].cvApplyThreshold
-
-
-
-
                                 await step.save()
                                 totalSteps.push(step._id)
                             }
@@ -604,57 +598,7 @@ const searchLesson = function (request, response) {
     });
 }
 
-const lessonDetail = function (request, response) {
-    const { id } = request.params;
-    Lesson.findById(id, async function (err, lesson) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            if (lesson) {
-                var parentArray = []
-                for (var i = 0; i < lesson.parent.length; i++) {
-                    let item = lesson.parent[i]
-                    if (item.type == "subject") {
-                        let subject = await Subject.findById(item._id, "name")
-                        if (subject) {
-                            parentArray.push({ type: "subject", subjectId: subject._id, subjectName: subject.name })
-                        }
-                    } else if (item.type == "lesson") {
-                        let les = await Lesson.findById(item._id, "name")
-                        if (les) {
-                            parentArray.push({ type: "lesson", lessonId: les._id, lessonName: les.name })
-                        }
-                    }
-                }
 
-                var steps = []
-                for (var i = 0; i < lesson.totalSteps.length; i++) {
-                    let step = await Step.findById(lesson.totalSteps[i])
-                    if (step) {
-                        steps.push(step)
-                    }
-                }
-                var result = lesson
-
-                result.parent = parentArray
-                result.totalSteps = steps
-
-                response.json({
-                    err_code: ERR_CODE.success,
-                    lesson: result
-                });
-            } else {
-                response.json({
-                    err_code: ERR_CODE.lesson_not_exist,
-                    msg: "Lesson is not exist"
-                });
-            }
-
-        }
-    });
-}
 
 const deleteLesson = function (request, response) {
     const { id } = request.params;
@@ -673,33 +617,78 @@ const deleteLesson = function (request, response) {
     });
 }
 
-const isUniqueInParent = async (parents, name, except = null) => {
-    const promises = parents.map((item) => {
-        return new Promise((resolve, reject) => {
-            var condition = { parent: item, name: name }
-            if (except) {
-                condition = { parent: item, name: name, except }
-            }
-            Lesson.findOne(condition, (err, lesson) => {
-                if (err) {
-                    reject(false)
-                } else {
-                    if (lesson) {
-                        resolve(true)
-                    } else {
-                        resolve(false)
+
+const addChapterToLesson = async function (request, response) {
+
+    const session = await db.startSession();
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+    responses = {}
+
+    try {
+
+        var chapterExistFlag = false
+        const transactionResults = await session.withTransaction(async () => {
+
+            const currentLesson = await Lesson.findById({ _id: request.body.lesson_id, session })
+            if (currentLesson) {
+                chapter = request.body.chapter_id
+                const chapterExist = currentLesson.chapters.find(element => element === request.body.chapter_id);
+
+                if (chapterExist) {
+                    chapterExistFlag = true
+                    session.endSession()
+                    return
+                }
+                else {
+                    currentLesson.chapters = currentLesson.chapters.concat(chapter)
+                    updatedLesson = await currentLesson.save({ session });
+                    if (updatedLesson) {
+                        responses['lesson'] = updatedLesson
                     }
                 }
-            })
-        })
-    })
+            }
+            else {
+                response.status(200).send({ err_code: 0, "message": "This lesson does not exist" })
+            }
+            // save collection document
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
+        } else {
+            if (chapterExistFlag) {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "This chapter already added to this lesson"
 
-    const results = await Promise.all(promises)
-    console.log(results)
-    if (results.includes(true)) {
-        return true
+                })
+
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "Sorry we were not able to update this lesson"
+                })
+            }
+
+            console.log("The transaction was intentionally aborted.");
+
+        }
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to update this lesson",
+            internalError: err
+
+        })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
     }
-    return false
 }
 
 
@@ -709,6 +698,6 @@ module.exports = {
     updateLesson,
     searchParent,
     searchLesson,
-    lessonDetail,
+    addChapterToLesson,
     deleteLesson
 } 
