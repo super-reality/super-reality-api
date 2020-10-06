@@ -45,7 +45,7 @@ const createStep = async function (request, response) {
             response.status(statusCodes.OK).send(responses)
 
         } else {
-            console.log("The transaction was intentionally aborted.");
+            console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                 err_code: statusCodes.INTERNAL_SERVER_ERROR,
                 message: "Sorry we were not able to create this step"
@@ -58,7 +58,7 @@ const createStep = async function (request, response) {
             internalError: err
 
         })
-        console.log("The transaction was aborted due to an unexpected error: " + err);
+        console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
         session.endSession();
     }
@@ -74,6 +74,7 @@ const getsteps = async function (request, response) {
     }
     catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch steps", internalError: error })
+        console.error(error)
     }
 
 }
@@ -88,6 +89,7 @@ const getstepsById = async function (request, response) {
     }
     catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch chapters", internalError: error })
+        console.error(error)
     }
 
 }

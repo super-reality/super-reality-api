@@ -20,8 +20,6 @@ const createChapter = async function (request, response) {
             message: "Name should be atleast 4 character"
         })
     }
-
-
     const session = await db.startSession();
     const responses = {};
 
@@ -47,7 +45,7 @@ const createChapter = async function (request, response) {
             response.status(statusCodes.OK).send(responses)
 
         } else {
-            console.log("The transaction was intentionally aborted.");
+            console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                 err_code: statusCodes.INTERNAL_SERVER_ERROR,
                 message: "Sorry we were not able to create this chapter"
@@ -60,7 +58,7 @@ const createChapter = async function (request, response) {
             internalError: err
 
         })
-        console.log("The transaction was aborted due to an unexpected error: " + err);
+        console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
         session.endSession();
     }
@@ -149,7 +147,7 @@ const addStepToChapter = async function (request, response) {
                 })
             }
 
-            console.log("The transaction was intentionally aborted.");
+            console.error("The transaction was intentionally aborted.");
 
         }
     } catch (err) {
@@ -159,7 +157,7 @@ const addStepToChapter = async function (request, response) {
             internalError: err
 
         })
-        console.log("The transaction was aborted due to an unexpected error: " + err);
+        console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
         session.endSession();
     }

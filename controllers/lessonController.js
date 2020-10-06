@@ -9,7 +9,7 @@ const db = mongoose.connection
 
 const createLesson = async function (request, response) {
     const {
-        parent,
+        subject,
         icon,
         name,
         shortDescription,
@@ -67,29 +67,11 @@ const createLesson = async function (request, response) {
 
     }
 
-    // check there are parent values
-    if (parent.length < 1) {
-        response.status(ERR_STATUS.Bad_Request).json({
-            err_code: ERR_CODE.require_field_missing,
-            msg: "Parent field should have value"
-        });
-        return
-    }
-
-    // check parent have already this lesson
-    var lesson_already_exist = await isUniqueInParent(parent, name)
-    if (lesson_already_exist) {
-        response.status(ERR_STATUS.Bad_Request).json({
-            err_code: ERR_CODE.lesson_already_exist_in_parent,
-            msg: "One of parents already has this lesson"
-        });
-        return
-    }
     const session = await db.startSession();
     const responses = {};
 
     var lesson = Lesson()
-    lesson.parent = parent
+    lesson.subject = subject
     lesson.icon = icon
     lesson.name = name
     lesson.shortDescription = shortDescription
@@ -422,7 +404,7 @@ const updateLesson = function (request, response) {
                                 step.cvCanvas = steps[i].cvCanvas
                                 step.cvDelay = steps[i].cvDelay
                                 step.cvGrayscale = steps[i].cvGrayscale,
-                                    step.cvApplyThreshold = steps[i].cvApplyThreshold,
+                                 step.cvApplyThreshold = steps[i].cvApplyThreshold,
                                     step.cvThreshold = steps[i].cvApplyThreshold
                                 await step.save()
                                 totalSteps.push(step._id)
