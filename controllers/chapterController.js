@@ -92,6 +92,66 @@ const getChaptersById = async function (request, response) {
     }
 
 }
+
+const updateChapterById = async function (request, response) {
+
+   const session = await db.startSession();
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+
+    try {
+
+        var chapterUpdated = false
+        var responses ={}
+
+        const transactionResults = await session.withTransaction(async () => {
+
+            const currentChapter = await Chapter.findById({ _id: request.body.chapter_id, session })
+            if (currentChapter) {
+               
+                currentChapter.steps = request.body.steps ? request.body.steps : currentChapter.steps
+                currentChapter.name = request.body.name ? request.body.name : currentChapter.name
+               
+                currentChapter.updatedAt =new Date()
+                updatedChapter = await currentChapter.save({session})
+                if (updatedChapter) {
+                    chapterUpdated = true
+                    responses['chapter']=updatedChapter
+                }
+                else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not updated this chapter" })
+                }
+            }
+            else {
+                response.status(200).send({ err_code: 0, "message": "This chapter does not exist" })
+            }
+            // save collection document
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
+        } else {
+
+            console.log("The transaction was intentionally aborted.");
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not updated this chapter" })
+
+        }
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to update this chapter",
+            internalError: err
+
+        })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
+    }
+
+}
 const addStepToChapter = async function (request, response) {
 
     const session = await db.startSession();
@@ -170,6 +230,7 @@ module.exports = {
     createChapter,
     getChapters,
     getChaptersById,
+    updateChapterById,
     addStepToChapter
 
 } 
