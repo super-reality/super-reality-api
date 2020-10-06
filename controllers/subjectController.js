@@ -316,33 +316,4 @@ const deleteSubject = function(request, response){
     });
 }
 
-const isUniqueInParentOfSubject = async(parents, name, except = null) => {
-    const promises = parents.map((item) => {
-        return new Promise((resolve, reject) => {
-            var condition = { parent: item, name: name }
-            if (except) {
-                condition = { parent: item, name: name, except }
-            }
-            Subject.findOne( condition, (err, subject) => {
-                if (err) {
-                    reject(false)
-                } else {
-                    if (subject) {
-                        resolve(true)
-                    } else {
-                        resolve(false)
-                    }
-                }
-            })
-        })
-    })
-    
-    const results = await Promise.all(promises)
-    console.log(results)
-    if (results.includes(true)) {
-        return true
-    }
-    return false
-}
-
 module.exports ={createSubject,updateSubject,deleteSubject,searchParent,searchSubject,subjectDetail}

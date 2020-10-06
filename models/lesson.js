@@ -4,7 +4,7 @@ const ObjectId = Schema.Types.ObjectId
 /* *** define lesson schema *** */
 const lessonSchema = new Schema({
     // parent subject id or lesson id
-    parent: {
+    subject: {
         type: Array,
         required: true,
     },
