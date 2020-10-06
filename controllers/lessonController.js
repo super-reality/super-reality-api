@@ -63,8 +63,6 @@ const createLesson = async function (request, response) {
             err_code: statusCodes.BAD_REQUEST,
             message: "Atleast one media is required"
         })
-
-
     }
 
     const session = await db.startSession();
@@ -103,12 +101,10 @@ const createLesson = async function (request, response) {
             for (var i = 0; i < skills.length; i++) {
                 const skillName = skills[i]
                 result = await Skill.findOne({ name: skillName })
-
                 if (result) {
                 } else {
                     var skill = Skill()
                     skill.name = skills[i]
-
                     createdSkills = await skill.save({ session })
                 }
             }
@@ -153,8 +149,56 @@ const updateLesson = async function (request, response) {
 
         const transactionResults = await session.withTransaction(async () => {
 
+<<<<<<< HEAD
             const currentLesson = await Lesson.findById({ _id: request.body.lesson_id, session })
             if (currentLesson) {
+=======
+                        // save steps to Step table
+                        var totalSteps = []
+                        for (var i = 0; i < steps.length; i++) {
+                            if (steps[i]._id) {
+                                totalSteps.push(steps[i]._id)
+                                const stepData = steps[i]
+                                if (steps[i].name != null) {
+                                    Step.findById(steps[i]._id, async function (err, step) {
+                                        if (err == null && step) {
+                                            step.images = stepData.images
+                                            step.functions = stepData.functions
+                                            step.name = stepData.name
+                                            step.trigger = stepData.trigger
+                                            step.description = stepData.description
+                                            step.next = stepData.next
+                                            step.createdBy = request.user._id
+                                            step.cvMatchValue = stepData.cvMatchValue
+                                            step.cvCanvas = stepData.cvCanvas
+                                            step.cvDelay = stepData.cvDelay
+                                            step.cvGrayscale = stepData.cvGrayscale,
+                                                step.cvApplyThreshold = stepData.cvApplyThreshold,
+                                                step.cvThreshold = stepData.cvApplyThreshold
+                                            step.save()
+                                        }
+                                    })
+                                }
+                            } else {
+                                var step = Step()
+                                step.images = steps[i].images
+                                step.functions = steps[i].functions
+                                step.name = steps[i].name
+                                step.trigger = steps[i].trigger
+                                step.description = steps[i].description
+                                step.next = steps[i].next
+                                step.createdBy = request.user._id
+                                step.cvMatchValue = steps[i].cvMatchValue
+                                step.cvCanvas = steps[i].cvCanvas
+                                step.cvDelay = steps[i].cvDelay
+                                step.cvGrayscale = steps[i].cvGrayscale,
+                                    step.cvApplyThreshold = steps[i].cvApplyThreshold,
+                                    step.cvThreshold = steps[i].cvApplyThreshold
+                                await step.save()
+                                totalSteps.push(step._id)
+                            }
+                        }
+>>>>>>> 622ceef... redis mechanism on hold
 
                 currentLesson.icon = request.body.icon ? request.body.icon : currentLesson.icon
                 currentLesson.name = request.body.name ? request.body.name : currentLesson.name

@@ -26,5 +26,9 @@ router.delete("/:id", auth(), function (req, res) {
 })
 
 
+router.delete("/:id", auth(), function (req, res) {
+    deleteChapterById(req, res)
+})
+
 // router.put("/update/:lesson_id", auth(), lessonController.list)
 module.exports = router

@@ -80,7 +80,9 @@ const getChapters = async function (request, response) {
 const getChaptersById = async function (request, response) {
     try {
         chapters = await Chapter.findById({ _id: request.params.id })
+        console.log(chapters)
         if (chapters) {
+            console.log(chapters)
             response.status(200).send({ err_code: 0, chapters })
         }
         else {
@@ -92,6 +94,7 @@ const getChaptersById = async function (request, response) {
     }
 
 }
+<<<<<<< HEAD
 
 const updateChapterById = async function (request, response) {
 
@@ -149,6 +152,27 @@ const updateChapterById = async function (request, response) {
         console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
         session.endSession();
+=======
+const deleteChapterById = async function (request, response) {
+    try {
+        chapters = await Chapter.findOne({ _id: request.params.id })
+        if (chapters) {
+            deletedChapter = await Chapter.deleteOne({ _id: request.params.id })
+            if (deletedChapter) {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The chapter was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this chapter" })
+            }
+
+        }
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This chapter does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this chapter", internalError: error })
+>>>>>>> 622ceef... redis mechanism on hold
     }
 
 }
@@ -217,7 +241,6 @@ const addStepToChapter = async function (request, response) {
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to update this chapter",
             internalError: err
-
         })
         console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
@@ -250,6 +273,7 @@ const deleteChapterById = async function (request, response) {
 
 module.exports = {
     createChapter,
+    deleteChapterById,
     getChapters,
     getChaptersById,
     updateChapterById,

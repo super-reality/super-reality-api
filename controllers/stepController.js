@@ -1,4 +1,10 @@
 const { Step } = require("../models")
+<<<<<<< HEAD
+=======
+const redis = require("redis");
+const client = redis.createClient(6379);
+const path = require('path')
+>>>>>>> 622ceef... redis mechanism on hold
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -38,8 +44,18 @@ const createStep = async function (request, response) {
 
         }, transactionOptions)
         if (transactionResults) {
-            responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
+            responses['err_code'] = 0
+            
+            client.setex(responses.steps._id.toString(), 60000000, JSON.stringify(responses), function (err) {
+                if (err) {
+                    console.error("could not store in redis");
+                }
+                else {
+                    console.log("stored in redis");
+                }
+            })
+           
 
         } else {
             console.message("The transaction was intentionally aborted.");
@@ -123,9 +139,20 @@ const updateStepById = async function (request, response) {
 const getsteps = async function (request, response) {
     try {
         steps = await Step.find({})
-        if(steps)
-        {
-            response.status(200).send({err_code:0,steps})
+        if (steps) {
+            client.setex('steps', 60000, JSON.stringify({ err_code: 0, steps }), function (err) {
+                if (err) {
+                    console.error("could not store in redis");
+                }
+                else {
+                    console.log("stored in redis");
+                }
+            })
+
+            response.status(200).send({ err_code: 0, steps })
+        }
+        else {
+            response.status(200).send({ err_code: 0, steps: {}, message: "No steps found" })
         }
     }
     catch (error) {
@@ -156,11 +183,53 @@ const deleteStepById = async function (request, response) {
 
 }
 
+const deleteStepById = async function (request, response) {
+    try {
+        steps = await Step.findOne({ _id: request.params.id })
+        if (steps) {
+            deletedStep = await Step.deleteOne({ _id: request.params.id })
+            if (deletedStep) {
+                client.del(request.params.id, 60000, JSON.stringify(steps), function (err, response) {
+                    if (err) {
+                        console.error("could not delete from store");
+                    }
+                    else {
+                        console.log("deletd from store");
+                    }
+                })
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The step was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "Could not delete this step" })
+            }
+        }
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This step does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this chapter", internalError: error })
+    }
+
+}
+
 const getstepsById = async function (request, response) {
     try {
         steps = await Step.findOne({ _id: request.params.id })
         if (steps) {
+<<<<<<< HEAD
         
+=======
+
+            client.setex(request.params.id, 60000, JSON.stringify({ err_code: 0, steps }), function (err, response) {
+                if (err) {
+                    console.error("could not store in redis");
+                }
+                else {
+                    console.log("stored in redis");
+                }
+            })
+>>>>>>> 622ceef... redis mechanism on hold
             response.status(200).send({ err_code: 0, steps })
         }
         else {
@@ -176,7 +245,10 @@ module.exports = {
     createStep,
     getsteps,
     getstepsById,
+<<<<<<< HEAD
     updateStepById,
+=======
+>>>>>>> 622ceef... redis mechanism on hold
     deleteStepById
 
 } 
