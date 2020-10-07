@@ -1,6 +1,4 @@
 const { Step } = require("../models")
-
-const path = require('path')
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -122,7 +120,6 @@ const updateStepById = async function (request, response) {
      }
  
  }
-
 const getsteps = async function (request, response) {
     try {
         steps = await Step.find({})
@@ -137,7 +134,6 @@ const getsteps = async function (request, response) {
     }
 
 }
-
 const deleteStepById = async function (request, response) {
     try {
         steps = await Step.findOne({ _id: request.params.id })
@@ -175,10 +171,7 @@ const getstepsById = async function (request, response) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch chapters", internalError: error })
         console.error(error)
     }
-
 }
-
-
 module.exports = {
     createStep,
     getsteps,

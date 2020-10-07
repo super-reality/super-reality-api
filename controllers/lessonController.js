@@ -1,4 +1,4 @@
-const { Lesson, Collection, Subject, Skill } = require("../models")
+const { Lesson, Skill } = require("../models")
 const { ERR_STATUS, ERR_CODE, Lesson_Sort } = require("../constants/constant")
 
 const fileupload = require("../utilities/upload")

@@ -1,10 +1,6 @@
 const { Chapter } = require("../models")
-
-const path = require('path')
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
-const chapter = require("../models/chapter")
-const { ChainableTemporaryCredentials } = require("aws-sdk")
 const db = mongoose.connection
 
 const createChapter = async function (request, response) {
