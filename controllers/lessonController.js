@@ -400,6 +400,7 @@ module.exports = {
     createLesson,
     updateLesson,
     searchLesson,
+    getLessonById,
     addChapterToLesson,
     deleteLessonById
 } 
