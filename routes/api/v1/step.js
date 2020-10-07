@@ -36,20 +36,11 @@ const getAllStepsFromRedis = (request, response, next) => {
 }
 
 const auth = require("../../../middleware/auth")
-<<<<<<< HEAD
 const { createStep, getsteps, getstepsById, updateStepById, deleteStepById } = require('../../../controllers/stepController')
 router.post("/create", auth(), function (req, res) {
     createStep(req, res)
 })
 router.get("/", auth(), function (req, res) {
-=======
-const {createStep,getsteps,getstepsById,deleteStepById} = require('../../../controllers/stepController')
-router.post("/create", auth(), function (req, res) {
-    createStep(req, res)
-})
-
-router.get("/", auth(),getAllStepsFromRedis,function (req, res) {
->>>>>>> 622ceef... redis mechanism on hold
     getsteps(req, res)
 })
 
@@ -59,11 +50,8 @@ router.get("/:id", auth(),stepExistInCache,function (req, res) {
 router.delete("/:id", auth(), function (req, res) {
     deleteStepById(req, res)
 })
-<<<<<<< HEAD
 router.put("/", auth(), function (req, res) {
     updateStepById(req, res)
 })
-=======
->>>>>>> 622ceef... redis mechanism on hold
 
 module.exports = router
