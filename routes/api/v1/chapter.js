@@ -4,7 +4,7 @@ require('express-group-routes')
 var router = express.Router()
 
 const auth = require("../../../middleware/auth")
-const {createChapter,getChapters,getChaptersById,addStepToChapter,updateChapterById} = require('../../../controllers/chapterController')
+const {createChapter,getChapters,getChaptersById,addStepToChapter,deleteChapterById} = require('../../../controllers/chapterController')
 router.post("/create", auth(), function (req, res) {
     createChapter(req, res)
 })
@@ -20,6 +20,9 @@ router.post("/addStepToChapter", auth(), function (req, res) {
 })
 router.put("/", auth(), function (req, res) {
     updateChapterById(req, res)
+})
+router.delete("/:id", auth(), function (req, res) {
+    deleteChapterById(req, res)
 })
 
 

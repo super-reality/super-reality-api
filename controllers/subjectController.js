@@ -1,18 +1,18 @@
 
- const {Subject,Collection,Tag, Lesson} = require("../models")
- const {ERR_CODE,ERR_STATUS,Subject_Sort} =require("../constants/constant")
+const { Subject, Collection, Tag, Lesson } = require("../models")
+const { ERR_CODE, ERR_STATUS, Subject_Sort } = require("../constants/constant")
 
-const createSubject = async function(request, response){
-    const { 
-        parent, 
-        icon, 
-        name, 
-        shortDescription, 
-        description, 
-        medias, 
-        tags, 
-        visibility, 
-        entry 
+const createSubject = async function (request, response) {
+    const {
+        parent,
+        icon,
+        name,
+        shortDescription,
+        description,
+        medias,
+        tags,
+        visibility,
+        entry
     } = request.body;
 
     // check there are parent values
@@ -59,19 +59,19 @@ const createSubject = async function(request, response){
             });
         } else {
             // save tags to Tag table
-            for (var i = 0; i < tags.length; i++){
+            for (var i = 0; i < tags.length; i++) {
                 const tagName = tags[i]
-                Tag.findOne({name: tagName})
-                .then(result => {
-                    if (result) {
-                    } else {
-                        var tag = Tag()
-                        tag.name = tagName
-                        tag.type = "subject"
-                        tag.save()
-                    }
-                })
-                .catch(error => {})
+                Tag.findOne({ name: tagName })
+                    .then(result => {
+                        if (result) {
+                        } else {
+                            var tag = Tag()
+                            tag.name = tagName
+                            tag.type = "subject"
+                            tag.save()
+                        }
+                    })
+                    .catch(error => { })
             }
 
             response.json({
@@ -82,21 +82,21 @@ const createSubject = async function(request, response){
     })
 }
 
-const updateSubject = function(request, response){
-    const { 
+const updateSubject = function (request, response) {
+    const {
         _id,
-        parent, 
-        icon, 
-        name, 
-        shortDescription, 
-        description, 
-        medias, 
-        tags, 
-        visibility, 
-        entry 
+        parent,
+        icon,
+        name,
+        shortDescription,
+        description,
+        medias,
+        tags,
+        visibility,
+        entry
     } = request.body;
 
-    Subject.findById(_id, async function(err, subject) {
+    Subject.findById(_id, async function (err, subject) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -104,7 +104,7 @@ const updateSubject = function(request, response){
         } else {
             if (subject) {
                 // check parent have already this subject
-                var subject_already_exist = await isUniqueInParentOfSubject(parent, name, { _id: {$ne: subject._id}})
+                var subject_already_exist = await isUniqueInParentOfSubject(parent, name, { _id: { $ne: subject._id } })
                 if (subject_already_exist) {
                     response.status(ERR_STATUS.Bad_Request).json({
                         err_code: ERR_CODE.subject_already_exist_in_parent,
@@ -112,7 +112,7 @@ const updateSubject = function(request, response){
                     });
                     return
                 }
-                
+
                 subject.parent = parent
                 subject.icon = icon
                 subject.name = name
@@ -131,19 +131,19 @@ const updateSubject = function(request, response){
                         });
                     } else {
                         // save tags to Tag table
-                        for (var i = 0; i < tags.length; i++){
+                        for (var i = 0; i < tags.length; i++) {
                             const tagName = tags[i]
-                            Tag.findOne({name: tagName})
-                            .then(result => {
-                                if (result) {
-                                } else {
-                                    var tag = Tag()
-                                    tag.name = tagName
-                                    tag.type = "subject"
-                                    tag.save()
-                                }
-                            })
-                            .catch(error => {})
+                            Tag.findOne({ name: tagName })
+                                .then(result => {
+                                    if (result) {
+                                    } else {
+                                        var tag = Tag()
+                                        tag.name = tagName
+                                        tag.type = "subject"
+                                        tag.save()
+                                    }
+                                })
+                                .catch(error => { })
                         }
 
                         response.json({
@@ -158,14 +158,14 @@ const updateSubject = function(request, response){
                     msg: "Subject is not exist"
                 });
             }
-            
+
         }
     });
 }
 
-const searchParent = function(request, response){
+const searchParent = function (request, response) {
     const { query } = request.params;
-    Collection.find({name: {$regex: query, $options: 'i'}}, 'name').sort({'name': "asc"}).limit(100).exec(async function(err, collections) {
+    Collection.find({ name: { $regex: query, $options: 'i' } }, 'name').sort({ 'name': "asc" }).limit(100).exec(async function (err, collections) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -173,25 +173,25 @@ const searchParent = function(request, response){
         } else {
             var result = []
             collections.forEach(item => {
-                result.push({type: "collection", collectionId: item._id, collectionName: item.name})
+                result.push({ type: "collection", collectionId: item._id, collectionName: item.name })
             });
             response.json({
                 err_code: ERR_CODE.success,
-                parents : result
+                parents: result
             });
         }
     });
 }
 
-const searchSubject = function(request, response){
-    var { 
+const searchSubject = function (request, response) {
+    var {
         query,
         sort,
         parent,
         fields,
     } = request.body;
 
-    var sortField = {"name" : 1}
+    var sortField = { "name": 1 }
     if (sort == null) {
         sort = Subject_Sort.Newest
     }
@@ -202,10 +202,10 @@ const searchSubject = function(request, response){
         case Subject_Sort.Most_Lesson:
             break
         case Subject_Sort.Newest:
-            sortField = {"createdAt" : -1}
+            sortField = { "createdAt": -1 }
             break
         case Subject_Sort.Oldest:
-            sortField = {"createdAt" : 1}
+            sortField = { "createdAt": 1 }
             break
         case Subject_Sort.My_Teacher:
             break
@@ -219,7 +219,7 @@ const searchSubject = function(request, response){
 
     var condition = {}
     if (query && query != "") {
-        condition["name"] = {$regex: query, $options: 'i'}
+        condition["name"] = { $regex: query, $options: 'i' }
     }
     if (parent) {
         condition["parent"] = parent
@@ -227,8 +227,8 @@ const searchSubject = function(request, response){
     if (fields == null || fields == "") {
         fields = 'name shortDescription icon medias createdAt'
     }
-    
-    Subject.find(condition, fields, { sort: sortField}).limit(100).find(function(err, subjects) {
+
+    Subject.find(condition, fields, { sort: sortField }).limit(100).find(function (err, subjects) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -242,10 +242,10 @@ const searchSubject = function(request, response){
     });
 }
 
-const subjectDetail = function(request, response){
+const subjectDetail = function (request, response) {
     const { id } = request.params;
-    
-    Subject.findById(id, async function(err, subject) {
+
+    Subject.findById(id, async function (err, subject) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -258,12 +258,12 @@ const subjectDetail = function(request, response){
                     if (item.type == "subject") {
                         let psubject = await Subject.findById(item._id, "name")
                         if (psubject) {
-                            parentArray.push({type: "subject", subjectId: psubject._id, subjectName: psubject.name})
+                            parentArray.push({ type: "subject", subjectId: psubject._id, subjectName: psubject.name })
                         }
                     } else if (item.type == "collection") {
                         let collection = await Collection.findById(item._id, "name")
                         if (collection) {
-                            parentArray.push({type: "collection", collectionId: collection._id, collectionName: collection.name})
+                            parentArray.push({ type: "collection", collectionId: collection._id, collectionName: collection.name })
                         }
                     }
                 }
@@ -272,7 +272,7 @@ const subjectDetail = function(request, response){
                 var result = subject
                 result.parent = parentArray
 
-                Lesson.find({parent: {_id: id, type: "subject"}}).find(function(err, lessons) {
+                Lesson.find({ parent: { _id: id, type: "subject" } }).find(function (err, lessons) {
                     if (err != null) {
                         console.log("find children lesson return error")
                         response.json({
@@ -294,15 +294,15 @@ const subjectDetail = function(request, response){
                     msg: "Subject is not exist"
                 });
             }
-            
+
         }
     });
 }
 
-const deleteSubject = function(request, response){
+const deleteSubject = function (request, response) {
     const { id } = request.params;
-    
-    Subject.deleteOne({_id: id}, function(err) {
+
+    Subject.deleteOne({ _id: id }, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -316,4 +316,4 @@ const deleteSubject = function(request, response){
     });
 }
 
-module.exports ={createSubject,updateSubject,deleteSubject,searchParent,searchSubject,subjectDetail}
+module.exports = { createSubject, updateSubject, deleteSubject, searchParent, searchSubject, subjectDetail }

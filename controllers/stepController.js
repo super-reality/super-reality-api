@@ -19,7 +19,6 @@ const createStep = async function (request, response) {
         })
     }
 
-
     const session = await db.startSession();
     const responses = {};
 
@@ -139,12 +138,37 @@ const getsteps = async function (request, response) {
 
 }
 
+const deleteStepById = async function (request, response) {
+    try {
+        steps = await Step.findOne({ _id: request.params.id })
+        if (steps) {
+            deletedStep = await Step.deleteOne({ _id: request.params.id })
+            if (deletedStep) {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The step was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "Could not delete this step" })
+            }
+        }
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This step does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this chapter", internalError: error })
+    }
+
+}
+
 const getstepsById = async function (request, response) {
     try {
-        steps = await Step.find({_id:request.params.id})
-        if(steps)
-        {
-            response.status(200).send({err_code:0,steps})
+        steps = await Step.findOne({ _id: request.params.id })
+        if (steps) {
+        
+            response.status(200).send({ err_code: 0, steps })
+        }
+        else {
+            response.status(200).send({ err_code: 0, steps: {}, message: "This step does not exist" })
         }
     }
     catch (error) {
@@ -159,6 +183,7 @@ module.exports = {
     createStep,
     getsteps,
     getstepsById,
-    updateStepById
+    updateStepById,
+    deleteStepById
 
 } 
