@@ -19,7 +19,7 @@ const createChapter = async function (request, response) {
     const session = await db.startSession();
     const responses = {};
 
-    var chapter = Chapter()
+    const chapter = Chapter()
 
     chapter.name = name
     chapter.createdBy = request.user._id
@@ -80,7 +80,9 @@ const getChapters = async function (request, response) {
 const getChaptersById = async function (request, response) {
     try {
         chapters = await Chapter.findById({ _id: request.params.id })
+        console.log(chapters)
         if (chapters) {
+            console.log(chapters)
             response.status(200).send({ err_code: 0, chapters })
         }
         else {
@@ -217,7 +219,6 @@ const addStepToChapter = async function (request, response) {
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to update this chapter",
             internalError: err
-
         })
         console.error("The transaction was aborted due to an unexpected error: " + err);
     } finally {
