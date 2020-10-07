@@ -63,8 +63,6 @@ const createLesson = async function (request, response) {
             err_code: statusCodes.BAD_REQUEST,
             message: "Atleast one media is required"
         })
-
-
     }
 
     const session = await db.startSession();
@@ -103,12 +101,10 @@ const createLesson = async function (request, response) {
             for (var i = 0; i < skills.length; i++) {
                 const skillName = skills[i]
                 result = await Skill.findOne({ name: skillName })
-
                 if (result) {
                 } else {
                     var skill = Skill()
                     skill.name = skills[i]
-
                     createdSkills = await skill.save({ session })
                 }
             }
@@ -382,6 +378,23 @@ const addChapterToLesson = async function (request, response) {
     } finally {
         session.endSession();
     }
+}
+
+const getLessonById = async function (request, response) {
+    try {
+        lessons = await Lesson.findById({ _id: request.params.id })
+         if (lessons) {
+           
+         response.status(200).send({ err_code: 0, lessons })
+        }
+        else {
+            response.status(200).send({ err_code: 0, lessons: {}, message: "This lesson does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error })
+    }
+
 }
 module.exports = {
     createLesson,
