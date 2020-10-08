@@ -7,11 +7,6 @@ const morgan = require("morgan")
 const fs = require("fs")
 const path = require("path");
 
-
-
-const mongoose = require("mongoose");
-mongoose.Promise = Promise;
-const database = mongoose.connection;
 let apiRoutes = require("./routes/api/v1");
 
 
@@ -35,7 +30,5 @@ app.use(function (req, res, next) {
 app.use("/api/v1", apiRoutes);
 
 
-database.on("error", () => console.error("database connection error"));
 
-mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-module.exports = {app}
+module.exports = app
