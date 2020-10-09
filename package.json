@@ -8,7 +8,7 @@
     "docker:down": "docker-compose down",
     "docker:up": "docker-compose up -d",
     "serve": "nodemon server.js",
-    "start": "lsof -i tcp:3000\n kill -9 PID  pm2-runtime start ecosystem.config.js --env production ",
+    "start": "fuser -k 3000/tcp  pm2-runtime start ecosystem.config.js --env production ",
     "test": "jest --runInBand --detectOpenHandles --testTimeout=100000000"
   },
   "jest": {
