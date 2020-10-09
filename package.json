@@ -8,7 +8,7 @@
     "docker:down": "docker-compose down",
     "docker:up": "docker-compose up -d",
     "serve": "nodemon server.js",
-    "start": "fuser -k 3000/tcp  pm2-runtime start ecosystem.config.js --env production ",
+    "start": " sudo kill `pidof server`  pm2-runtime start ecosystem.config.js --env production ",
     "test": "jest --runInBand --detectOpenHandles --testTimeout=100000000"
   },
   "jest": {
