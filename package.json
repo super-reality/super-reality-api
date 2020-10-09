@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "serve": "nodemon server.js",
-    "start": "ENV=PRODUCTION pm2-runtime start ecosystem.config.js --no--daemon  --watch",
+    "start": "ENV=PRODUCTION pm2 start ecosystem.config.js --no--daemon  --watch",
     "test": "jest --runInBand --detectOpenHandles --testTimeout=100000000"
   },
   "jest": {
