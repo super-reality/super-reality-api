@@ -38,6 +38,7 @@ const createStep = async function (request, response) {
 
         }, transactionOptions)
         if (transactionResults) {
+            console.log("successfull")
             responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
 
