@@ -80,9 +80,7 @@ const getChapters = async function (request, response) {
 const getChaptersById = async function (request, response) {
     try {
         chapters = await Chapter.findById({ _id: request.params.id })
-        console.log(chapters)
         if (chapters) {
-            console.log(chapters)
             response.status(200).send({ err_code: 0, chapters })
         }
         else {

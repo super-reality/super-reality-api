@@ -6,7 +6,6 @@ const auth = require("./middleware/auth");
 const morgan = require("morgan")
 const fs = require("fs")
 const path = require("path");
-
 let apiRoutes = require("./routes/api/v1");
 
 
@@ -28,7 +27,5 @@ app.use(function (req, res, next) {
 });
 
 app.use("/api/v1", apiRoutes);
-
-
 
 module.exports = app

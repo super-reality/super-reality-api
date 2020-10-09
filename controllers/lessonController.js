@@ -294,7 +294,7 @@ const deleteLessonById = async function (request, response) {
         lessons = await Lesson.findOne({ _id: request.params.id })
         if (lessons) {
             deletedLesson = await Lesson.deleteOne({ _id: request.params.id })
-            if (deletedChapter) {
+            if (deletedLesson) {
                 response.status(statusCodes.OK).send({ err_code: 0, message: "The lesson was deleted successfully" })
             }
             else {
