@@ -8,7 +8,7 @@ const expect = chai.expect;
 
 
 const createChapterPayload = {
-    "name": "testing automated token genearation and creating chapter "
+    "name": "testing automated token genearation and creating chapter for students "
 }
 
 const updateChapterPayload = {
