@@ -1,14 +1,12 @@
 module.exports = {
     apps: [{
         script: 'server.js',
-        watch: '.'
+        watch: '.',
+        restart_delay: 3000
 
     },],
-    env: {
-        NODE_ENV: "development",
-    },
     env_production: {
-        "PORT": 3001,
-        "NODE_ENV": "production",
+         PORT:"3000",
+        NODE_ENV: "development",
     }
 };
