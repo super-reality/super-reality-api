@@ -3,8 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const auth = require("./middleware/auth");
-const fs = require("fs")
-const path = require("path");
 let apiRoutes = require("./routes/api/v1");
 
 
