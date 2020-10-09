@@ -1,7 +1,6 @@
 {
   "name": "openworld-server",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "docker:build": "docker build .",
@@ -44,5 +43,17 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.3",
     "pm2": "^4.5.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/super-reality/super-reality-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/super-reality/super-reality-api/issues"
+  },
+  "homepage": "https://github.com/super-reality/super-reality-api#readme",
+  "description": ""
 }

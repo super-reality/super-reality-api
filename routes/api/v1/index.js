@@ -23,6 +23,9 @@ router.use("/auth", require("./auth"))
 // collection routes
 router.use("/collection", require("./collection"))
 
+// item routes
+router.use("/item", require("./item"))
+
 // subject routes
 router.use("/subject", require("./subject"))
 
