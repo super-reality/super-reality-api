@@ -3,16 +3,12 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const auth = require("./middleware/auth");
-const morgan = require("morgan")
 const fs = require("fs")
 const path = require("path");
 let apiRoutes = require("./routes/api/v1");
 
 
 app.use(express.json());
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
-app.use(morgan('combined', { stream: accessLogStream }))
-
 
 // setting for local server connection from other port
 app.use(function (req, res, next) {
