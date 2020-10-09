@@ -3,11 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "docker:build": "docker build .",
-    "docker:down": "docker-compose down",
-    "docker:up": "docker-compose up -d",
     "serve": "nodemon server.js",
-    "start": " PORT=3000 ENV=PRODUCTION pm2-runtime start ecosystem.config.js  --watch",
+    "start": "ENV=PRODUCTION pm2 start  --no-daemon ecosystem.config.js  --watch",
     "test": "jest --runInBand --detectOpenHandles --testTimeout=100000000"
   },
   "jest": {
