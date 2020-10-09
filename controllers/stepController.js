@@ -32,13 +32,11 @@ const createStep = async function (request, response) {
     };
     try {
         const transactionResults = await session.withTransaction(async () => {
-            // save collection document
             const createdStep = await step.save({ session })
             responses['steps'] = createdStep
 
         }, transactionOptions)
         if (transactionResults) {
-            console.log("successfull")
             responses['err_code'] = 0
             responses['log']='created'
             response.status(statusCodes.OK).send(responses)
