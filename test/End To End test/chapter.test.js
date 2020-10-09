@@ -16,7 +16,7 @@ const updateChapterPayload = {
     "steps": [
         {
             "_id": "5f7c82e0e42dbd619e821788",
-            "name": "Something"
+            "name": "good"
         }
     ]
 }
