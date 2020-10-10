@@ -22,4 +22,5 @@ router.put("/update", auth(), function (req, res) {
 router.delete("/:id", auth(), function (req, res) {
     deleteSubject(req, res)
 })
+
 module.exports = router
