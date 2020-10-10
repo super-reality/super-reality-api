@@ -7,7 +7,6 @@ let apiRoutes = require("./routes/api/v1");
 
 
 app.use(express.json());
-
 // setting for local server connection from other port
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
