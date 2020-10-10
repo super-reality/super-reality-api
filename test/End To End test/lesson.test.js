@@ -67,7 +67,7 @@ describe('API Tests', function () {
         it('should create a token', function (done) {
             request(app).post('/api/v1/auth/signin').send(loginPayload).end(function (err, res) {
                 if (res) {
-                    token = res.body.token
+                    token = res.body.token;
                     expect(res.statusCode).to.equal(200);
                     done();
                 }
