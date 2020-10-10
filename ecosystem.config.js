@@ -1,8 +1,8 @@
 module.exports = {
     apps: [{
-        script: 'nodemon server.js',
+        script: 'server.js',
         watch: '.',
-        restart_delay: 3001
+        restart_delay: 10000
 
     },],
     env_production: {
