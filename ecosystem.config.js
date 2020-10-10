@@ -8,7 +8,8 @@ module.exports = {
         out_file: 'out.log',
         log_file: 'combined.log',
         time: true,
-        kill_timeout: 3000
+        kill_timeout: 3000,
+        ignore_watch:['err.log','combined.log','out.log']
     },],
     env_production: {
         PORT: "3000",
