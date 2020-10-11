@@ -17,6 +17,9 @@ router.get("/find", function(req,res)
     findCollection(req,res)
 })
 
+// anchor routes
+router.use("/anchor", require("./anchor"))
+
 // auth routes
 router.use("/auth", require("./auth"))
 

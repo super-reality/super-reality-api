@@ -58,6 +58,7 @@ const createCollection = async function (request, response) {
 
 
     }
+    
     const session = await db.startSession();
     const responses = {};
     if (!errorStatus) {

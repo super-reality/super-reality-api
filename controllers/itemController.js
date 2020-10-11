@@ -8,6 +8,15 @@ const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
+// var fs = require('fs');
+// var util = require('util');
+// var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
+// var log_stdout = process.stdout;
+// console.log = function (d) { //
+//     log_file.write(util.format(d) + '\n');
+//     log_stdout.write(util.format(d) + '\n');
+// };
+
 
 const createItem = async function (request, response) {
     const {
@@ -42,6 +51,7 @@ const createItem = async function (request, response) {
     // }
 
     const session = await db.startSession();
+    
     const responses = {};
 
     var item = Item()
@@ -75,17 +85,27 @@ const createItem = async function (request, response) {
     };
 
     try {
-        const transactionResults = await session.withTransaction(async () => {
-            // save collection document
-            const createdItem = await item.save({ session })
-            responses['item'] = createdItem
+        
+        try {
+            const transactionResults = await session.withTransaction(async () => {
+                const createdItem = await item.save({ session })
+                responses['item'] = createdItem
 
-        }, transactionOptions)
+
+            }, transactionOptions)
+        } catch (e) {
+            
+        }
+
         if (transactionResults) {
+            
+
             responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
 
         } else {
+            
+
             console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                 err_code: statusCodes.INTERNAL_SERVER_ERROR,
@@ -93,6 +113,8 @@ const createItem = async function (request, response) {
             })
         }
     } catch (err) {
+        
+
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to create this item",
@@ -188,17 +210,17 @@ const updateItem = function (request, response) {
 
 
     const { Id } = request.params;
-    
+
     Item.findById(Id, async function (err, item) {
+        
+
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
             });
         } else {
-
             item.type = type;
             item.showPopup = showPopup;
-
             item.name = name
             item.description = description
             item.relativePos = relativePos
@@ -234,11 +256,11 @@ const updateItem = function (request, response) {
 
 }
 
-const deleteItem = function(request, response){
-    console.log('DELETE')
+const deleteItem = function (request, response) {
+    
     const { Id } = request.params;
-    console.log('DELETE: ', Id)
-    Item.deleteOne({_id: Id}, function(err) {
+    
+    Item.deleteOne({ _id: Id }, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
