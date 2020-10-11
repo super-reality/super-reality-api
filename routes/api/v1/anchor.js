@@ -14,24 +14,24 @@ console.log = function (d) { //
 
 
 
-router.post("/create", function (req, res) {
+router.post("/create", auth(), function (req, res) {
     
     createAnchor(req, res)
 })
 
-router.post("/search", function (req, res) {
+router.post("/search", auth(), function (req, res) {
     searchAnchor(req, res)
 })
 
-router.get("/:Id", function (req, res) {
+router.get("/:Id", auth(), function (req, res) {
     getAnchorById(req, res)
 });
 
-router.put("/:Id", function (req, res) {
+router.put("/:Id", auth(), function (req, res) {
     
     updateAnchor(req, res)
 });
-router.delete("/:Id", function (req, res) {
+router.delete("/:Id", auth(), function (req, res) {
     
     deleteAnchor(req, res)
 })
