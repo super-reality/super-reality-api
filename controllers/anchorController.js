@@ -18,7 +18,7 @@ const db = mongoose.connection
 // };
 
 const createAnchor = async function (request, response) {
-
+console.log(request)
     const {
         name,
         type,
@@ -59,8 +59,8 @@ const createAnchor = async function (request, response) {
     anchor.cvApplyThreshold = cvApplyThreshold
     anchor.cvThreshold = cvThreshold
     anchor.createdBy = createdBy
-    anchor.createdAt = createdAt
-    anchor.updatedAt = updatedAt
+    anchor.createdAt = new Date()
+    anchor.updatedAt = new Date()
 
     const transactionOptions = {
         readPreference: 'primary',

@@ -1,39 +1,73 @@
 const { Schema, model } = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
+const enumType = {
+    values: ['focus_highlight', 'audio', 'video', 'image', 'dialogue']
+    , message: 'Type must have value of focus_highlight, audio, video or dialogue.'
+}
+const enumFocus = {
+    values: ['Mouse Point', 'Rectangle', 'Area Highlight']
+    , message: 'Type must have value of Mouse Point, Rectangle or Area Highlight.'
+}
 
 const itemSchema = new Schema({
 
     type: {
         type: String,
-        // required: true,
+        enum: enumType,
+        required: [true, 'You must provide a Type value']
     },
     showPopup: {
-        type: Boolean
+        type: Boolean,
+        required: [
+            function (value) {
+                if (this.type === 'audio') {
+                    return true;
+                } else {
+                    return false;
+                }
+            }, "You must provide a showPopup value for Audio items."
+        ]
     },
     name: {
         type: String,
-        // required: true,
-        index: true
+        required: [true, 'You must provide a Name value']
     },
     description: {
         type: String
     },
+    focus: {
+        type: String,
+        enum: enumFocus,
+        required: [
+            function (value) {
+                if (this.type === 'video') {
+                    return true;
+                } else {
+                    return false;
+                }
+            },"You must provide a Focus Value for a video item"
+        ]
+    },
     relativePos: {
         vertical: {
-            type: Number
+            type: Number,
+            default: 50
         },
         horizontal: {
-            type: Number
+            type: Number,
+            default: 50
         },
         x: {
-            type: Number
+            type: Number,
+            default: 0
         },
         y: {
-            type: Number
+            type: Number,
+            default: 0
         }
     },
     time: {
-        type: Number
+        type: Number,
     },
     startTime: {
         type: Number
@@ -45,15 +79,42 @@ const itemSchema = new Schema({
         type: Boolean
     },
     loop: {
-
+        type: Boolean,
+        required: [
+            function (value) {
+                if (this.type === 'image' || 'video') {
+                    return true;
+                } else {
+                    return false;
+                }
+            },"You must provide a Loop value for a video or image item"
+        ]
     },
 
-    sourceMedia: {
-        type: String
+    url: {
+        type: String,
+        required: [
+            function (value) {
+                if (this.type === 'image' || 'video') {
+                    return true;
+                } else {
+                    return false;
+                }
+            },"You must provide a URL value for a video or image item"
+        ]
     },
 
-    textContent: {
-        type: String
+    text: {
+        type: String,
+        required: [
+            function (value) {
+                if (this.type === 'dialogue') {
+                    return true;
+                } else {
+                    return false;
+                }
+            },"You must provide a text value for a dialogue item"
+        ]
     },
     textSize: {
         type: Number
