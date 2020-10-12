@@ -5,12 +5,10 @@ const anchorSchema = new Schema({
 
     name: {
         type: String,
-
+        required: [true, 'You must provide a Name value']
     },
     type: {
         type: String,
-        //“record” | “crop” | “url”
-
     },
     templates: {
         type: Array,
@@ -32,7 +30,6 @@ const anchorSchema = new Schema({
     },
     cvMatchValue: {
         type: Number,
-
     },
     cvCanvas: {
         type: Number,

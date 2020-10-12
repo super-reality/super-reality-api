@@ -8,17 +8,18 @@ const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
-// var fs = require('fs');
-// var util = require('util');
-// var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
-// var log_stdout = process.stdout;
-// console.log = function (d) { //
-//     log_file.write(util.format(d) + '\n');
-//     log_stdout.write(util.format(d) + '\n');
-// };
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
+var log_stdout = process.stdout;
+console.log = function (d) { //
+    log_file.write(util.format(d) + '\n');
+    log_stdout.write(util.format(d) + '\n');
+};
 
 
 const createItem = async function (request, response) {
+    console.log(request)
     const {
         type,
         showPopup,
@@ -30,8 +31,8 @@ const createItem = async function (request, response) {
         endTime,
         autoStart,
         loop,
-        sourceMedia,
-        textContent,
+        url,
+        text,
         textSize,
         textFont,
         textColor,
@@ -51,7 +52,7 @@ const createItem = async function (request, response) {
     // }
 
     const session = await db.startSession();
-    
+
     const responses = {};
 
     var item = Item()
@@ -66,17 +67,16 @@ const createItem = async function (request, response) {
     item.endTime = endTime
     item.autoStart = autoStart
     item.loop = loop
-    item.sourceMedia = sourceMedia
-    item.textContent = textContent
+    item.url = url
+    item.text = text
     item.textSize = textSize
     item.textFont = textFont
     item.textColor = textColor
     item.textStrength = textStrength
     item.trigger = trigger
     item.createdBy = createdBy
-    item.createdAt = createdAt
-    item.updatedAt = updatedAt
-
+    item.createdAt = new Date()
+    item.updatedAt = new Date()
 
     const transactionOptions = {
         readPreference: 'primary',
@@ -85,19 +85,19 @@ const createItem = async function (request, response) {
     };
 
     try {
-        
-            const transactionResults = await session.withTransaction(async () => {
-                const createdItem = await item.save({ session })
-                responses['item'] = createdItem
-            }, transactionOptions)
+
+        const transactionResults = await session.withTransaction(async () => {
+            const createdItem = await item.save({ session })
+            responses['item'] = createdItem
+        }, transactionOptions)
 
         if (transactionResults) {
-            
+
             responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
 
         } else {
-            
+
 
             console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
@@ -106,7 +106,7 @@ const createItem = async function (request, response) {
             })
         }
     } catch (err) {
-        
+
 
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
@@ -188,8 +188,8 @@ const updateItem = function (request, response) {
         endTime,
         autoStart,
         loop,
-        sourceMedia,
-        textContent,
+        url,
+        text,
         textSize,
         textFont,
         textColor,
@@ -205,7 +205,7 @@ const updateItem = function (request, response) {
     const { Id } = request.params;
 
     Item.findById(Id, async function (err, item) {
-        
+
 
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
@@ -222,8 +222,8 @@ const updateItem = function (request, response) {
             item.endTime = endTime
             item.autoStart = autoStart
             item.loop = loop
-            item.sourceMedia = sourceMedia
-            item.textContent = textContent
+            item.url = url
+            item.text = text
             item.textSize = textSize
             item.textFont = textFont
             item.textColor = textColor
@@ -250,9 +250,9 @@ const updateItem = function (request, response) {
 }
 
 const deleteItem = function (request, response) {
-    
+
     const { Id } = request.params;
-    
+
     Item.deleteOne({ _id: Id }, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
