@@ -86,20 +86,13 @@ const createItem = async function (request, response) {
 
     try {
         
-        try {
             const transactionResults = await session.withTransaction(async () => {
                 const createdItem = await item.save({ session })
                 responses['item'] = createdItem
-
-
             }, transactionOptions)
-        } catch (e) {
-            
-        }
 
         if (transactionResults) {
             
-
             responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
 
