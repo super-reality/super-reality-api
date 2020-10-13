@@ -12,8 +12,8 @@ const itemSchema = new Schema({
         index: true
     },
     anchor: {
-        type: Array,
-        default: []
+        type: String,
+        default: null
     },
     description: {
         type: String

@@ -31,7 +31,7 @@ const createItem = async function (request, response) {
         transition,
         type,
     } = request.body;
-    const itemTypes = ['audio', 'video', 'focus highlights', 'image']
+    const itemTypes = ['audio', 'video', 'focus_highlight', 'image']
 
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({err_code: statusCodes.BAD_REQUEST, msg: "Item type does not match"})
