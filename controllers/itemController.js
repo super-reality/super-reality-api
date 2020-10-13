@@ -19,63 +19,70 @@ const db = mongoose.connection
 
 
 const createItem = async function (request, response) {
+
+
     const {
-        type,
-        showPopup,
         name,
+        anchor,
         description,
         relativePos,
-        time,
-        startTime,
-        endTime,
-        autoStart,
-        loop,
-        sourceMedia,
-        textContent,
-        textSize,
-        textFont,
-        textColor,
-        textStrength,
         trigger,
-        createdBy,
-        createdAt,
-        updatedAt,
+        destination,
+        transition,
+        type,
     } = request.body;
+    const itemTypes = ['audio', 'video', 'focus highlights', 'image']
 
-    // if (type != 'anchor' || 'video' || 'audio') {
-    //     errorStatus = true
-    //     response.status(statusCodes.BAD_REQUEST).send({
-    //         err_code: statusCodes.BAD_REQUEST,
-    //         message: "Type is not valid"
-    //     })
-    // }
+    if (type == undefined) {
+        response.status(statusCodes.BAD_REQUEST).send({err_code: statusCodes.BAD_REQUEST, msg: "Item type does not match"})
+    } else {
+        const validItemType = itemTypes.find(element => element === type);
+        if (!validItemType) {
+            response.status(statusCodes.BAD_REQUEST).send({
+                err_code: statusCodes.BAD_REQUEST,
+                msg: "Item type is required"
+            })
+
+        }
+    }
 
     const session = await db.startSession();
     
     const responses = {};
 
-    var item = Item()
+    const item = Item()
     item.type = type;
-    item.showPopup = showPopup;
+    item.name = name ? name :item.name;
+    item.anchor = anchor ? anchor : item.anchor;
+    item.description = description? description : item.description
+    item.relativePos = relativePos? relativePos: item.relativePos
+    item.trigger = trigger? trigger: item.trigger
+    item.destination = destination ? destination: item.destination
+    item.transition = transition? transition : item.transition
+    item.type = item.type
 
-    item.name = name
-    item.description = description
-    item.relativePos = relativePos
-    item.time = time
-    item.startTime = startTime
-    item.endTime = endTime
-    item.autoStart = autoStart
-    item.loop = loop
-    item.sourceMedia = sourceMedia
-    item.textContent = textContent
-    item.textSize = textSize
-    item.textFont = textFont
-    item.textColor = textColor
-    item.textStrength = textStrength
-    item.trigger = trigger
-    item.createdBy = createdBy
-    item.createdAt = createdAt
-    item.updatedAt = updatedAt
+    if (type == 'audio') {
+        item.showPopup = request.body.showPopup ? request.body.showPopup : false;
+        item.url = request.body.url ? request.body.url : '';
+        item.text = request.body.text ? request.body.text : '';
+    }
+    if (type == 'focus highlights') {
+        item.focus = request.body.focus ? request.body.focus : '';
+
+    }
+    if (type == 'image') {
+        item.url = request.body.url ? request.body.url : '';
+
+    }
+    if (type == 'video') {
+        item.url = request.body.url ? request.body.url : '';
+        item.loop = request.body.loop ? request.body.loop : false;
+
+
+    }
+
+
+
 
 
     const transactionOptions = {

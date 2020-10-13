@@ -1,80 +1,76 @@
-const { Schema, model } = require("mongoose");
+const {Schema, model} = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 const itemSchema = new Schema({
 
-    type: {
-        type: String,
-        // required: true,
-    },
-    showPopup: {
-        type: Boolean
-    },
+
     name: {
         type: String,
         // required: true,
+
+        default: null,
         index: true
+    },
+    anchor: {
+        type: Array,
+        default: []
     },
     description: {
         type: String
     },
     relativePos: {
         vertical: {
-            type: Number
+            type: Number,
+            default: 50,
         },
         horizontal: {
-            type: Number
+            type: Number,
+            default: 50,
         },
         x: {
-            type: Number
+            type: Number,
+            default: 0,
         },
         y: {
-            type: Number
+            type: Number,
+            default: 0,
         }
     },
-    time: {
-        type: Number
+    trigger: {
+        type: Number,
+        default: null
     },
-    startTime: {
-        type: Number
+    destination: {
+        type: ObjectId,
+        default: null,
     },
-    endTime: {
-        type: Number
+    transition: {
+        type: Number,
+        default: 0
     },
-    autoStart: {
-        type: Boolean
+    type: {
+        type: String,
+        required: true
+    },
+    showPopup: {
+        type: Boolean,
+    },
+    url: {
+        type: String,
+    },
+    text: {
+        type: String,
+    },
+    focus: {
+        type: String,
     },
     loop: {
+        type: Boolean,
 
     },
-
-    sourceMedia: {
-        type: String
-    },
-
-    textContent: {
-        type: String
-    },
-    textSize: {
-        type: Number
-    },
-    textFont: {
-        type: String
-    },
-    textColor: {
-        type: String
-    },
-    textStrength: {
-        type: String
-    },
-
-    trigger: {
-        type: String
-    },
-
-    createdBy: { type: ObjectId },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date },
+    createdBy: {type: ObjectId},
+    createdAt: {type: Date, default: Date.now},
+    updatedAt: {type: Date},
 
 
 });
