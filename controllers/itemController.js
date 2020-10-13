@@ -66,25 +66,16 @@ const createItem = async function (request, response) {
         item.url = request.body.url ? request.body.url : '';
         item.text = request.body.text ? request.body.text : '';
     }
-    if (type == 'focus highlights') {
-        item.focus = request.body.focus ? request.body.focus : '';
-
+    if (type == 'focus_highlight') {
+        item.focus = request.body.focus ? request.body.focus : 'Area Highlight';
     }
     if (type == 'image') {
         item.url = request.body.url ? request.body.url : '';
-
     }
     if (type == 'video') {
         item.url = request.body.url ? request.body.url : '';
         item.loop = request.body.loop ? request.body.loop : false;
-
-
     }
-
-
-
-
-
     const transactionOptions = {
         readPreference: 'primary',
         readConcern: { level: 'local' },
