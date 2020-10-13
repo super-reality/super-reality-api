@@ -1,6 +1,6 @@
 const Item = require("../models/item");
 
-const { ERR_STATUS, ERR_CODE, Lesson_Sort } = require("../constants/constant")
+const {ERR_STATUS, ERR_CODE, Lesson_Sort} = require("../constants/constant")
 
 const fileupload = require("../utilities/upload")
 const path = require('path')
@@ -34,7 +34,10 @@ const createItem = async function (request, response) {
     const itemTypes = ['audio', 'video', 'focus_highlight', 'image']
 
     if (type == undefined) {
-        response.status(statusCodes.BAD_REQUEST).send({err_code: statusCodes.BAD_REQUEST, msg: "Item type does not match"})
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            msg: "Item type does not match"
+        })
     } else {
         const validItemType = itemTypes.find(element => element === type);
         if (!validItemType) {
@@ -47,19 +50,18 @@ const createItem = async function (request, response) {
     }
 
     const session = await db.startSession();
-    
+
     const responses = {};
 
     const item = Item()
     item.type = type;
-    item.name = name ? name :item.name;
+    item.name = name ? name : item.name;
     item.anchor = anchor ? anchor : item.anchor;
-    item.description = description? description : item.description
-    item.relativePos = relativePos? relativePos: item.relativePos
-    item.trigger = trigger? trigger: item.trigger
-    item.destination = destination ? destination: item.destination
-    item.transition = transition? transition : item.transition
-    item.type = item.type
+    item.description = description ? description : item.description
+    item.relativePos = relativePos ? relativePos : item.relativePos
+    item.trigger = trigger ? trigger : item.trigger
+    item.destination = destination ? destination : item.destination
+    item.transition = transition ? transition : item.transition
 
     if (type == 'audio') {
         item.showPopup = request.body.showPopup ? request.body.showPopup : false;
@@ -78,24 +80,24 @@ const createItem = async function (request, response) {
     }
     const transactionOptions = {
         readPreference: 'primary',
-        readConcern: { level: 'local' },
-        writeConcern: { w: 'majority' }
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
     };
 
     try {
-        
-            const transactionResults = await session.withTransaction(async () => {
-                const createdItem = await item.save({ session })
-                responses['item'] = createdItem
-            }, transactionOptions)
+
+        const transactionResults = await session.withTransaction(async () => {
+            const createdItem = await item.save({session})
+            responses['item'] = createdItem
+        }, transactionOptions)
 
         if (transactionResults) {
-            
+
             responses['err_code'] = 0
             response.status(statusCodes.OK).send(responses)
 
         } else {
-            
+
 
             console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
@@ -104,7 +106,7 @@ const createItem = async function (request, response) {
             })
         }
     } catch (err) {
-        
+
 
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
@@ -133,13 +135,13 @@ const searchItem = async function (request, response) {
     // Add more query options - name, description, type, etc..
     // Currently only searching against name
     if (query && query != "") {
-        condition["name"] = { $regex: query, $options: 'i' }
+        condition["name"] = {$regex: query, $options: 'i'}
     }
 
     // Add sort options
     sortField = sort;
 
-    Item.find(condition, fields, { sort: sortField }).limit(100).find(function (err, lessons) {
+    Item.find(condition, fields, {sort: sortField}).limit(100).find(function (err, lessons) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -156,7 +158,7 @@ const searchItem = async function (request, response) {
 
 const getItemById = async function (request, response) {
     // 
-    const { Id } = request.params;
+    const {Id} = request.params;
 
     Item.findById(Id, async function (err, item) {
         if (err != null) {
@@ -173,85 +175,102 @@ const getItemById = async function (request, response) {
 
 }
 
-const updateItem = function (request, response) {
+const updateItemById = async function (request, response) {
 
-    const {
-        type,
-        showPopup,
-        name,
-        description,
-        relativePos,
-        time,
-        startTime,
-        endTime,
-        autoStart,
-        loop,
-        sourceMedia,
-        textContent,
-        textSize,
-        textFont,
-        textColor,
-        textStrength,
-        trigger,
-        createdBy,
-        createdAt,
-        updatedAt,
-    } = request.body;
+    if (request.body.item_id == undefined) {
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            msg: "Provide an id to update"
+        })
+    }
+    else {
+        const session = await db.startSession();
+        const transactionOptions = {
+            readPreference: 'primary',
+            readConcern: {level: 'local'},
+            writeConcern: {w: 'majority'}
+        };
 
+        try {
 
+            var itemUpdated = false
+            const responses = {}
 
-    const { Id } = request.params;
+            const transactionResults = await session.withTransaction(async () => {
 
-    Item.findById(Id, async function (err, item) {
-        
+                const currentItem = await Item.findById({_id: request.body.item_id, session})
+                if (currentItem) {
 
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            item.type = type;
-            item.showPopup = showPopup;
-            item.name = name
-            item.description = description
-            item.relativePos = relativePos
-            item.time = time
-            item.startTime = startTime
-            item.endTime = endTime
-            item.autoStart = autoStart
-            item.loop = loop
-            item.sourceMedia = sourceMedia
-            item.textContent = textContent
-            item.textSize = textSize
-            item.textFont = textFont
-            item.textColor = textColor
-            item.textStrength = textStrength
-            item.trigger = trigger
-            item.createdBy = createdBy
-            item.createdAt = createdAt
-            item.updatedAt = updatedAt
-            item.save(async function (err) {
-                if (err != null) {
-                    response.status(ERR_STATUS.Bad_Request).json({
-                        error: err
-                    });
+                    currentItem.type = request.body.type ? request.body.type : currentItem.type;
+                    currentItem.name = request.body.name ? request.body.name : currentItem.name;
+                    currentItem.anchor = request.body.anchor ? request.body.anchor : currentItem.anchor;
+                    currentItem.description = request.body.description ? request.body.description : currentItem.description
+                    currentItem.relativePos = request.body.relativePos ? request.body.relativePos : currentItem.relativePos
+                    currentItem.trigger = request.body.trigger ? request.body.trigger : currentItem.trigger
+                    currentItem.destination = request.body.destination ? request.body.destination : currentItem.destination
+                    currentItem.transition = request.body.transition ? request.body.transition : currentItem.transition
+                    currentItem.updatedAt = new Date()
+                    if (currentItem.type == 'audio') {
+                        currentItem.showPopup = request.body.showPopup ? request.body.showPopup : currentItem.showPopup;
+                        currentItem.url = request.body.url ? request.body.url : currentItem.url;
+                        currentItem.text = request.body.text ? request.body.text : currentItem.text;
+                    }
+                    if (currentItem.type == 'focus_highlight') {
+                        currentItem.focus = request.body.focus ? request.body.focus : currentItem.focus;
+                    }
+                    if (currentItem.type == 'image') {
+                        currentItem.url = request.body.url ? request.body.url : currentItem.url;
+                    }
+                    if (currentItem.type == 'video') {
+                        currentItem.url = request.body.url ? request.body.url : currentItem.url;
+                        currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
+                    }
+                    updatedItem = await currentItem.save({session})
+                    if (updatedItem) {
+                        itemUpdated = true
+                        responses['chapter'] = updatedItem
+                    } else {
+                        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                            message: "Could not update this item"
+                        })
+                    }
                 } else {
-                    response.json({
-                        err_code: ERR_CODE.success,
-                        item
-                    });
+                    response.status(200).send({err_code: 0, "message": "This item does not exist"})
                 }
+            }, transactionOptions)
+            if (transactionResults) {
+                responses['err_code'] = 0
+                response.status(statusCodes.OK).send(responses)
+            } else {
+
+                console.error("The transaction was intentionally aborted.");
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                    message: "Could not update this item"
+                })
+
+            }
+        } catch (err) {
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Sorry we were not able to update this item",
+                internalError: err
+
             })
+            console.error("The transaction was aborted due to an unexpected error: " + err);
+        } finally {
+            session.endSession();
         }
-    })
+    }
 
 }
 
 const deleteItem = function (request, response) {
-    
-    const { Id } = request.params;
-    
-    Item.deleteOne({ _id: Id }, function (err) {
+
+    const {Id} = request.params;
+
+    Item.deleteOne({_id: Id}, function (err) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -266,7 +285,7 @@ const deleteItem = function (request, response) {
 }
 
 module.exports = {
-    createItem, searchItem, getItemById, updateItem, deleteItem
+    createItem, searchItem, getItemById, updateItemById, deleteItem
 }
 
 
