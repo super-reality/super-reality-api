@@ -228,7 +228,7 @@ const updateItemById = async function (request, response) {
                     updatedItem = await currentItem.save({session})
                     if (updatedItem) {
                         itemUpdated = true
-                        responses['chapter'] = updatedItem
+                        responses['item'] = updatedItem
                     } else {
                         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                             err_code: statusCodes.INTERNAL_SERVER_ERROR,
