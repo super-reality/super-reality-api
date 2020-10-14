@@ -1,7 +1,6 @@
 module.exports = {
     apps: [{
         script: 'server.js',
-        watch: '.',
         restart_delay: 10000,
         exp_backoff_restart_delay: 100,
         error_file: 'err.log',

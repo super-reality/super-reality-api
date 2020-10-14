@@ -1,4 +1,4 @@
-const { Lesson, Skill } = require("../models")
+const { Lesson, Skill,Chapter,Step,Item,Anchor } = require("../models")
 const { ERR_STATUS, ERR_CODE, Lesson_Sort } = require("../constants/constant")
 
 const fileupload = require("../utilities/upload")
@@ -380,11 +380,80 @@ const addChapterToLesson = async function (request, response) {
     }
 }
 
+const getAllByLessonId = async function (request,response)
+{
+      var allChapters;
+    var allSteps;
+    var allItems;
+    var allAnchors;
+    const chapters = []
+    const steps = []
+    const items = []
+    const anchors = []
+    try {
+
+        lessons = await Lesson.findById({_id: request.params.id})
+        if (lessons) {
+            let allChapters = lessons.chapters
+            for (i = 0; i < allChapters.length; i++) {
+                if (allChapters[i]._id !== undefined) {
+                    const currentChapter = await Chapter.findById({_id: allChapters[i]._id})
+                    if (currentChapter) {
+                        chapters.push(currentChapter)
+                        let allSteps = currentChapter.steps
+                        for (j = 0; j < allSteps.length; j++) {
+                            if (allSteps[j]._id !== undefined) {
+                                const currentStep = await Step.findById({_id: allSteps[j]._id})
+                                if (currentStep) {
+                                    steps.push(currentStep)
+                                    let allItems = currentStep.items
+                                    for (k = 0; k < allItems.length; k++) {
+                                        if (allItems[k]._id !== undefined) {
+                                            const currentItem = await Item.findById({_id: allItems[k]._id})
+                                            if (currentItem) {
+                                                items.push(currentItem)
+                                                let allAnchors = currentItem.anchor
+                                                if(allAnchors._id !== undefined) {
+                                                    const currentAnchor = await Anchor.findById({_id: allAnchors._id})
+                                                    if (currentAnchor) {
+                                                        anchors.push(currentAnchor)
+                                                    }
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+            response.status(200).send({lessons, chapters, steps, items, anchors})
+        } else {
+            response.status(200).send({err_code: 0, lessons: {}, message: "This lesson does not exist"})
+        }
+    } catch (error) {
+        console.log(error)
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch lesson",
+            internalError: error
+        })
+    }
+
+}
+
 const getLessonById = async function (request, response) {
     try {
         lessons = await Lesson.findById({ _id: request.params.id })
          if (lessons) {
-           
+
          response.status(200).send({ err_code: 0, lessons })
         }
         else {
@@ -402,5 +471,6 @@ module.exports = {
     searchLesson,
     getLessonById,
     addChapterToLesson,
+    getAllByLessonId,
     deleteLessonById
 } 

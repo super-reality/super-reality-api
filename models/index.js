@@ -20,6 +20,8 @@ const Task = require("./task")
 const User = require("./user")
 const Favor = require("./favor")
 const Chapter = require("./chapter")
+const Anchor = require("./anchor")
+const Item = require("./item")
 
 module.exports = {
     Classroom,
@@ -41,7 +43,9 @@ module.exports = {
     SubjectUserRole,
     Tag,
     Chapter,
+    Anchor,
     Skill,
+    Item,
     Task,
     User
 }
