@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createAnchor, searchAnchor, getAnchorById, updateAnchor, deleteAnchor} = require('../../../controllers/anchorController')
+const {createAnchor, searchAnchor, getAnchorById, updateAnchorById, deleteAnchor} = require('../../../controllers/anchorController')
 var fs = require('fs');
 var util = require('util');
 var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
@@ -29,7 +29,7 @@ router.get("/:Id", auth(), function (req, res) {
 
 router.put("/", auth(), function (req, res) {
     
-    updateAnchor(req, res)
+    updateAnchorById(req, res)
 });
 router.delete("/:Id", auth(), function (req, res) {
     
