@@ -92,22 +92,20 @@ const createAnchor = async function (request, response) {
         session.endSession();
     }
 }
-const getAnchorById = async function (request, response) {
-    //
-    const {Id} = request.params;
 
-    Anchor.findById(Id, async function (err, anchor) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            response.json({
-                err_code: ERR_CODE.success,
-                anchor
-            });
+const getAnchorById = async function (request, response) {
+    try {
+        anchor = await Anchor.findById({ _id: request.params.id })
+        if (anchor) {
+            response.status(statusCodes.OK).send({ err_code: 0, anchor })
         }
-    })
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: statusCodes.NOT_FOUND, chapters: {}, message: "This anchor does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch anchor", internalError: error })
+    }
 
 }
 
