@@ -203,7 +203,7 @@ const updateAnchorById = async function (request, response) {
                     })
                 }
             } else {
-                response.status(200).send({err_code: 0, "message": "This anchor does not exist"})
+                response.status(statusCodes.NOT_FOUND).send({err_code: statusCodes.NOT_FOUND, "message": "This anchor does not exist"})
             }
             // save collection document
         }, transactionOptions)
