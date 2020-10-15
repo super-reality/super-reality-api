@@ -187,8 +187,8 @@ const updateAnchorById = async function (request, response) {
                 currentAnchor.cvMatchValue = cvMatchValue ? cvMatchValue : currentAnchor.cvMatchValue
                 currentAnchor.cvCanvas = cvCanvas ? cvCanvas : currentAnchor.cvCanvas
                 currentAnchor.cvDelay = cvDelay ? cvDelay : currentAnchor.cvDelay
-                currentAnchor.cvGrayscale = cvGrayscale ? cvGrayscale : currentAnchor.cvGrayscale
-                currentAnchor.cvApplyThreshold = cvApplyThreshold ? cvApplyThreshold : currentAnchor.cvApplyThreshold
+                currentAnchor.cvGrayscale = cvGrayscale
+                currentAnchor.cvApplyThreshold = cvApplyThreshold
                 currentAnchor.cvThreshold = cvThreshold ? cvThreshold : currentAnchor.cvThreshold
                 currentAnchor.updatedAt = new Date()
 
