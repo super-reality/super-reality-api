@@ -27,7 +27,7 @@ router.get("/:Id", auth(), function (req, res) {
     getAnchorById(req, res)
 });
 
-router.put("/:Id", auth(), function (req, res) {
+router.put("/", auth(), function (req, res) {
     
     updateAnchor(req, res)
 });

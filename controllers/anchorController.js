@@ -158,6 +158,7 @@ const updateAnchor = function (request, response) {
     // 
     const {
         name,
+        anchor_id,
         type,
         templates,
         anchorFunction,
@@ -177,7 +178,7 @@ const updateAnchor = function (request, response) {
     } = request.body;
 
 
-    const { Id } = request.params;
+    const { Id } = anchor_id;
     
     
     
