@@ -38,8 +38,7 @@ const createStep = async function (request, response) {
         }, transactionOptions)
         if (transactionResults) {
             responses['err_code'] = 0
-            responses['log']='created'
-            response.status(statusCodes.OK).send(responses)
+            response.status(statusCodes.CREATED).send(responses)
 
         } else {
             console.message("The transaction was intentionally aborted.");
@@ -94,7 +93,7 @@ const updateStepById = async function (request, response) {
                  }
              }
              else {
-                 response.status(200).send({ err_code: 0, "message": "This step does not exist" })
+                 response.status(statusCodes.NOT_FOUND).send({ err_code: statusCodes.NOT_FOUND, "message": "This step does not exist" })
              }
              // save collection document
          }, transactionOptions)

@@ -111,7 +111,7 @@ const createLesson = async function (request, response) {
         }, transactionOptions)
         if (transactionResults) {
             responses['err_code'] = 0
-            response.status(statusCodes.OK).send(responses)
+            response.status(statusCodes.CREATED).send(responses)
 
         } else {
             console.log("The transaction was intentionally aborted.");
@@ -197,7 +197,7 @@ const updateLesson = async function (request, response) {
                 }
             }
             else {
-                response.status(200).send({ err_code: 0, "message": "This lesson does not exist" })
+                response.status(statusCodes.NOT_FOUND).send({ err_code: 0, "message": "This lesson does not exist" })
             }
             // save collection document
         }, transactionOptions)

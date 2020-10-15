@@ -63,7 +63,7 @@ describe('API Tests', function () {
                 if (res) {
                     chapterId = res.body.chapter._id
                     updateChapterPayload.chapter_id = chapterId
-                    expect(res.statusCode).to.equal(200);
+                    expect(res.statusCode).to.equal(201);
                     done();
                 }
             });

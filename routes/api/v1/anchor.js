@@ -2,17 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createAnchor, searchAnchor, getAnchorById, updateAnchorById, deleteAnchor} = require('../../../controllers/anchorController')
-var fs = require('fs');
-var util = require('util');
-var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
-var log_stdout = process.stdout;
-console.log = function (d) { //
-    log_file.write(util.format(d) + '\n');
-    log_stdout.write(util.format(d) + '\n');
-};
-
-
+const {createAnchor, getAnchorById, updateAnchorById, deleteAnchor} = require('../../../controllers/anchorController')
 
 router.post("/create", auth(), function (req, res) {
     

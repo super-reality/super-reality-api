@@ -46,7 +46,7 @@ describe('API Tests', function () {
             request(app).post('/api/v1/step/create').send(createStepPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     stepId = res.body.steps._id
-                    expect(res.statusCode).to.equal(200);
+                    expect(res.statusCode).to.equal(201);
                     done();
                 }
             });

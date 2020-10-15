@@ -28,8 +28,6 @@ const createAnchor = async function (request, response) {
     } = request.body;
 
     const session = await db.startSession();
-
-
     const responses = {};
     var anchor = Anchor()
     anchor.name = name
@@ -65,14 +63,14 @@ const createAnchor = async function (request, response) {
 
         if (transactionResults) {
             responses['err_code'] = 0
-            response.status(statusCodes.OK).send(responses)
+            response.status(statusCodes.CREATED).send(responses)
 
         } else {
 
             console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                 err_code: statusCodes.INTERNAL_SERVER_ERROR,
-                message: "Sorry we were not able to create this anchor  111"
+                message: "Sorry we were not able to create this anchor"
             })
         }
     } catch (err) {
@@ -80,51 +78,13 @@ const createAnchor = async function (request, response) {
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: err,
             internalError: err
-
         })
-
     } finally {
         session.endSession();
     }
-
 }
-
-const searchAnchor = async function (request, response) {
-    var {
-        //the term to search against 'name'
-        query,
-        //ascending / decs
-        sort,
-        //what fields to return 
-        fields,
-    } = request.body;
-
-    var condition = {}
-    // Add more query options - name, description, type, etc..
-    // Currently only searching against name
-    if (query && query != "") {
-        condition["name"] = {$regex: query, $options: 'i'}
-    }
-
-    // Add sort options
-    sortField = sort;
-
-    Anchor.find(condition, fields, {sort: sortField}).limit(100).find(function (err, lessons) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            response.json({
-                err_code: ERR_CODE.success,
-                lessons
-            });
-        }
-    });
-}
-
 const getAnchorById = async function (request, response) {
-    // 
+    //
     const {Id} = request.params;
 
     Anchor.findById(Id, async function (err, anchor) {
@@ -249,7 +209,7 @@ const deleteAnchor = function (request, response) {
 }
 
 module.exports = {
-    createAnchor, searchAnchor, getAnchorById, updateAnchorById, deleteAnchor
+    createAnchor, getAnchorById, updateAnchorById, deleteAnchor
 }
 
 

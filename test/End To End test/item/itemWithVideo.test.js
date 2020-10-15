@@ -53,11 +53,11 @@ describe('API Tests', function () {
         });
     });
     describe('## Items ', function () {
-        it('should get a item with default values with video type using id', function (done) {
+        it('should create a item with default values with video type', function (done) {
             request(app).post('/api/v1/item/create').send(createdefaultItemPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     itemId = res.body.item._id
-                    expect(res.statusCode).to.equal(200);
+                    expect(res.statusCode).to.equal(201);
                     expect(res.body.item).to.have.all.keys(propeties)
                     done();
                 }

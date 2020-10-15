@@ -59,7 +59,7 @@ describe('API Tests', function () {
             request(app).post('/api/v1/item/create').send(createdefaultItemPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     itemId = res.body.item._id
-                    expect(res.statusCode).to.equal(200);
+                    expect(res.statusCode).to.equal(201);
                     expect(res.body.item).to.have.all.keys(propeties)
                     done();
                 }

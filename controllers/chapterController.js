@@ -37,9 +37,8 @@ const createChapter = async function (request, response) {
 
         }, transactionOptions)
         if (transactionResults) {
-            console.log("chapter created successfully")
             responses['err_code'] = 0
-            response.status(statusCodes.OK).send(responses)
+            response.status(statusCodes.CREATED).send(responses)
 
         } else {
             console.message("The transaction was intentionally aborted.");

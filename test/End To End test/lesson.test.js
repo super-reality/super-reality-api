@@ -82,7 +82,7 @@ describe('API Tests', function () {
                 if (res) {
                     lessonId = res.body.lesson._id
                     updateLessonPayload.lesson_id = lessonId
-                    expect(res.statusCode).to.equal(200);
+                    expect(res.statusCode).to.equal(201);
                     done();
                 }
             });
