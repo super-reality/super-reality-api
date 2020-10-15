@@ -36,14 +36,14 @@ const createItem = async function (request, response) {
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({
             err_code: statusCodes.BAD_REQUEST,
-            msg: "Item type does not match"
+            msg: "Item type is required"
         })
     } else {
         const validItemType = itemTypes.find(element => element === type);
         if (!validItemType) {
             response.status(statusCodes.BAD_REQUEST).send({
                 err_code: statusCodes.BAD_REQUEST,
-                msg: "Item type is required"
+                msg: "Item type is not valid"
             })
 
         }

@@ -12,10 +12,6 @@ const createAnchor = async function (request, response) {
         type,
         templates,
         anchorFunction,
-        x,
-        y,
-        width,
-        height,
         cvMatchValue,
         cvCanvas,
         cvDelay,
@@ -27,23 +23,36 @@ const createAnchor = async function (request, response) {
         updatedAt,
     } = request.body;
 
+    const anchorTypes = ['record', 'crop', 'url']
+
+    if (type == undefined) {
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            msg: "Anchor type is required"
+        })
+    } else {
+        const validItemType = anchorTypes.find(element => element === type);
+        if (!validItemType) {
+            response.status(statusCodes.BAD_REQUEST).send({
+                err_code: statusCodes.BAD_REQUEST,
+                msg: "Anchor type is not valid"
+            })
+
+        }
+    }
     const session = await db.startSession();
     const responses = {};
     var anchor = Anchor()
     anchor.name = name
     anchor.type = type
-    anchor.templates = templates
-    anchor.anchorFunction = anchorFunction
-    anchor.x = x
-    anchor.y = y
-    anchor.width = width
-    anchor.height = height
-    anchor.cvMatchValue = cvMatchValue
-    anchor.cvCanvas = cvCanvas
-    anchor.cvDelay = cvDelay
-    anchor.cvGrayscale = cvGrayscale
-    anchor.cvApplyThreshold = cvApplyThreshold
-    anchor.cvThreshold = cvThreshold
+    anchor.templates = templates ? templates : []
+    anchor.anchorFunction = anchorFunction ? anchorFunction : anchor.anchorFunction
+    anchor.cvMatchValue = cvMatchValue ? cvMatchValue : anchor.cvMatchValue
+    anchor.cvCanvas = cvCanvas ? cvCanvas : anchor.cvCanvas
+    anchor.cvDelay = cvDelay ? cvDelay : anchor.cvDelay
+    anchor.cvGrayscale = cvGrayscale ? cvGrayscale : anchor.cvGrayscale
+    anchor.cvApplyThreshold = cvApplyThreshold ? cvApplyThreshold : anchor.cvApplyThreshold
+    anchor.cvThreshold = cvThreshold ? cvThreshold : anchor.cvThreshold
     anchor.createdBy = createdBy
     anchor.createdAt = createdAt
     anchor.updatedAt = updatedAt
@@ -109,10 +118,6 @@ const updateAnchorById = async function (request, response) {
         type,
         templates,
         anchorFunction,
-        x,
-        y,
-        width,
-        height,
         cvMatchValue,
         cvCanvas,
         cvDelay,
@@ -140,10 +145,6 @@ const updateAnchorById = async function (request, response) {
                 currentAnchor.type = type ? type : currentAnchor.type
                 currentAnchor.templates = templates ? templates : currentAnchor.templates
                 currentAnchor.anchorFunction = anchorFunction ? anchorFunction : currentAnchor.anchorFunction
-                currentAnchor.x = x ? x : currentAnchor.x
-                currentAnchor.y = y ? y : currentAnchor.y
-                currentAnchor.width = width ? width : currentAnchor.width
-                currentAnchor.height = height ? height : currentAnchor.height
                 currentAnchor.cvMatchValue = cvMatchValue ? cvMatchValue : currentAnchor.cvMatchValue
                 currentAnchor.cvCanvas = cvCanvas ? cvCanvas : currentAnchor.cvCanvas
                 currentAnchor.cvDelay = cvDelay ? cvDelay : currentAnchor.cvDelay
@@ -163,7 +164,10 @@ const updateAnchorById = async function (request, response) {
                     })
                 }
             } else {
-                response.status(statusCodes.NOT_FOUND).send({err_code: statusCodes.NOT_FOUND, "message": "This anchor does not exist"})
+                response.status(statusCodes.NOT_FOUND).send({
+                    err_code: statusCodes.NOT_FOUND,
+                    "message": "This anchor does not exist"
+                })
             }
             // save collection document
         }, transactionOptions)
