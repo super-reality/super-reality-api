@@ -217,7 +217,6 @@ const updateLesson = async function (request, response) {
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to update this lesson",
             internalError: err
-
         })
         console.log("The transaction was aborted due to an unexpected error: " + err);
     } finally {

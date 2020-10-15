@@ -37,7 +37,6 @@ const createAnchor = async function (request, response) {
                 err_code: statusCodes.BAD_REQUEST,
                 msg: "Anchor type is not valid"
             })
-
         }
     }
     const session = await db.startSession();
@@ -62,9 +61,7 @@ const createAnchor = async function (request, response) {
         readConcern: {level: 'local'},
         writeConcern: {w: 'majority'}
     };
-
     try {
-
         const transactionResults = await session.withTransaction(async () => {
             const createdAnchor = await anchor.save({session})
             responses['anchor'] = createdAnchor
@@ -92,7 +89,6 @@ const createAnchor = async function (request, response) {
         session.endSession();
     }
 }
-
 const getAnchorById = async function (request, response) {
     try {
         anchor = await Anchor.findById({ _id: request.params.id })
@@ -106,9 +102,7 @@ const getAnchorById = async function (request, response) {
     catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch anchor", internalError: error })
     }
-
 }
-
 const updateAnchorById = async function (request, response) {
     const {
         name,
@@ -130,7 +124,6 @@ const updateAnchorById = async function (request, response) {
         readConcern: {level: 'local'},
         writeConcern: {w: 'majority'}
     };
-
     try {
         var anchorUpdated = false
         var responses = {}
@@ -186,13 +179,11 @@ const updateAnchorById = async function (request, response) {
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to update this anchor",
             internalError: err
-
         })
         console.log("The transaction was aborted due to an unexpected error: " + err);
     } finally {
         session.endSession();
     }
-
 }
 const deleteAnchor = function (request, response) {
     const {Id} = request.params;

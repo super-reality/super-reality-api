@@ -19,8 +19,6 @@ const db = mongoose.connection
 
 
 const createItem = async function (request, response) {
-
-
     const {
         name,
         anchor,
@@ -45,12 +43,9 @@ const createItem = async function (request, response) {
                 err_code: statusCodes.BAD_REQUEST,
                 msg: "Item type is not valid"
             })
-
         }
     }
-
     const session = await db.startSession();
-
     const responses = {};
 
     const item = Item()
@@ -83,7 +78,6 @@ const createItem = async function (request, response) {
         readConcern: {level: 'local'},
         writeConcern: {w: 'majority'}
     };
-
     try {
 
         const transactionResults = await session.withTransaction(async () => {
@@ -96,8 +90,6 @@ const createItem = async function (request, response) {
             response.status(statusCodes.CREATED).send(responses)
 
         } else {
-
-
             console.message("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                 err_code: statusCodes.INTERNAL_SERVER_ERROR,
@@ -105,75 +97,36 @@ const createItem = async function (request, response) {
             })
         }
     } catch (err) {
-
-
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to create this item",
             internalError: err
-
         })
 
     } finally {
         session.endSession();
     }
-
 }
-
-const searchItem = async function (request, response) {
-    var {
-        //the term to search against 'name'
-        query,
-        //ascending / decs
-        sort,
-        //what fields to return 
-        fields,
-    } = request.body;
-
-    var condition = {}
-    // Add more query options - name, description, type, etc..
-    // Currently only searching against name
-    if (query && query != "") {
-        condition["name"] = {$regex: query, $options: 'i'}
-    }
-
-    // Add sort options
-    sortField = sort;
-
-    Item.find(condition, fields, {sort: sortField}).limit(100).find(function (err, lessons) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            response.json({
-                err_code: ERR_CODE.success,
-                lessons
-            });
-        }
-    });
-
-}
-
 const getItemById = async function (request, response) {
-    // 
-    const {Id} = request.params;
-
-    Item.findById(Id, async function (err, item) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
+    try {
+        item = await Item.findById({_id: request.params.id})
+        if (item) {
+            response.status(statusCodes.OK).send({err_code: 0, item})
         } else {
-            response.json({
-                err_code: ERR_CODE.success,
-                item
-            });
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                item: {},
+                message: "This item does not exist"
+            })
         }
-    })
-
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch item",
+            internalError: error
+        })
+    }
 }
-
 const updateItemById = async function (request, response) {
 
     if (request.body.item_id == undefined) {
@@ -181,17 +134,14 @@ const updateItemById = async function (request, response) {
             err_code: statusCodes.BAD_REQUEST,
             msg: "Provide an id to update"
         })
-    }
-    else {
+    } else {
         const session = await db.startSession();
         const transactionOptions = {
             readPreference: 'primary',
             readConcern: {level: 'local'},
             writeConcern: {w: 'majority'}
         };
-
         try {
-
             var itemUpdated = false
             const responses = {}
 
@@ -242,13 +192,11 @@ const updateItemById = async function (request, response) {
                 responses['err_code'] = 0
                 response.status(statusCodes.OK).send(responses)
             } else {
-
                 console.error("The transaction was intentionally aborted.");
                 response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                     err_code: statusCodes.INTERNAL_SERVER_ERROR,
                     message: "Could not update this item"
                 })
-
             }
         } catch (err) {
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
@@ -262,29 +210,29 @@ const updateItemById = async function (request, response) {
             session.endSession();
         }
     }
-
 }
-
-const deleteItem = function (request, response) {
-
-    const {Id} = request.params;
-
-    Item.deleteOne({_id: Id}, function (err) {
-        if (err != null) {
-            response.status(ERR_STATUS.Bad_Request).json({
-                error: err
-            });
-        } else {
-            response.json({
-                err_code: ERR_CODE.success,
-                msg: "Item deleted successfully"
-            });
+const deleteItemById = async function (request, response) {
+    try {
+        item = await Item.findOne({ _id: request.params.id })
+        if (item) {
+            deletedItem = await Item.deleteOne({ _id: request.params.id })
+            if (deletedItem) {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The item was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this item" })
+            }
         }
-    });
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This item does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this item", internalError: error })
+    }
 }
-
 module.exports = {
-    createItem, searchItem, getItemById, updateItemById, deleteItem
+    createItem, getItemById, updateItemById, deleteItemById
 }
 
 

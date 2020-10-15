@@ -55,17 +55,14 @@ const createCollection = async function (request, response) {
             err_code: statusCodes.BAD_REQUEST,
             message: "Atleast one media is required"
         })
-
-
     }
-    
     const session = await db.startSession();
     const responses = {};
     if (!errorStatus) {
         const collection = Collection()
+
         collection.icon = icon
         collection.name = name
-
         collection.description = description
         collection.medias = medias
         collection.tags = tags
@@ -84,8 +81,6 @@ const createCollection = async function (request, response) {
             readConcern: {level: 'local'},
             writeConcern: {w: 'majority'}
         };
-
-
         try {
             const transactionResults = await session.withTransaction(async () => {
                 // save collection document
@@ -128,11 +123,8 @@ const createCollection = async function (request, response) {
         }
     }
 }
-
-
 const collectionDetail = function (request, response) {
     const {id} = request.params;
-
     Collection.findById(id, async function (err, collection) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
@@ -166,7 +158,6 @@ const collectionDetail = function (request, response) {
         }
     });
 }
-
 const findCollection = function (request, response) {
     const {search, category} = request.query
 
@@ -383,7 +374,6 @@ const search = function (request, response) {
         }
     });
 }
-
 module.exports = {
     createCollection,
     findCollection,
