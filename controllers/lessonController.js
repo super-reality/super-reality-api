@@ -382,8 +382,10 @@ const getLessonById = async function (request, response) {
     try {
         lessons = await Lesson.findById({ _id: request.params.id })
          if (lessons) {
+             chapters = await Chapter.find({$match:lessons.chapters})
 
-         response.status(200).send({ err_code: 0, lessons })
+
+         response.status(200).send({ err_code: 0, lessons,chapters })
         }
         else {
             response.status(200).send({ err_code: 0, lessons: {}, message: "This lesson does not exist" })
@@ -394,11 +396,39 @@ const getLessonById = async function (request, response) {
     }
 
 }
+const getChaptesByLessonId = async function (request, response) {
+    try {
+        allChaptersId = []
+        lesson = await Lesson.findById({_id: request.params.id})
+        if (lesson) {
+            allChapters = lesson.chapters
+            for (i = 0; i < allChapters.length; i++) {
+                if (allChapters[i]._id !== undefined) {
+                    allChaptersId.push(allChapters[i]._id)
+                }
+            }
+
+            chapters = await Chapter.find({ _id: { $in: allChaptersId } })
+            if(chapters) {
+
+                response.status(200).send({err_code: 0, chapters})
+            }
+
+        } else {
+            response.status(200).send({err_code: 0, lessons: {}, message: "This lesson does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).se
+        nd({err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error})
+    }
+
+}
 module.exports = {
     createLesson,
     updateLesson,
     searchLesson,
     getLessonById,
+    getChaptesByLessonId,
     addChapterToLesson,
     deleteLessonById
 } 
