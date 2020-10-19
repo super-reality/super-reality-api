@@ -382,13 +382,10 @@ const getLessonById = async function (request, response) {
     try {
         lessons = await Lesson.findById({ _id: request.params.id })
          if (lessons) {
-             chapters = await Chapter.find({$match:lessons.chapters})
-
-
-         response.status(200).send({ err_code: 0, lessons,chapters })
+             response.status(statusCodes.OK).send({ err_code: 0, lessons})
         }
         else {
-            response.status(200).send({ err_code: 0, lessons: {}, message: "This lesson does not exist" })
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, lessons: {}, message: "This lesson does not exist" })
         }
     }
     catch (error) {
@@ -418,7 +415,7 @@ const getChaptesByLessonId = async function (request, response) {
             response.status(200).send({err_code: 0, lessons: {}, message: "This lesson does not exist"})
         }
     } catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).se
+        response.status(statusCodes.INTERNAL_SERVER_ERROR)
         nd({err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error})
     }
 
