@@ -1,4 +1,4 @@
-const { Chapter } = require("../models")
+const { Chapter,Step } = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -139,6 +139,32 @@ const updateChapterById = async function (request, response) {
         session.endSession();
     }
 }
+const getStepsByChapterId = async function (request, response) {
+    try {
+        allStepsId = []
+        chapter = await Chapter.findById({_id: request.params.id})
+        if (chapter) {
+            allSteps = chapter.steps
+            for (i = 0; i < allSteps.length; i++) {
+                if (allSteps[i]._id !== undefined) {
+                    allStepsId.push(allSteps[i]._id)
+                }
+            }
+            steps = await Step.find({_id: {$in: allStepsId}})
+            if (steps) {
+                response.status(200).send({err_code: 0, steps})
+            }
+        } else {
+            response.status(200).send({err_code: 0, lessons: {}, message: "This chapter does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch steps",
+            internalError: error
+        })
+    }
+}
 const addStepToChapter = async function (request, response) {
 
     const session = await db.startSession();
@@ -227,6 +253,7 @@ module.exports = {
     createChapter,
     getChapters,
     getChaptersById,
+    getStepsByChapterId,
     updateChapterById,
     addStepToChapter,
     deleteChapterById

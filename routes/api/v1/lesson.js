@@ -18,7 +18,7 @@ router.put("/", auth(), function (req, res) {
 router.delete("/:id", auth(), function (req, res) {
     deleteLessonById(req, res)
 })
-router.get("/allByLesson/:id", auth(), function (req, res) {
+router.get("/chapters/:id", auth(), function (req, res) {
     getChaptesByLessonId(req, res)
 })
 router.get("/:id", auth(), function (req, res) {

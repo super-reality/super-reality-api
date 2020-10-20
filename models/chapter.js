@@ -17,5 +17,4 @@ const chapterSchema = new Schema({
 });
 
 const chapter = new model("chapter", chapterSchema);
-
 module.exports = chapter;

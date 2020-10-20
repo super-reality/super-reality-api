@@ -1,4 +1,4 @@
-const { Step } = require("../models")
+const { Step,Item } = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -119,6 +119,36 @@ const updateStepById = async function (request, response) {
      }
  
  }
+
+ const getItemsByStepId = async function (request, response) {
+    try {
+        allItemsId = []
+        step = await Step.findById({_id: request.params.id})
+        if (step) {
+            allItems = step.items
+            console.log(allItems)
+            for (i = 0; i < allItems.length; i++) {
+                if (allItems[i]._id !== undefined) {
+                    allItemsId.push(allItems[i]._id)
+                }
+            }
+            items = await Item.find({_id: {$in: allItemsId}})
+            console.log(items)
+            if (items) {
+                response.status(200).send({err_code: 0, items})
+            }
+        } else {
+            response.status(200).send({err_code: 0, lessons: {}, message: "This Step does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch items",
+            internalError: error
+        })
+    }
+}
+
 const getsteps = async function (request, response) {
     try {
         steps = await Step.find({})
@@ -176,6 +206,7 @@ module.exports = {
     getsteps,
     getstepsById,
     updateStepById,
-    deleteStepById
+    deleteStepById,
+    getItemsByStepId
 
 } 

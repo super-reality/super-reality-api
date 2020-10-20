@@ -415,8 +415,7 @@ const getChaptesByLessonId = async function (request, response) {
             response.status(200).send({err_code: 0, lessons: {}, message: "This lesson does not exist"})
         }
     } catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR)
-        nd({err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error})
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error})
     }
 
 }
