@@ -126,14 +126,12 @@ const updateStepById = async function (request, response) {
         step = await Step.findById({_id: request.params.id})
         if (step) {
             allItems = step.items
-            console.log(allItems)
             for (i = 0; i < allItems.length; i++) {
                 if (allItems[i]._id !== undefined) {
                     allItemsId.push(allItems[i]._id)
                 }
             }
             items = await Item.find({_id: {$in: allItemsId}})
-            console.log(items)
             if (items) {
                 response.status(200).send({err_code: 0, items})
             }

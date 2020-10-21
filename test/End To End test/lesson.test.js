@@ -75,7 +75,6 @@ describe('API Tests', function () {
         });
     });
 
-
     describe('## Lessons', function () {
         it('should create a lesson', function (done) {
             request(app).post('/api/v1/lesson/create').send(createLessonPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
@@ -89,6 +88,7 @@ describe('API Tests', function () {
         });
     });
 
+
     describe('# Lessons', function () {
         it('should get a lesson by its id ', function (done) {
             request(app).get('/api/v1/lesson/' + lessonId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
@@ -99,6 +99,17 @@ describe('API Tests', function () {
             });
         });
     });
+      describe('# Lessons', function () {
+        it('should get chapters of a lesson id ', function (done) {
+            request(app).get('/api/v1/lesson/chapters/' + lessonId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+                if (res) {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                }
+            });
+        });
+    });
+
 
     describe('# Lessons', function () {
         it('should get a lesson by its id ', function (done) {

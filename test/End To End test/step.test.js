@@ -72,6 +72,17 @@ describe('API Tests', function () {
             });
         });
     });
+
+       describe('# Steps', function () {
+        it('should get items of a step ', function (done) {
+            request(app).get('/api/v1/step/items/' + stepId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+                if (res) {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                }
+            });
+        });
+    });
     describe('# Steps', function () {
         it('should delete the step that was created', function (done) {
             request(app).delete('/api/v1/step/' + stepId).set('Authorization', 'Bearer ' + token).end(function (err, res) {

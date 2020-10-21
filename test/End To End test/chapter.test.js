@@ -89,6 +89,16 @@ describe('API Tests', function () {
             });
         });
     });
+        describe('# Chapters', function () {
+        it('should steps of a chapter ', function (done) {
+            request(app).get('/api/v1/chapter/steps/' + chapterId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+                if (res) {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                }
+            });
+        });
+    });
 
     describe('# Chapters', function () {
         it('should update the chapter that was created', function (done) {
