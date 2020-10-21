@@ -1,22 +1,7 @@
 const {Item, Anchor} = require("../models");
-
-const {ERR_STATUS, ERR_CODE, Lesson_Sort} = require("../constants/constant")
-
-const fileupload = require("../utilities/upload")
-const path = require('path')
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
-
-// var fs = require('fs');
-// var util = require('util');
-// var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
-// var log_stdout = process.stdout;
-// console.log = function (d) { //
-//     log_file.write(util.format(d) + '\n');
-//     log_stdout.write(util.format(d) + '\n');
-// };
-
 
 const createItem = async function (request, response) {
     const {
