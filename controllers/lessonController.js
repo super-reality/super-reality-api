@@ -208,7 +208,6 @@ const updateLesson = async function (request, response) {
             }
             response.status(statusCodes.OK).send(responses)
         } else {
-
             console.log("The transaction was intentionally aborted.");
             response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this lesson" })
         }
@@ -404,7 +403,6 @@ const getChaptesByLessonId = async function (request, response) {
                     allChaptersId.push(allChapters[i]._id)
                 }
             }
-
             chapters = await Chapter.find({ _id: { $in: allChaptersId } })
             if(chapters) {
 

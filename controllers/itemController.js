@@ -1,4 +1,4 @@
-const Item = require("../models/item");
+const {Item, Anchor} = require("../models");
 
 const {ERR_STATUS, ERR_CODE, Lesson_Sort} = require("../constants/constant")
 
@@ -111,7 +111,12 @@ const getItemById = async function (request, response) {
     try {
         item = await Item.findById({_id: request.params.id})
         if (item) {
-            response.status(statusCodes.OK).send({err_code: 0, item})
+            anchor = item.anchor ? await Anchor.findById({_id: item.anchor}) : []
+            if (anchor) {
+                response.status(statusCodes.OK).send({err_code: 0, item, anchor})
+            } else {
+                response.status(statusCodes.OK).send({err_code: 0, item})
+            }
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
@@ -213,22 +218,26 @@ const updateItemById = async function (request, response) {
 }
 const deleteItemById = async function (request, response) {
     try {
-        item = await Item.findOne({ _id: request.params.id })
+        item = await Item.findOne({_id: request.params.id})
         if (item) {
-            deletedItem = await Item.deleteOne({ _id: request.params.id })
+            deletedItem = await Item.deleteOne({_id: request.params.id})
             if (deletedItem) {
-                response.status(statusCodes.OK).send({ err_code: 0, message: "The item was deleted successfully" })
+                response.status(statusCodes.OK).send({err_code: 0, message: "The item was deleted successfully"})
+            } else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: 0,
+                    message: "Could not delete this item"
+                })
             }
-            else {
-                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this item" })
-            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This item does not exist"})
         }
-        else {
-            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This item does not exist" })
-        }
-    }
-    catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this item", internalError: error })
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this item",
+            internalError: error
+        })
     }
 }
 module.exports = {
