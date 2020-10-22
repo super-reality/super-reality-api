@@ -1,9 +1,6 @@
 "use strict"
 const express = require('express')
-require('express-group-routes')
 var router = express.Router()
-const multer  = require('multer');
-const fileParser  = multer({ storage: multer.memoryStorage() });
 const auth = require("../../../middleware/auth")
 const {createLesson, updateLesson, searchLesson, deleteLessonById,addChapterToLesson, getLessonById,getChaptesByLessonId} = require('../../../controllers/lessonController')
 router.post("/create", auth(), function (req, res) {

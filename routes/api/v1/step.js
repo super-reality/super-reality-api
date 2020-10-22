@@ -1,8 +1,6 @@
 "use strict"
 const express = require('express')
-require('express-group-routes')
 var router = express.Router()
-
 const auth = require("../../../middleware/auth")
 const { createStep, getsteps, getstepsById, updateStepById, deleteStepById,getItemsByStepId } = require('../../../controllers/stepController')
 router.post("/create", auth(), function (req, res) {

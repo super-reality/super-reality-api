@@ -23,7 +23,6 @@ const createSubject = async function (request, response) {
         });
         return
     }
-
     // check parent have already this subject
     var subject_already_exist = await isUniqueInParentOfSubject(parent, name)
     if (subject_already_exist) {
