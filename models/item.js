@@ -34,7 +34,17 @@ const itemSchema = new Schema({
         y: {
             type: Number,
             default: 0,
+        },
+        width: {
+            type: Number,
+            default: 100,
+        },
+        height: {
+            type: Number,
+            default: 100,
         }
+
+
     },
     trigger: {
         type: Number,
