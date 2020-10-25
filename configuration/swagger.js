@@ -2,11 +2,11 @@ const swaggerJSDoc = require('swagger-jsdoc');
 
 const swaggerDefinition = {
   info: {
-    title: 'REST API for my App', // Title of the documentation
+    title: 'Super Reality Api', // Title of the documentation
     version: '1.0.0', // Version of the app
-    description: 'This is the REST API for my product', // short description of the app
+    description: 'Convert your reality to super reality', // short description of the app
   },
-  host: 'http://54.183.151.100:3000', // the host or url of the app
+  host: '54.183.151.100:3000', // the host or url of the app
   basePath: '/api/v1', // the basepath of your endpoint
 };
 

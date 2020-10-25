@@ -19,8 +19,7 @@ paths:
           $ref: '#/definitions/signin'
       responses:
         200:
-          description: An object with a user updated user profile detail
-        401:
+          description: An object with a user info
           description: Unauthorized users
 definitions:        # Schema definition for the request body
   signin:

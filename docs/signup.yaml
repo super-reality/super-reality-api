@@ -11,7 +11,7 @@ paths:
         type: string
       - in: body
         name: create user
-        description: It enables a user to update pet profile
+        description: It enables user to create a account
         required: false
         schema:
           $ref: '#/definitions/signup'
@@ -23,7 +23,7 @@ paths:
 
       responses:
         200:
-          description: An object with a user updated user profile detail
+          description: An object with a user information
           content:
             application/json:
               schema:
