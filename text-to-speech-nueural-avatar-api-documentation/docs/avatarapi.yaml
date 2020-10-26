@@ -1,5 +1,5 @@
 paths:
-   /avatar_api:
+   :4444/avatar_api:
      post:
        summary: Uploads a file.
        consumes:

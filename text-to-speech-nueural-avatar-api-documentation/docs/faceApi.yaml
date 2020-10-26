@@ -1,5 +1,5 @@
 paths:
-   /face_api:
+   :8080/face_api:
      post:
        summary: Uploads a file.
        consumes:

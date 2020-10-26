@@ -1,5 +1,5 @@
 paths:
-   /text_to_speech:
+   :5555/text_to_speech:
      post:
        summary: Uploads a file.
        consumes:
