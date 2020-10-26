@@ -9,4 +9,10 @@ paths:
            name: text
            type: file
            description: upload text file
-
+       responses:
+              200:
+                description: An object with a new signed up user
+                content:
+                  application/json:
+              401:
+                description: Unauthorized users
