@@ -6,7 +6,7 @@ const swaggerDefinition = {
     version: '1.0.0', // Version of the app
     description: 'Convert your reality to super reality', // short description of the app
   },
-  host: ': http://54.153.19.166:', // the host or url of the app// the basepath of your endpoint
+  host: ': http://54.153.19.166', // the host or url of the app// the basepath of your endpoint
 };
 
 // options for the swagger docs
