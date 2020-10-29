@@ -117,12 +117,16 @@ definitions:        # Schema definition for the request body
     properties:
       name:
         type: string
+      anchor:
+        type: string
   StepUpdate:
     type: object
     properties:
       step_id:
         type: string
       name:
+        type: string
+      anchor:
         type: string
       items:
         type: array
