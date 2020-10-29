@@ -96,12 +96,8 @@ const getItemById = async function (request, response) {
     try {
         item = await Item.findById({_id: request.params.id})
         if (item) {
-            anchor = item.anchor ? await Anchor.findById({_id: item.anchor}) : []
-            if (anchor) {
-                response.status(statusCodes.OK).send({err_code: 0, item, anchor})
-            } else {
-                response.status(statusCodes.OK).send({err_code: 0, item})
-            }
+            response.status(statusCodes.OK).send({err_code: 0, item})
+
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,

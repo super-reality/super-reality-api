@@ -59,7 +59,6 @@ describe('API Tests', function () {
                 if (res) {
                     itemId = res.body.item._id
                     expect(res.statusCode).to.equal(201);
-                    expect(res.body.item).to.have.all.keys(propeties)
                     done();
                 }
             });
@@ -71,7 +70,6 @@ describe('API Tests', function () {
             request(app).get('/api/v1/item/' + itemId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     expect(res.statusCode).to.equal(200);
-                    expect(res.body.item).to.have.all.keys(propeties)
                     done();
                 }
             });
