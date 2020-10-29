@@ -10,6 +10,7 @@ const swaggerDefinition = {
   basePath: '/api/v1', // the basepath of your endpoint
 };
 
+
 // options for the swagger docs
 const options = {
   // import swaggerDefinitions

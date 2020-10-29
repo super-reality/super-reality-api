@@ -1,0 +1,195 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /lesson/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      security:
+        - Bearer: []
+      tags:
+        - Lesson
+      summary: Create Lesson
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create lesson
+        description: It enables a user to create lesson
+        required: false
+        schema:
+          $ref: '#/definitions/lessonCreate'
+      responses:
+        201:
+          description: An object with a new lesson
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/lessonCreate'
+        401:
+          description: Unauthorized users
+          
+  /lesson/:         # path of the user from your endpoint
+    put: # endpoint request type (post request)
+      security:
+        - Bearer: []
+      tags:
+        - Lesson
+      summary: Update Lesson
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create lesson
+        description: It enables a user to create lesson
+        required: false
+        schema:
+          $ref: '#/definitions/lessonUpdate'
+      responses:
+        200:
+          description: An object with a new lesson
+        401:
+          description: Unauthorized users
+  /lesson/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      security:
+        - Bearer: []
+      tags:
+        - Lesson
+      summary: Get Lesson By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a lesson
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a lesson values
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  lessonCreate:
+    type: object
+    properties:
+      lesson_id:
+        type: string
+      subject:
+        type: array
+        items:
+          type: object
+        required: true
+      icon:
+        type: string
+      name:
+        type : string
+        required: true
+      description:
+        type: string
+        required: true
+      cost:
+        type: integer
+        required: true
+      difficulty:
+        type: integer
+        required: true
+      medias:
+        type: array
+        items:
+          type:string
+      skills:
+        type: array
+        items:
+          type: string
+      visibility:
+        type: array
+        items:
+          type : string
+      entry:
+        type: integer
+      chapters:
+        type: array
+        items:
+          type:object
+      rating:
+        type: integer
+      setupScreenshots:
+        type: array
+        items:
+          type: string
+      setupInstructions:
+        type: string
+      setupFiles:
+        type: array
+        items:
+          type: string
+  getLessonById:
+    type: object
+    properties:
+      id:
+        type: string
+  lessonUpdate:
+    type: object
+    properties:
+      lesson_id:
+        type: string
+      subject:
+        type: array
+        items:
+          type: object
+        required: true
+      icon:
+        type: string
+      name:
+        type : string
+        required: true
+      description:
+        type: string
+        required: true
+      cost:
+        type: integer
+        required: true
+      difficulty:
+        type: integer
+        required: true
+      medias:
+        type: array
+        items:
+          type:string
+      skills:
+        type: array
+        items:
+          type: string
+      visibility:
+        type: array
+        items:
+          type : string
+      entry:
+        type: integer
+      chapters:
+        type: array
+        items:
+          type:object
+      rating:
+        type: integer
+      setupScreenshots:
+        type: array
+        items:
+          type: string
+      setupInstructions:
+        type: string
+      setupFiles:
+        type: array
+        items:
+          type: string
+
