@@ -24,7 +24,7 @@ const createStep = async function (request, response) {
     var step = Step()
 
     step.name = name
-    step.anchor = anchor ? anchor : step.anchor
+    step.anchor = anchor
     step.createdBy = request.user._id
 
     const transactionOptions = {
@@ -83,7 +83,7 @@ const updateStepById = async function (request, response) {
 
                 currentStep.items = request.body.items ? request.body.items : currentStep.items
                 currentStep.name = request.body.name ? request.body.name : currentStep.name
-                currentStep.anchor = request.body.anchor ? request.body.anchor : currentStep.anchor
+                currentStep.anchor = request.body.anchor
                 currentStep.updatedAt = new Date()
                 updatedStep = await currentStep.save({session})
                 if (updatedStep) {
