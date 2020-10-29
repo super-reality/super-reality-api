@@ -12,8 +12,8 @@ const itemSchema = new Schema({
         index: true
     },
     anchor: {
-        type: String,
-        default: null
+        type: Boolean,
+        default: true
     },
     description: {
         type: String

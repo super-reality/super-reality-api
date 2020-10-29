@@ -14,8 +14,8 @@ const stepSchema = new Schema({
         type: Array
     },
     anchor: {
-        type: Boolean,
-        default: true
+        type: String,
+        default: null
     },
     createdBy: {
         type: ObjectId
