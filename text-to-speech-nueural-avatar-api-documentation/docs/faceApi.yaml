@@ -6,11 +6,11 @@ paths:
          - multipart/form-data
        parameters:
          - in: formData
-           name: audio
+           name: image
            type: file
-           description: upload .wav file
+           description: upload an image file (.png)
          - in: formData
-           name: vidoe
+           name: video
            type: file
            description: upload .mp4 file
        responses:
