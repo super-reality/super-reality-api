@@ -15,8 +15,6 @@ paths:
            description: upload .mp4 file
        responses:
               200:
-                description: An object with a new signed up user
-                content:
-                  application/json:
+                description: A video
               401:
                 description: Unauthorized users
