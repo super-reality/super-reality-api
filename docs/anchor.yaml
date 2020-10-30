@@ -38,7 +38,7 @@ paths:
   /anchor:         # path of the user from your endpoint
     put: # endpoint request type (post request)
       tags:
-        - anchor
+        - Anchor
       security:
         - Bearer: []
       summary: Update anchor
@@ -74,7 +74,7 @@ paths:
   /anchor/{id}:         # path of the user from your endpoint
     get: # endpoint request type (post request)
       tags:
-        - anchor
+        - Anchor
       security:
         - Bearer: []
       summary: Get anchor By Id
