@@ -1,0 +1,136 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /item/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - item
+      security:
+        - Bearer: []
+      summary: Create item
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create item
+        description: It enables a user to create item
+        required: false
+        schema:
+          $ref: '#/definitions/itemCreate'
+      responses:
+        201:
+          description: An object with a new item
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/itemCreate'
+        401:
+          description: Unauthorized users
+          
+  /item:         # path of the user from your endpoint
+    put: # endpoint request type (post request)
+      tags:
+        - item
+      security:
+        - Bearer: []
+      summary: Update item
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: update item
+        description: It enables a user to update item
+        required: false
+        schema:
+          $ref: '#/definitions/itemUpdate'
+      responses:
+        200:
+          description: An object with a item
+        401:
+          description: Unauthorized users
+    get: # endpoint request type (post request)
+      tags:
+        - item
+      security:
+        - Bearer: []
+      summary: Get All items
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a item values
+        401:
+          description: Unauthorized users
+  /item/{item_id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - item
+      security:
+        - Bearer: []
+      summary: Get item By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: item_id
+          description: It enables a user to fetch a item
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a item values
+        401:
+          description: Unauthorized users
+  /item/{id}:         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - item
+      security:
+        - Bearer: []
+      summary: Delete item By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to delete a item
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  itemCreate:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+        required: true
+  itemUpdate:
+    type: object
+    properties:
+      item_id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+        required: true
+      steps:
+        type: array
+        items:
+          type: string

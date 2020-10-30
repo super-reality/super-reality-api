@@ -1,0 +1,166 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /anchor/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Anchor
+      security:
+        - Bearer: []
+      summary: Create anchor
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create anchor
+        description: It enables a user to create anchor
+        required: false
+        schema:
+          $ref: '#/definitions/anchorCreate'
+      responses:
+        201:
+          description: An object with a new anchor
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/anchorCreate'
+        401:
+          description: Unauthorized users
+          
+  /anchor:         # path of the user from your endpoint
+    put: # endpoint request type (post request)
+      tags:
+        - anchor
+      security:
+        - Bearer: []
+      summary: Update anchor
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: update anchor
+        description: It enables a user to update anchor
+        required: false
+        schema:
+          $ref: '#/definitions/anchorUpdate'
+      responses:
+        200:
+          description: An object with a anchor
+        401:
+          description: Unauthorized users
+    get: # endpoint request type (post request)
+      tags:
+        - Anchor
+      security:
+        - Bearer: []
+      summary: Get All anchor
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a anchor values
+        401:
+          description: Unauthorized users
+  /anchor/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - anchor
+      security:
+        - Bearer: []
+      summary: Get anchor By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a anchor
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a anchor values
+        401:
+          description: Unauthorized users
+  /anchor/{anchor_id}:         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Anchor
+      security:
+        - Bearer: []
+      summary: Delete anchor By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: anchor_id
+          description: It enables a user to delete a anchor
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  anchorCreate:
+    type: object
+    properties:
+      name:
+        type: string
+        required: true
+      type:
+        type: string
+        required: true
+      templates:
+        type: array
+        items:
+          type: string
+        anchorFunction:
+          type: string
+        cvMatchValue:
+          type: integer
+        cvCanvas:
+          type: integer
+        cvDelay:
+          type: boolean
+        cvApplyThreshold:
+          type: boolean
+        cvThreshold:
+          type: integer
+  anchorUpdate:
+    type: object
+    properties:
+      anchor_id:
+        type: string
+      name:
+        type: string
+        required: true
+      type:
+        type: string
+        required: true
+      templates:
+        type: array
+        items:
+          type: string
+      anchorFunction:
+        type: string
+      cvMatchValue:
+        type: integer
+      cvCanvas:
+        type: integer
+      cvDelay:
+        type: boolean
+      cvApplyThreshold:
+        type: boolean
+      cvThreshold:
+        type: integer
