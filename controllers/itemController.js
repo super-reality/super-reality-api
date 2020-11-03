@@ -14,7 +14,7 @@ const createItem = async function (request, response) {
         transition,
         type,
     } = request.body;
-    const itemTypes = ['audio', 'video', 'focus_highlight', 'image']
+    const itemTypes = ['audio', 'video', 'focus_highlight', 'image','fx']
 
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({
