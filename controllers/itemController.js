@@ -163,7 +163,7 @@ const updateItemById = async function (request, response) {
                         currentItem.url = request.body.url ? request.body.url : currentItem.url;
                         currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
                     }
-                     if (currentItem.type == 'text') {
+                     if (currentItem.type == 'dialog') {
                         currentItem.text = request.body.text ? request.body.text : currentItem.text;
                     }
                     updatedItem = await currentItem.save({session})
