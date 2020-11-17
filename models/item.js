@@ -43,9 +43,7 @@ const itemSchema = new Schema({
             type: Number,
             default: 100,
         }
-
-
-    },
+     },
     trigger: {
         type: Number,
         default: null
@@ -62,6 +60,9 @@ const itemSchema = new Schema({
         type: String,
         required: true
     },
+    effect: {
+        type: String,
+    },
     showPopup: {
         type: Boolean,
     },
@@ -73,6 +74,9 @@ const itemSchema = new Schema({
     },
     focus: {
         type: String,
+    },
+    fullScreen: {
+        type: Boolean,
     },
     loop: {
         type: Boolean,

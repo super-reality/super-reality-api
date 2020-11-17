@@ -14,7 +14,7 @@ const createItem = async function (request, response) {
         transition,
         type,
     } = request.body;
-    const itemTypes = ['audio', 'video', 'focus_highlight', 'image','fx','dialog']
+    const itemTypes = ['audio', 'video', 'focus_highlight', 'image', 'fx', 'dialog']
 
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({
@@ -60,6 +60,11 @@ const createItem = async function (request, response) {
     }
     if (type == 'dialog') {
         item.text = request.body.text ? request.body.text : '';
+    }
+    if (type == 'fx') {
+        item.effect = request.body.effect ? request.body.effect : 'id_1';
+        item.fullScreen = request.body.fullScreen
+
     }
     const transactionOptions = {
         readPreference: 'primary',
@@ -163,8 +168,12 @@ const updateItemById = async function (request, response) {
                         currentItem.url = request.body.url ? request.body.url : currentItem.url;
                         currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
                     }
-                     if (currentItem.type == 'dialog') {
+                    if (currentItem.type == 'dialog') {
                         currentItem.text = request.body.text ? request.body.text : currentItem.text;
+                    }
+                    if (currentItem.type == 'fx') {
+                        currentItem.effect = request.body.effect ? request.body.effect : currentItem.effect;
+                        currentItem.fullScreen = request.body.fullScreen
                     }
                     updatedItem = await currentItem.save({session})
                     if (updatedItem) {
