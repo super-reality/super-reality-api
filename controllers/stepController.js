@@ -6,7 +6,9 @@ const db = mongoose.connection
 const createStep = async function (request, response) {
     const {
         name,
-        anchor
+        anchor,
+        recordingId,
+        recordingTimestamp
     } = request.body;
 
     // Name should be atleast 4 character
@@ -25,6 +27,8 @@ const createStep = async function (request, response) {
 
     step.name = name
     step.anchor = anchor ? anchor : step.anchor
+    step.recordingId = recordingId ? recordingId : step.recordingId
+    step.recordingTimestamp = recordingTimestamp ? recordingTimestamp : step.recordingTimestamp
     step.createdBy = request.user._id
 
     const transactionOptions = {
@@ -84,6 +88,8 @@ const updateStepById = async function (request, response) {
                 currentStep.items = request.body.items ? request.body.items : currentStep.items
                 currentStep.name = request.body.name ? request.body.name : currentStep.name
                 currentStep.anchor = request.body.anchor ? request.body.anchor : currentStep.anchor
+                currentStep.recordingId = request.body.recordingId ? request.body.recordingId : currentStep.recordingId
+                currentStep.recordingTimestamp = request.body.recordingTimestamp ? request.body.recordingTimestamp : currentStep.recordingTimestamp
                 currentStep.updatedAt = new Date()
                 updatedStep = await currentStep.save({session})
                 if (updatedStep) {

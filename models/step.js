@@ -17,6 +17,14 @@ const stepSchema = new Schema({
         type: String,
         default: null
     },
+    recordingId: {
+        type: String,
+        default: ''
+    },
+    recordingTimestamp: {
+        type: String,
+        default: ''
+    },
     createdBy: {
         type: ObjectId
     },
