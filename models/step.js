@@ -21,6 +21,9 @@ const stepSchema = new Schema({
         type: String,
         default: ''
     },
+    snapShot: {
+        type: String,
+    },
     recordingTimestamp: {
         type: String,
         default: ''

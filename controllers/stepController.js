@@ -8,7 +8,8 @@ const createStep = async function (request, response) {
         name,
         anchor,
         recordingId,
-        recordingTimestamp
+        recordingTimestamp,
+        snapShot
     } = request.body;
 
     // Name should be atleast 4 character
@@ -29,6 +30,7 @@ const createStep = async function (request, response) {
     step.anchor = anchor ? anchor : step.anchor
     step.recordingId = recordingId ? recordingId : step.recordingId
     step.recordingTimestamp = recordingTimestamp ? recordingTimestamp : step.recordingTimestamp
+    step.snapShot = snapShot
     step.createdBy = request.user._id
 
     const transactionOptions = {
@@ -89,6 +91,7 @@ const updateStepById = async function (request, response) {
                 currentStep.name = request.body.name ? request.body.name : currentStep.name
                 currentStep.anchor = request.body.anchor ? request.body.anchor : currentStep.anchor
                 currentStep.recordingId = request.body.recordingId ? request.body.recordingId : currentStep.recordingId
+                currentStep.snapShot = request.body.snapShot ? request.body.snapShot : currentStep.snapShot
                 currentStep.recordingTimestamp = request.body.recordingTimestamp ? request.body.recordingTimestamp : currentStep.recordingTimestamp
                 currentStep.updatedAt = new Date()
                 updatedStep = await currentStep.save({session})
