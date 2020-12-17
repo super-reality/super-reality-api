@@ -43,7 +43,7 @@ const itemSchema = new Schema({
             type: Number,
             default: 100,
         }
-     },
+    },
     trigger: {
         type: Number,
         default: null
@@ -81,6 +81,10 @@ const itemSchema = new Schema({
     loop: {
         type: Boolean,
 
+    },
+    parameter: {
+        type: Object,
+        default: {}
     },
     createdBy: {type: ObjectId},
     createdAt: {type: Date, default: Date.now},
