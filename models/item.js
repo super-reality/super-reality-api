@@ -91,9 +91,9 @@ const itemSchema = new Schema({
     updatedAt: {type: Date},
 
 
-});
+},{ minimize: false });
 
-const Item = new model("Item", itemSchema, {minimize: false});
+const Item = new model("Item", itemSchema);
 
 
 module.exports = Item;
