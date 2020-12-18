@@ -82,7 +82,7 @@ const itemSchema = new Schema({
         type: Boolean,
 
     },
-    parameter: {
+    parameters: {
         type: Object,
         default: {}
     },

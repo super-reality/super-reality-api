@@ -63,7 +63,7 @@ const createItem = async function (request, response) {
     }
     if (type == 'fx') {
         item.effect = request.body.effect ? request.body.effect : 'id_1';
-        item.parameter = request.body.parameter ? request.body.parameter : {}
+        item.parameters = request.body.parameters ? request.body.parameters : {}
         item.fullScreen = request.body.fullScreen
 
     }
@@ -174,7 +174,7 @@ const updateItemById = async function (request, response) {
                     }
                     if (currentItem.type == 'fx') {
                         currentItem.effect = request.body.effect ? request.body.effect : currentItem.effect;
-                        currentItem.parameter = request.body.parameter ? request.body.parameter : {}
+                        currentItem.parameters = request.body.parameters ? request.body.parameters : {}
                         currentItem.fullScreen = request.body.fullScreen
                     }
                     updatedItem = await currentItem.save({session})

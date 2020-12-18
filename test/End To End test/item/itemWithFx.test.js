@@ -8,7 +8,8 @@ const expect = chai.expect;
 
 const createdefaultItemPayload = {
     "type": "fx",
-    "fullScreen":false
+    "fullScreen":false,
+    "parameters":{bool:true}
 }
 const loginPayload =
     {
