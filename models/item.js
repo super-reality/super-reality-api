@@ -93,6 +93,7 @@ const itemSchema = new Schema({
 
 });
 
-const Item = new model("Item", itemSchema);
+const Item = new model("Item", itemSchema, {minimize: false});
+
 
 module.exports = Item;
