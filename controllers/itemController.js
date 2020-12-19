@@ -14,7 +14,7 @@ const createItem = async function (request, response) {
         transition,
         type,
     } = request.body;
-    const itemTypes = ['audio', 'video', 'focus_highlight', 'image', 'fx', 'dialog']
+    const itemTypes = ['audio', 'video', 'focus_highlight', 'image', 'fx', 'dialog','youtube']
 
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({
@@ -57,6 +57,9 @@ const createItem = async function (request, response) {
     if (type == 'video') {
         item.url = request.body.url ? request.body.url : '';
         item.loop = request.body.loop ? request.body.loop : false;
+    }
+    if (type == 'youtube') {
+        item.url = request.body.url ? request.body.url : '';
     }
     if (type == 'dialog') {
         item.text = request.body.text ? request.body.text : '';
@@ -168,6 +171,9 @@ const updateItemById = async function (request, response) {
                     if (currentItem.type == 'video') {
                         currentItem.url = request.body.url ? request.body.url : currentItem.url;
                         currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
+                    }
+                    if (currentItem.type == 'youtube') {
+                        currentItem.url = request.body.url ? request.body.url : '';
                     }
                     if (currentItem.type == 'dialog') {
                         currentItem.text = request.body.text ? request.body.text : currentItem.text;
