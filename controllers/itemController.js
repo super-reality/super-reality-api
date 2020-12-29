@@ -57,6 +57,7 @@ const createItem = async function (request, response) {
     if (type == 'video') {
         item.url = request.body.url ? request.body.url : '';
         item.loop = request.body.loop ? request.body.loop : false;
+        item.muted = request.body.muted
     }
     if (type == 'youtube') {
         item.url = request.body.url ? request.body.url : '';
@@ -171,6 +172,7 @@ const updateItemById = async function (request, response) {
                     if (currentItem.type == 'video') {
                         currentItem.url = request.body.url ? request.body.url : currentItem.url;
                         currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
+                        currentItem.muted = request.body.muted
                     }
                     if (currentItem.type == 'youtube') {
                         currentItem.url = request.body.url ? request.body.url : '';

@@ -86,12 +86,17 @@ const itemSchema = new Schema({
         type: Object,
         default: {}
     },
+    muted: {
+        type: Boolean,
+        default: false
+
+    },
     createdBy: {type: ObjectId},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date},
 
 
-},{ minimize: false });
+}, {minimize: false});
 
 const Item = new model("Item", itemSchema);
 
