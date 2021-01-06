@@ -13,8 +13,9 @@ const createItem = async function (request, response) {
         destination,
         transition,
         type,
+        endOn
     } = request.body;
-    const itemTypes = ['audio', 'video', 'focus_highlight', 'image', 'fx', 'dialog','youtube']
+    const itemTypes = ['audio', 'video', 'focus_highlight', 'image', 'fx', 'dialog', 'youtube']
 
     if (type == undefined) {
         response.status(statusCodes.BAD_REQUEST).send({
@@ -42,6 +43,7 @@ const createItem = async function (request, response) {
     item.trigger = trigger ? trigger : item.trigger
     item.destination = destination ? destination : item.destination
     item.transition = transition ? transition : item.transition
+    item.endOn = endOn ? endOn : item.endOn
 
     if (type == 'audio') {
         item.showPopup = request.body.showPopup ? request.body.showPopup : false;
@@ -157,6 +159,7 @@ const updateItemById = async function (request, response) {
                     currentItem.trigger = request.body.trigger
                     currentItem.destination = request.body.destination ? request.body.destination : currentItem.destination
                     currentItem.transition = request.body.transition ? request.body.transition : currentItem.transition
+                    currentItem.endOn = request.body.endOn ? request.body.endOn : currentItem.endOn
                     currentItem.updatedAt = new Date()
                     if (currentItem.type == 'audio') {
                         currentItem.showPopup = request.body.showPopup ? request.body.showPopup : currentItem.showPopup;

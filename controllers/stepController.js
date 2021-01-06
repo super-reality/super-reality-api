@@ -9,7 +9,10 @@ const createStep = async function (request, response) {
         anchor,
         recordingId,
         recordingTimestamp,
-        snapShot
+        snapShot,
+        startWhen,
+        canvas,
+        summary
     } = request.body;
 
     // Name should be atleast 4 character
@@ -30,6 +33,9 @@ const createStep = async function (request, response) {
     step.anchor = anchor ? anchor : step.anchor
     step.recordingId = recordingId ? recordingId : step.recordingId
     step.recordingTimestamp = recordingTimestamp ? recordingTimestamp : step.recordingTimestamp
+    step.startWhen = startWhen ? startWhen : step.startWhen
+    step.canvas = canvas ? canvas : step.canvas
+    step.summary = summary ? summary : step.summary
     step.snapShot = snapShot
     step.createdBy = request.user._id
 
@@ -93,6 +99,9 @@ const updateStepById = async function (request, response) {
                 currentStep.recordingId = request.body.recordingId ? request.body.recordingId : currentStep.recordingId
                 currentStep.snapShot = request.body.snapShot ? request.body.snapShot : currentStep.snapShot
                 currentStep.recordingTimestamp = request.body.recordingTimestamp ? request.body.recordingTimestamp : currentStep.recordingTimestamp
+                currentStep.startWhen = request.body.startWhen ? request.body.startWhen : currentStep.startWhen
+                currentStep.summary = request.body.summary ? request.body.summary : currentStep.summary
+                currentStep.canvas = request.body.canvas ? request.body.canvas : currentStep.canvas
                 currentStep.updatedAt = new Date()
                 updatedStep = await currentStep.save({session})
                 if (updatedStep) {

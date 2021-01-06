@@ -86,6 +86,10 @@ const itemSchema = new Schema({
         type: Object,
         default: {}
     },
+    endOn: {
+        type: Array,
+        default: []
+    },
     muted: {
         type: Boolean,
         default: false

@@ -21,6 +21,18 @@ const stepSchema = new Schema({
         type: String,
         default: ''
     },
+    startWhen: {
+        type: Array,
+        default: []
+    },
+    canvas: {
+        type: Array,
+        default: []
+    },
+    summary: {
+        type: String,
+        default: ''
+    },
     snapShot: {
         type: String,
     },
