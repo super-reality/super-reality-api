@@ -60,6 +60,7 @@ const createItem = async function (request, response) {
         item.url = request.body.url ? request.body.url : '';
         item.loop = request.body.loop ? request.body.loop : false;
         item.muted = request.body.muted
+        item.source = request.body.source ? request.body.source : ''
     }
     if (type == 'youtube') {
         item.url = request.body.url ? request.body.url : '';
@@ -180,6 +181,7 @@ const updateItemById = async function (request, response) {
                         currentItem.url = request.body.url ? request.body.url : currentItem.url;
                         currentItem.loop = request.body.loop ? request.body.loop : currentItem.loop;
                         currentItem.muted = request.body.muted
+                        currentItem.source = request.body.source ? request.body.source : currentItem.source
                     }
                     if (currentItem.type == 'youtube') {
                         currentItem.url = request.body.url ? request.body.url : '';

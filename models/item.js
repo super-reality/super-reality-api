@@ -90,6 +90,10 @@ const itemSchema = new Schema({
         type: Array,
         default: []
     },
+    source: {
+        type: String,
+        default: ''
+    },
     muted: {
         type: Boolean,
         default: false
