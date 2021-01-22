@@ -2,26 +2,31 @@ const {Schema, model} = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 /* *** define tag schema *** */
-const skillSchema = new Schema({
-    // skill name
+const categorySchema = new Schema({
+    // tag name
     name: {
         type: String,
         required: true,
         index: true
     },
-    subSKills: {
+    subCategories: {
         type: Array,
         default: []
     },
     createdBy: {
-        type: ObjectId
+        type: ObjectId,
+        required: true,
     },
     createdAt: {
         type: Date,
         default: Date.now()
+
+    },
+    updatedAt: {
+        type: Date,
     }
 });
 
-const Skill = new model("Skill", skillSchema);
+const Category = new model("Category", categorySchema );
 
-module.exports = Skill;
+module.exports = Category;

@@ -29,6 +29,8 @@ router.use("/collection", require("./collection"))
 // item routes
 router.use("/item", require("./item"))
 
+router.use("/support", require("./support"))
+
 // subject routes
 router.use("/subject", require("./subject"))
 

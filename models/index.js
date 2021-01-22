@@ -22,6 +22,7 @@ const Favor = require("./favor")
 const Chapter = require("./chapter")
 const Anchor = require("./anchor")
 const Item = require("./item")
+const Support = require("./support")
 
 module.exports = {
     Classroom,
@@ -47,5 +48,6 @@ module.exports = {
     Skill,
     Item,
     Task,
-    User
+    User,
+    Support
 }
