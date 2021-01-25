@@ -23,7 +23,7 @@ const Chapter = require("./chapter")
 const Anchor = require("./anchor")
 const Item = require("./item")
 const Support = require("./support")
-
+const Category = require("./category")
 module.exports = {
     Classroom,
     Collection,
@@ -49,5 +49,6 @@ module.exports = {
     Item,
     Task,
     User,
-    Support
+    Support,
+    Category
 }

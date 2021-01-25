@@ -5,7 +5,6 @@ const ObjectId = Schema.Types.ObjectId
 const supportSchema = new Schema({
     title: {
         type: String,
-        allowNull: false,
         required: true
     },
     supportType: {
@@ -15,7 +14,7 @@ const supportSchema = new Schema({
     },
     supportCategory: {
         type: ObjectId,
-        required: true
+        required: false
     },
     description: {
         type: String,

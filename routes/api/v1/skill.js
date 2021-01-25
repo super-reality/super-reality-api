@@ -2,16 +2,16 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {getCategoryById,getAllCategory} = require('../../../controllers/categoryController')
+const {getSkillById,getAllSkill} = require('../../../controllers/skillController')
 
 
 
 router.get("/:id", auth(), function (req, res) {
-    getCategoryById(req, res)
+    getSkillById(req, res)
 });
 
 router.get("/search/:name", auth(), function (req, res) {
-    getAllCategory(req, res)
+    getAllSkill(req, res)
 });
 
 

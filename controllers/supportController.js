@@ -1,4 +1,4 @@
-const {Support,Cate} = require("../models");
+const {Support, Category, Skill} = require("../models");
 
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
@@ -15,21 +15,17 @@ const createSupportTicket = async function (request, response) {
         skills,
     } = request.body;
 
-    if(request.body.newCategory)
-    {
-
-    }
-
 
     const session = await db.startSession();
     const responses = {};
     var support = Support()
-    support.title  = title ? title : support.title
+    support.title = title ? title : support.title
     support.supportType = supportType ? supportType : support.supportType
-    support.supportCategory = supportCategory ? supportCategory : support.supportCategory
     support.description = description ? description : support.description
     support.files = files ? files : support.files
     support.skills = skills ? skills : support.skills
+    support.createdBy = request.user._id
+    support.createdAt = new Date()
 
     const transactionOptions = {
         readPreference: 'primary',
@@ -38,10 +34,37 @@ const createSupportTicket = async function (request, response) {
     };
     try {
         const transactionResults = await session.withTransaction(async () => {
+            if (request.body.newCategory) {
+                var category = Category()
+                category.name = request.body.newCategoryName
+                category.createdBy = request.user._id
+                category.createdAt = new Date()
+                const createdCategory = await category.save({session})
+                if (createdCategory) {
+                    support.supportCategory = createdCategory._id
+                }
+            } else {
+                support.supportCategory = request.body.supportCategory
+                const createdTicket = await support.save({session})
+                responses['ticket'] = createdTicket
+            }
+            if (request.body.newSkill) {
+                var newSkills = []
+                var skill = Skill()
+                skill.name = request.body.newSkillName
+                skill.createdBy = request.user._id
+                skill.createdAt = new Date()
+                const createdSkill = await skill.save({session})
+                if (createdSkill) {
+                    console.log(createdSkill)
+                    support.skills = newSkills.concat(createdSkill._id)
+                }
+            } else {
+                support.skills = request.body.skills
+            }
             const createdTicket = await support.save({session})
             responses['ticket'] = createdTicket
         }, transactionOptions)
-
         if (transactionResults) {
             responses['err_code'] = 0
             response.status(statusCodes.CREATED).send(responses)
@@ -68,7 +91,14 @@ const getTicketById = async function (request, response) {
     try {
         ticket = await Support.findById({_id: request.params.id})
         if (ticket) {
-            response.status(statusCodes.OK).send({err_code: 0, ticket})
+
+            category = await Category.findById({_id: ticket.supportCategory})
+            skill = await Skill.find({_id: {$in :  ticket.skills}})
+            console.log(skill)
+
+
+            response.status(statusCodes.OK).send({err_code: 0, ticket,category,skill})
+
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,

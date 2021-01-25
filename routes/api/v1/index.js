@@ -12,9 +12,8 @@ router.get('/', function (req, res) {
     })
 })
 // find collection route
-router.get("/find", function(req,res)
-{
-    findCollection(req,res)
+router.get("/find", function (req, res) {
+    findCollection(req, res)
 })
 
 // anchor routes
@@ -48,9 +47,12 @@ router.use("/classroom", require("./classroom"))
 
 //file routes
 router.use("/file", require("./file"))
-
-//file routes
+router.use("/category", require("./category"))
+//chapter routes
 router.use("/chapter", require("./chapter"))
+// skill routes
+router.use("/skill", require("./skill"))
+// step routes
 router.use("/step", require("./step"))
 
 
