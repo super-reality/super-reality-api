@@ -8,7 +8,6 @@ const getSkillById = async function (request, response) {
     try {
         skill = await Skill.findById({_id: request.params.id})
         if (skill) {
-            console.log(skill)
             response.status(statusCodes.OK).send({err_code: 0, skill})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
@@ -27,7 +26,6 @@ const getSkillById = async function (request, response) {
 
 const getAllSkill = async function (request, response) {
     try {
-        console.log(request.params.name)
         skill = await Skill.find({
             name: {
                 $regex: request.params.name,

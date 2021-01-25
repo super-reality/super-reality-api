@@ -1,0 +1,166 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /support/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Create support
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create support
+        description: It enables a user to create support
+        required: false
+        schema:
+          $ref: '#/definitions/supportCreate'
+      responses:
+        201:
+          description: An object with a new support
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/supportCreate'
+        401:
+          description: Unauthorized users
+          
+  /support:         # path of the user from your endpoint
+    put: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Update support
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: update support
+        description: It enables a user to update support
+        required: false
+        schema:
+          $ref: '#/definitions/supportUpdate'
+      responses:
+        200:
+          description: An object with a support
+        401:
+          description: Unauthorized users
+    get: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Get All support
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a support values
+        401:
+          description: Unauthorized users
+  /support/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Get support By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a support
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a support values
+        401:
+          description: Unauthorized users
+  /support/{support_id}:         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Delete support By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: support_id
+          description: It enables a user to delete a support
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  supportCreate:
+    type: object
+    properties:
+      title:
+        type: string
+        required: true
+      supportType:
+        type: string
+        required: true
+      supportCategory:
+        type: string
+        required: false
+      description:
+        type : string
+        required: true
+      files:
+        type: array
+        required: true
+        items:
+          type: string
+      skills:
+        type: array
+        required: true
+        items:
+          type: string
+      
+        
+  supportUpdate:
+    type: object
+    properties:
+        title:
+          type: string
+          required: true
+        supportType:
+          type: string
+          required: true
+        supportCategory:
+          type: string
+          required: false
+        description:
+          type: string
+          required: true
+        files:
+          type: array
+          required: true
+          items:
+            type: string
+        skills:
+          type: array
+          required: true
+          items:
+            type: string

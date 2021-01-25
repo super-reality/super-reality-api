@@ -9,7 +9,6 @@ const createSupportTicket = async function (request, response) {
     const {
         title,
         supportType,
-        supportCategory,
         description,
         files,
         skills,
@@ -56,7 +55,6 @@ const createSupportTicket = async function (request, response) {
                 skill.createdAt = new Date()
                 const createdSkill = await skill.save({session})
                 if (createdSkill) {
-                    console.log(createdSkill)
                     support.skills = newSkills.concat(createdSkill._id)
                 }
             } else {
@@ -94,9 +92,6 @@ const getTicketById = async function (request, response) {
 
             category = await Category.findById({_id: ticket.supportCategory})
             skill = await Skill.find({_id: {$in :  ticket.skills}})
-            console.log(skill)
-
-
             response.status(statusCodes.OK).send({err_code: 0, ticket,category,skill})
 
         } else {
