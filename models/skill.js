@@ -7,11 +7,16 @@ const skillSchema = new Schema({
     name: {
         type: String,
         required: true,
+        unique: true,
         index: true
     },
-    subSKills: {
+    subSkills: {
         type: Array,
         default: []
+    },
+    rating: {
+        type: Number,
+        default: 0
     },
     createdBy: {
         type: ObjectId

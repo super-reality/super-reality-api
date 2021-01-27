@@ -1,9 +1,51 @@
 const {Skill} = require("../models");
-
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
+const createSkill = async function (request, response) {
+    const {
+        name,
+        subSkills,
+    } = request.body;
+
+    var skill = Skill()
+    skill.name = name ? name : skill.name
+    skill.subSkills = subSkills ? subSkills : skill.subSkills
+    skill.createdBy = request.user._id
+    skill.rating = skill.rating
+    skill.createdAt = new Date()
+
+    // save subject document
+    skill.save(async function (err, result) {
+        if (err != null) {
+            response.status(statusCodes.Bad_Request).json({
+                error: err
+            });
+        } else {
+            response.status(statusCodes.CREATED).send(result)
+        }
+    })
+}
+const getAllSkill = async function (request, response) {
+    try {
+        skill = await Skill.find({})
+        if (skill) {
+            response.status(statusCodes.OK).send({err_code: 0, skill})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This skill does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch category",
+            internalError: error
+        })
+    }
+}
 const getSkillById = async function (request, response) {
     try {
         skill = await Skill.findById({_id: request.params.id})
@@ -23,8 +65,7 @@ const getSkillById = async function (request, response) {
         })
     }
 }
-
-const getAllSkill = async function (request, response) {
+const getAllSkillBySearch = async function (request, response) {
     try {
         skill = await Skill.find({
             name: {
@@ -49,25 +90,6 @@ const getAllSkill = async function (request, response) {
         })
     }
 }
-
-
 module.exports = {
-    getSkillById, getAllSkill
+    getSkillById, getAllSkillBySearch,createSkill,getAllSkill
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

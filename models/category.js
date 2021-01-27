@@ -20,13 +20,16 @@ const categorySchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now()
-
+    },
+    rating: {
+        type: Number,
+        default: 0
     },
     updatedAt: {
         type: Date,
     }
 });
 
-const Category = new model("Category", categorySchema );
+const Category = new model("Category", categorySchema);
 
 module.exports = Category;
