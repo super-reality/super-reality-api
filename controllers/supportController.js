@@ -108,6 +108,27 @@ const getTicketById = async function (request, response) {
         })
     }
 }
+
+const getAllSupportTicket = async function (request, response) {
+    try {
+        ticket = await Support.find({})
+        if (ticket) {
+            response.status(statusCodes.OK).send({err_code: 0, ticket})
+
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This ticket does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch ticket",
+            internalError: error
+        })
+    }
+}
 const updateSupportTicketById = async function (request, response) {
     const {
         title,
@@ -183,6 +204,6 @@ const updateSupportTicketById = async function (request, response) {
 
 
 module.exports = {
-    createSupportTicket, getTicketById, updateSupportTicketById
+    createSupportTicket, getTicketById,  getAllSupportTicket, updateSupportTicketById
 }
 
