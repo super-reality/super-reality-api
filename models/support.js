@@ -22,7 +22,8 @@ const supportSchema = new Schema({
     },
     files: {
         type: Array,
-        required: true
+        required: false,
+        default: []
     },
     skills: {
         type: Array,
