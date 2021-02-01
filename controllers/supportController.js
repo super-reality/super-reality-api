@@ -24,6 +24,7 @@ const createSupportTicket = async function (request, response) {
     support.files = files  ? files : support.files
     support.skills = skills ? skills : support.skills
     support.createdBy = request.user._id
+    support.creatorInfo = request.user
     support.createdAt = new Date()
 
     const transactionOptions = {

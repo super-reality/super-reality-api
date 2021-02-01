@@ -31,6 +31,10 @@ const supportSchema = new Schema({
     },
 
     // user id that created this project
+    creatorInfo: {
+        type: Object,
+        default: {}
+    },
     createdBy: {type: ObjectId},
     // created date
     createdAt: {type: Date, default: Date.now}
