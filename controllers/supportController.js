@@ -5,7 +5,8 @@ const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
 const createSupportTicket = async function (request, response) {
-
+    delete request.user.passwordSalt
+    delete request.user.passwordHash
     const {
         title,
         supportType,
@@ -17,11 +18,12 @@ const createSupportTicket = async function (request, response) {
 
     const session = await db.startSession();
     const responses = {};
+
     var support = Support()
     support.title = title ? title : support.title
     support.supportType = supportType ? supportType : support.supportType
     support.description = description ? description : support.description
-    support.files = files  ? files : support.files
+    support.files = files ? files : support.files
     support.skills = skills ? skills : support.skills
     support.createdBy = request.user._id
     support.creatorInfo = request.user
@@ -92,8 +94,8 @@ const getTicketById = async function (request, response) {
         if (ticket) {
 
             category = await Category.findById({_id: ticket.supportCategory})
-            skill = await Skill.find({_id: {$in :  ticket.skills}})
-            response.status(statusCodes.OK).send({err_code: 0, ticket,category,skill})
+            skill = await Skill.find({_id: {$in: ticket.skills}})
+            response.status(statusCodes.OK).send({err_code: 0, ticket, category, skill})
 
         } else {
             response.status(statusCodes.NOT_FOUND).send({
@@ -205,6 +207,6 @@ const updateSupportTicketById = async function (request, response) {
 
 
 module.exports = {
-    createSupportTicket, getTicketById,  getAllSupportTicket, updateSupportTicketById
+    createSupportTicket, getTicketById, getAllSupportTicket, updateSupportTicketById
 }
 
