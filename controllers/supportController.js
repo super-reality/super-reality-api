@@ -5,8 +5,11 @@ const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
 const createSupportTicket = async function (request, response) {
-    delete request.user.passwordSalt
-    delete request.user.passwordHash
+    let creatorInfo = {}
+    creatorInfo._id = request.user._id
+    creatorInfo.firstname = request.user.firstname
+    creatorInfo.lastname = request.user.lastname
+    creatorInfo.username = request.user.username
     const {
         title,
         supportType,
@@ -26,7 +29,7 @@ const createSupportTicket = async function (request, response) {
     support.files = files ? files : support.files
     support.skills = skills ? skills : support.skills
     support.createdBy = request.user._id
-    support.creatorInfo = request.user
+    support.creatorInfo = creatorInfo
     support.createdAt = new Date()
 
     const transactionOptions = {
