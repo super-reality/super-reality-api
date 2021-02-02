@@ -42,6 +42,7 @@ const createSupportTicket = async function (request, response) {
             if (request.body.newCategory) {
                 var category = Category()
                 category.name = request.body.newCategoryName
+                category.subCategories = request.body.subCategories ? request.body.subCategories : []
                 category.createdBy = request.user._id
                 category.createdAt = new Date()
                 const createdCategory = await category.save({session})
@@ -59,6 +60,7 @@ const createSupportTicket = async function (request, response) {
                 skill.name = request.body.newSkillName
                 skill.createdBy = request.user._id
                 skill.createdAt = new Date()
+                skill.subSkills = request.body.subSkills ? request.body.subSkills : []
                 const createdSkill = await skill.save({session})
                 if (createdSkill) {
                     support.skills = newSkills.concat(createdSkill._id)
