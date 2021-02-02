@@ -1,5 +1,5 @@
-const { Lesson, Skill,Chapter,Step,Item,Anchor } = require("../models")
-const { ERR_STATUS, ERR_CODE, Lesson_Sort } = require("../constants/constant")
+const {Lesson, Skill, Chapter, User} = require("../models")
+const {ERR_STATUS, ERR_CODE, Lesson_Sort} = require("../constants/constant")
 
 const fileupload = require("../utilities/upload")
 const path = require('path')
@@ -89,23 +89,34 @@ const createLesson = async function (request, response) {
 
     const transactionOptions = {
         readPreference: 'primary',
-        readConcern: { level: 'local' },
-        writeConcern: { w: 'majority' }
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
     };
     try {
         const transactionResults = await session.withTransaction(async () => {
             // save collection document
-            const createdLesson = await lesson.save({ session })
+            const createdLesson = await lesson.save({session})
             responses['lesson'] = createdLesson
+            if (createdLesson) {
+                const lessonCreator = await User.findById({_id: request.user._id, session})
+                lessonCreator.lessons = lessonCreator.lessons.concat(createdLesson._id)
+                updatedList = lessonCreator.save({session})
+                if (!updatedList) {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Sorry we were not able to update lesson list for this user"
+                    })
+                }
+            }
 
             for (var i = 0; i < skills.length; i++) {
                 const skillName = skills[i]
-                result = await Skill.findOne({ name: skillName })
+                result = await Skill.findOne({name: skillName})
                 if (result) {
                 } else {
                     var skill = Skill()
                     skill.name = skills[i]
-                    createdSkills = await skill.save({ session })
+                    createdSkills = await skill.save({session})
                 }
             }
         }, transactionOptions)
@@ -137,8 +148,8 @@ const updateLesson = async function (request, response) {
     const session = await db.startSession();
     const transactionOptions = {
         readPreference: 'primary',
-        readConcern: { level: 'local' },
-        writeConcern: { w: 'majority' }
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
     };
 
     try {
@@ -149,7 +160,7 @@ const updateLesson = async function (request, response) {
 
         const transactionResults = await session.withTransaction(async () => {
 
-            const currentLesson = await Lesson.findById({ _id: request.body.lesson_id, session })
+            const currentLesson = await Lesson.findById({_id: request.body.lesson_id, session})
             if (currentLesson) {
 
                 currentLesson.icon = request.body.icon ? request.body.icon : currentLesson.icon
@@ -170,7 +181,7 @@ const updateLesson = async function (request, response) {
                 currentLesson.chapters = request.body.chapters ? request.body.chapters : currentLesson.chapters
                 currentLesson.updatedAt = new Date()
 
-                updatedLesson = await currentLesson.save({ session })
+                updatedLesson = await currentLesson.save({session})
                 if (updatedLesson) {
                     lessonUpdated = true
                     responses['lesson'] = updatedLesson
@@ -178,26 +189,27 @@ const updateLesson = async function (request, response) {
                         skills = request.body.skills
                         for (var i = 0; i < skills.length; i++) {
                             const skillName = skills[i]
-                            result = await Skill.findOne({ name: skillName })
+                            result = await Skill.findOne({name: skillName})
 
                             if (result) {
                             } else {
                                 var skill = Skill()
                                 skill.name = skills[i]
-                                createdSkills = await skill.save({ session })
+                                createdSkills = await skill.save({session})
                                 if (createdSkills) {
                                     newSkillAdded = true
                                 }
                             }
                         }
                     }
+                } else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Could not update this lesson"
+                    })
                 }
-                else {
-                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this lesson" })
-                }
-            }
-            else {
-                response.status(statusCodes.NOT_FOUND).send({ err_code: 0, "message": "This lesson does not exist" })
+            } else {
+                response.status(statusCodes.NOT_FOUND).send({err_code: 0, "message": "This lesson does not exist"})
             }
             // save collection document
         }, transactionOptions)
@@ -209,7 +221,10 @@ const updateLesson = async function (request, response) {
             response.status(statusCodes.OK).send(responses)
         } else {
             console.log("The transaction was intentionally aborted.");
-            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not update this lesson" })
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Could not update this lesson"
+            })
         }
     } catch (err) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
@@ -229,7 +244,7 @@ const searchLesson = function (request, response) {
         fields,
     } = request.body;
 
-    var sortField = { "name": 1 }
+    var sortField = {"name": 1}
     var difficulty = 0
     if (sort == null) {
         sort = Lesson_Sort.Newest
@@ -237,16 +252,16 @@ const searchLesson = function (request, response) {
 
     switch (sort) {
         case Lesson_Sort.Newest:
-            sortField = { "createdAt": -1 }
+            sortField = {"createdAt": -1}
             break
         case Lesson_Sort.Oldest:
-            sortField = { "createdAt": 1 }
+            sortField = {"createdAt": 1}
             break
         case Lesson_Sort.Highest_Avg:
-            sortField = { "rating": -1 }
+            sortField = {"rating": -1}
             break
         case Lesson_Sort.Lowest_Avg:
-            sortField = { "rating": 1 }
+            sortField = {"rating": 1}
             break
         case Lesson_Sort.Intro:
             difficulty = Difficulty.Intro
@@ -264,7 +279,7 @@ const searchLesson = function (request, response) {
 
     var condition = {}
     if (query && query != "") {
-        condition["name"] = { $regex: query, $options: 'i' }
+        condition["name"] = {$regex: query, $options: 'i'}
     }
     if (difficulty) {
         condition["difficulty"] = difficulty
@@ -274,7 +289,7 @@ const searchLesson = function (request, response) {
         fields = 'name shortDescription icon medias rating createdAt'
     }
 
-    Lesson.find(condition, fields, { sort: sortField }).limit(100).find(function (err, lessons) {
+    Lesson.find(condition, fields, {sort: sortField}).limit(100).find(function (err, lessons) {
         if (err != null) {
             response.status(ERR_STATUS.Bad_Request).json({
                 error: err
@@ -289,23 +304,27 @@ const searchLesson = function (request, response) {
 }
 const deleteLessonById = async function (request, response) {
     try {
-        lessons = await Lesson.findOne({ _id: request.params.id })
+        lessons = await Lesson.findOne({_id: request.params.id})
         if (lessons) {
-            deletedLesson = await Lesson.deleteOne({ _id: request.params.id })
+            deletedLesson = await Lesson.deleteOne({_id: request.params.id})
             if (deletedLesson) {
-                response.status(statusCodes.OK).send({ err_code: 0, message: "The lesson was deleted successfully" })
-            }
-            else {
-                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this lesson" })
+                response.status(statusCodes.OK).send({err_code: 0, message: "The lesson was deleted successfully"})
+            } else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: 0,
+                    message: "Could not delete this lesson"
+                })
             }
 
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This lesson does not exist"})
         }
-        else {
-            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This lesson does not exist" })
-        }
-    }
-    catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this lesson", internalError: error })
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this lesson",
+            internalError: error
+        })
     }
 
 }
@@ -314,8 +333,8 @@ const addChapterToLesson = async function (request, response) {
     const session = await db.startSession();
     const transactionOptions = {
         readPreference: 'primary',
-        readConcern: { level: 'local' },
-        writeConcern: { w: 'majority' }
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
     };
     responses = {}
     try {
@@ -323,7 +342,7 @@ const addChapterToLesson = async function (request, response) {
         var chapterExistFlag = false
         const transactionResults = await session.withTransaction(async () => {
 
-            const currentLesson = await Lesson.findById({ _id: request.body.lesson_id, session })
+            const currentLesson = await Lesson.findById({_id: request.body.lesson_id, session})
             if (currentLesson) {
                 chapter = request.body.chapter_id
                 const chapterExist = currentLesson.chapters.find(element => element === request.body.chapter_id);
@@ -332,17 +351,15 @@ const addChapterToLesson = async function (request, response) {
                     chapterExistFlag = true
                     session.endSession()
                     return
-                }
-                else {
+                } else {
                     currentLesson.chapters = currentLesson.chapters.concat(chapter)
-                    updatedLesson = await currentLesson.save({ session });
+                    updatedLesson = await currentLesson.save({session});
                     if (updatedLesson) {
                         responses['lesson'] = updatedLesson
                     }
                 }
-            }
-            else {
-                response.status(200).send({ err_code: 0, "message": "This lesson does not exist" })
+            } else {
+                response.status(200).send({err_code: 0, "message": "This lesson does not exist"})
             }
             // save collection document
         }, transactionOptions)
@@ -356,8 +373,7 @@ const addChapterToLesson = async function (request, response) {
                     message: "This chapter already added to this lesson"
 
                 })
-            }
-            else {
+            } else {
                 response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
                     err_code: statusCodes.INTERNAL_SERVER_ERROR,
                     message: "Sorry we were not able to update this lesson"
@@ -379,16 +395,22 @@ const addChapterToLesson = async function (request, response) {
 }
 const getLessonById = async function (request, response) {
     try {
-        lessons = await Lesson.findById({ _id: request.params.id })
-         if (lessons) {
-             response.status(statusCodes.OK).send({ err_code: 0, lessons})
+        lessons = await Lesson.findById({_id: request.params.id})
+        if (lessons) {
+            response.status(statusCodes.OK).send({err_code: 0, lessons})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: 0,
+                lessons: {},
+                message: "This lesson does not exist"
+            })
         }
-        else {
-            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, lessons: {}, message: "This lesson does not exist" })
-        }
-    }
-    catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error })
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch lesson",
+            internalError: error
+        })
     }
 
 }
@@ -403,8 +425,8 @@ const getChaptesByLessonId = async function (request, response) {
                     allChaptersId.push(allChapters[i]._id)
                 }
             }
-            chapters = await Chapter.find({ _id: { $in: allChaptersId } })
-            if(chapters) {
+            chapters = await Chapter.find({_id: {$in: allChaptersId}})
+            if (chapters) {
 
                 response.status(200).send({err_code: 0, chapters})
             }
@@ -413,7 +435,11 @@ const getChaptesByLessonId = async function (request, response) {
             response.status(200).send({err_code: 0, lessons: {}, message: "This lesson does not exist"})
         }
     } catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not fetch lesson", internalError: error})
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch lesson",
+            internalError: error
+        })
     }
 
 }

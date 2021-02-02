@@ -35,7 +35,8 @@ const signup = function(request, response){
         firstname, 
         lastname, 
         invitecode,
-        age
+        age,
+        lessons
     } = request.body;
     
     User.findOne({username})
@@ -49,6 +50,7 @@ const signup = function(request, response){
             newUser.username = username
             newUser.invitecode = invitecode
             newUser.age = age
+            newUser.lessons = lessons ? lessons : newUser.lessons
             newUser.passwordSalt = hashDigest(Date.now().toString())
             newUser.passwordHash = hashSaltDigest(password, newUser.passwordSalt)
 

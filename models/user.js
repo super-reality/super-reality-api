@@ -15,25 +15,26 @@ const userSchema = new Schema({
         type: String,
         index: true
     },
-    firstname: { type: String },
-    lastname: { type: String },
-    inviteCode: { type: String },
-    age: { type: Number },
+    firstname: {type: String},
+    lastname: {type: String},
+    inviteCode: {type: String},
+    lessons: {type: Array, default: []},
+    age: {type: Number},
     // description
-    description: { type: String },
-    budget: { type: Number },
-    escrow: { type: Number },
+    description: {type: String},
+    budget: {type: Number},
+    escrow: {type: Number},
     // visibility: either of Public/Team/Private
-    visibility: { type: String },
-    role: { type: String }
+    visibility: {type: String},
+    role: {type: String}
 });
 
-userSchema.methods.setPassword = function(password) {
+userSchema.methods.setPassword = function (password) {
     this.passwordSalt = hashDigest(Date.now().toString());
     this.passwordHash = hashSaltDigest(password, this.passwordSalt);
 }
 
-userSchema.methods.checkPassword = function(password) {
+userSchema.methods.checkPassword = function (password) {
     return hashSaltDigest(password, this.passwordSalt) === this.passwordHash;
 }
 
