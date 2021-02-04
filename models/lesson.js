@@ -6,7 +6,6 @@ const lessonSchema = new Schema({
     // parent subject id or lesson id
     subject: {
         type: Array,
-        required: true,
     },
     // lesson icon url
     icon: {
