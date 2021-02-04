@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const {Schema, model} = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 /* *** define lesson schema *** */
@@ -6,10 +6,12 @@ const lessonSchema = new Schema({
     // parent subject id or lesson id
     subject: {
         type: Array,
+        default: []
     },
     // lesson icon url
     icon: {
         type: String,
+        default: ''
     },
     // lesson name
     name: {
@@ -20,39 +22,45 @@ const lessonSchema = new Schema({
     // lesson long description
     description: {
         type: String,
-        required: true,
+        default: ''
     },
-    cost: { type: Number },
+    cost: {
+        type: Number,
+        default: 0
+    },
     // difficulty
-    difficulty: { type: Number },
+    difficulty: {type: Number, default: 0},
     // medias urls
-    medias: { type: Array },
+    medias: {type: Array, default: []},
     // tag Array
-    skills: { type: Array },
+    skills: {type: Array, default: []},
     // visibility
-    visibility: { type: Array },
+    visibility: {type: Array, default: []},
 
-    entry: { type: Number },
+    entry: {type: Number, default: 0},
     chapters: {
-        type: Array
+        type: Array, default: []
     },
     // lesson Rating
-    rating: { type: Number },
+    rating: {type: Number, default: 0},
     setupScreenshots: {
-        type: Array
+        type: Array,
+        default: []
     },
     setupInstructions: {
-        type: String
+        type: String,
+        default: ''
     },
 
     setupFiles: {
-        type: Array
+        type: Array,
+        default: []
     },
     // user id that created this lesson
-    createdBy: { type: ObjectId },
+    createdBy: {type: ObjectId},
     // created date
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date }
+    createdAt: {type: Date, default: Date.now},
+    updatedAt: {type: Date}
 });
 const Lesson = new model("Lesson", lessonSchema);
 

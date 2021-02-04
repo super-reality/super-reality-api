@@ -33,56 +33,29 @@ const createLesson = async function (request, response) {
             message: "Name should be atleast 4 character"
         })
     }
-    if (description.length < 4) {
-        errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({
-            err_code: statusCodes.BAD_REQUEST,
-            message: "Description should be atleast 4 character"
-        })
-    }
-    // Short description should be atleast 4 character
-    if (shortDescription.length < 4) {
-        errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({
-            err_code: statusCodes.BAD_REQUEST,
-            message: "Short description should be atleast 4 character"
-        })
-    }
     // Icon url should be atleast 4 character
-    if (icon.length < 4) {
-        errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({
-            err_code: statusCodes.BAD_REQUEST,
-            message: "Icon url should be atleast 4 character"
-        })
-    }
+
     // atleast one media file is required
-    if (medias.length == 0) {
-        errorStatus = true
-        response.status(statusCodes.BAD_REQUEST).send({
-            err_code: statusCodes.BAD_REQUEST,
-            message: "Atleast one media is required"
-        })
-    }
+
 
     const session = await db.startSession();
     const responses = {};
 
     var lesson = Lesson()
-    lesson.subject = subject
-    lesson.icon = icon
-    lesson.name = name
-    lesson.shortDescription = shortDescription
-    lesson.description = description
-    lesson.cost = cost
-    lesson.difficulty = difficulty
-    lesson.medias = medias
-    lesson.skills = skills
-    lesson.visibility = visibility
-    lesson.entry = entry
-    lesson.setupScreenshots = setupScreenshots
-    lesson.setupInstructions = setupInstructions
-    lesson.setupFiles = setupFiles
+    lesson.subject = subject ? subject : lesson.subject
+    lesson.icon = icon ? icon : lesson.icon
+    lesson.name = name ? name : lesson.name
+    lesson.shortDescription = shortDescription ? shortDescription : lesson.shortDescription
+    lesson.description = description ? description : lesson.shortDescription
+    lesson.cost = cost ? cost : lesson.cost
+    lesson.difficulty = difficulty ? difficulty : lesson.difficulty
+    lesson.medias = medias ? medias : lesson.medias
+    lesson.skills = skills ? skills : lesson.skills
+    lesson.visibility = visibility ? visibility : lesson.visibility
+    lesson.entry = entry ? entry : lesson.entry
+    lesson.setupScreenshots = setupScreenshots ? setupScreenshots : lesson.setupScreenshots
+    lesson.setupInstructions = setupInstructions ? setupInstructions : lesson.setupInstructions
+    lesson.setupFiles = setupFiles ? setupFiles : lesson.setupFiles
     lesson.rating = 0
     lesson.chapters = []
     lesson.createdBy = request.user._id
@@ -109,14 +82,16 @@ const createLesson = async function (request, response) {
                 }
             }
 
-            for (var i = 0; i < skills.length; i++) {
-                const skillName = skills[i]
-                result = await Skill.findOne({name: skillName})
-                if (result) {
-                } else {
-                    var skill = Skill()
-                    skill.name = skills[i]
-                    createdSkills = await skill.save({session})
+            if(skills) {
+                for (var i = 0; i < skills.length; i++) {
+                    const skillName = skills[i]
+                    result = await Skill.findOne({name: skillName})
+                    if (result) {
+                    } else {
+                        var skill = Skill()
+                        skill.name = skills[i]
+                        createdSkills = await skill.save({session})
+                    }
                 }
             }
         }, transactionOptions)
