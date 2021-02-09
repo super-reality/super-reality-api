@@ -27,7 +27,6 @@ const getCategoryById = async function (request, response) {
 
 const getAllCategory = async function (request, response) {
     try {
-        console.log(request.params.name)
         category = await Category.find({
             name: {
                 $regex: request.params.name,
@@ -36,7 +35,6 @@ const getAllCategory = async function (request, response) {
         }, 'name').sort({'name': "asc"}).limit(10)
 
         if (category) {
-            console.log(category)
             response.status(statusCodes.OK).send({err_code: 0, category})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
