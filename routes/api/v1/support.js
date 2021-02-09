@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createSupportTicket, getTicketById, getAllSupportTicket ,updateSupportTicketById} = require('../../../controllers/supportController')
+const {createSupportTicket, getTicketById, getAllSupportTicket ,updateSupportTicketById ,getTicketBySearch} = require('../../../controllers/supportController')
 
 router.post("/create", auth(), function (req, res) {
 
@@ -18,5 +18,10 @@ router.get("/", auth(), function (req, res) {
 router.put("/", auth(), function (req, res) {
 
     updateSupportTicketById(req, res)
+});
+
+router.post("/search/", auth(), function (req, res) {
+
+    getTicketBySearch(req, res)
 });
 module.exports = router
