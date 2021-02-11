@@ -120,7 +120,7 @@ const getTicketById = async function (request, response) {
 const getAllSupportTicket = async function (request, response) {
     try {
         tickets = await Support.find({})
-        if (ticket) {
+        if (tickets) {
             response.status(statusCodes.OK).send({err_code: 0, tickets})
 
         } else {
