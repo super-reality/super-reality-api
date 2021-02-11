@@ -35,7 +35,7 @@ const lessonSchema = new Schema({
     // tag Array
     skills: {type: Array, default: []},
     // visibility
-    visibility: {type: Array, default: []},
+    visibility: {type: Boolean , default : false},
 
     entry: {type: Number, default: 0},
     chapters: {

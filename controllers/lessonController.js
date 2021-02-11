@@ -51,7 +51,12 @@ const createLesson = async function (request, response) {
     lesson.difficulty = difficulty ? difficulty : lesson.difficulty
     lesson.medias = medias ? medias : lesson.medias
     lesson.skills = skills ? skills : lesson.skills
-    lesson.visibility = visibility ? visibility : lesson.visibility
+    if (visibility === true) {
+        lesson.visibility = true
+
+    } else {
+        lesson.visibility = false
+    }
     lesson.entry = entry ? entry : lesson.entry
     lesson.setupScreenshots = setupScreenshots ? setupScreenshots : lesson.setupScreenshots
     lesson.setupInstructions = setupInstructions ? setupInstructions : lesson.setupInstructions
@@ -82,7 +87,7 @@ const createLesson = async function (request, response) {
                 }
             }
 
-            if(skills) {
+            if (skills) {
                 for (var i = 0; i < skills.length; i++) {
                     const skillName = skills[i]
                     result = await Skill.findOne({name: skillName})
@@ -147,6 +152,11 @@ const updateLesson = async function (request, response) {
                 currentLesson.skills = request.body.skills ? request.body.skills : currentLesson.skills
                 currentLesson.difficulty = request.body.difficulty ? request.body.difficulty : currentLesson.difficulty
                 currentLesson.medias = request.body.medias ? request.body.medias : currentLesson.medias
+                if (request.body.visibility === true) {
+                    currentLesson.visibility = true
+                } else {
+                    currentLesson.visibility = false
+                }
                 currentLesson.visibility = request.body.visibility ? request.body.visibility : currentLesson.visibility
                 currentLesson.entry = request.body.entry ? request.body.entry : currentLesson.entry
                 currentLesson.setupScreenshots = request.body.setupScreenshots ? request.body.setupScreenshots : currentLesson.setupScreenshots
