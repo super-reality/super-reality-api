@@ -213,12 +213,11 @@ const updateSupportTicketById = async function (request, response) {
 const getTicketBySearch = async function (request, response) {
     try {
         tickets = await Support.find({
-        $or: {
             title: {
                 $regex: request.body.name
             },
             supportCategory: request.body.category
-        }}).limit(request.body.limit)
+        }).limit(request.body.limit)
 
         if (tickets) {
             response.status(statusCodes.OK).send({err_code: 0, tickets})
