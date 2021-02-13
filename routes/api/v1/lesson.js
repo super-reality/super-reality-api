@@ -2,7 +2,7 @@
 const express = require('express')
 var router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createLesson, updateLesson, searchLesson, deleteLessonById,addChapterToLesson, getLessonById,getChaptesByLessonId} = require('../../../controllers/lessonController')
+const {createLesson, updateLesson, searchLesson, deleteLessonById, getPublicOrPrivateLesson, addChapterToLesson, getLessonById,getChaptesByLessonId} = require('../../../controllers/lessonController')
 router.post("/create", auth(), function (req, res) {
     createLesson(req, res)
 })
@@ -14,6 +14,9 @@ router.put("/", auth(), function (req, res) {
 })
 router.delete("/:id", auth(), function (req, res) {
     deleteLessonById(req, res)
+})
+router.post("/visibility", auth(), function (req, res) {
+    getPublicOrPrivateLesson(req, res)
 })
 router.get("/chapters/:id", auth(), function (req, res) {
     getChaptesByLessonId(req, res)

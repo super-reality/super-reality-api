@@ -399,6 +399,28 @@ const getLessonById = async function (request, response) {
     }
 
 }
+const getPublicOrPrivateLesson = async function (request, response) {
+    try {
+        lessons = await Lesson.find(
+            {visibility: request.body.visibility})
+        if (lessons) {
+            response.status(statusCodes.OK).send({err_code: 0, lessons})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: 0,
+                lessons: {},
+                message: "This lesson does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch lesson",
+            internalError: error
+        })
+    }
+
+}
 const getChaptesByLessonId = async function (request, response) {
     try {
         allChaptersId = []
@@ -429,6 +451,7 @@ const getChaptesByLessonId = async function (request, response) {
 
 }
 module.exports = {
+    getPublicOrPrivateLesson,
     createLesson,
     updateLesson,
     searchLesson,
