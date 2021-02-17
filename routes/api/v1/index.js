@@ -54,6 +54,7 @@ router.use("/chapter", require("./chapter"))
 router.use("/skill", require("./skill"))
 // step routes
 router.use("/step", require("./step"))
+router.use("/vibe", require("./vibe"))
 
 
 module.exports = router

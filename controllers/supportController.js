@@ -13,6 +13,8 @@ const createSupportTicket = async function (request, response) {
     const {
         title,
         supportType,
+        vibes,
+        vibesLevels,
         description,
         files,
         skills,
@@ -29,6 +31,8 @@ const createSupportTicket = async function (request, response) {
     support.files = files ? files : support.files
     support.skills = skills ? skills : support.skills
     support.createdBy = request.user._id
+    support.vibes = vibes ? vibes : support.vibes
+    support.vibesLevels = vibesLevels ? vibesLevels : support.vibesLevels
     support.creatorInfo = creatorInfo
     support.createdAt = new Date()
 

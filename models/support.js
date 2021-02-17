@@ -29,7 +29,14 @@ const supportSchema = new Schema({
         type: Array,
         required: true
     },
-
+    vibes: {
+        type: Array,
+        default: []
+    },
+    vibesLevels: {
+        type: Array,
+        default: []
+    },
     // user id that created this project
     creatorInfo: {
         type: Object,

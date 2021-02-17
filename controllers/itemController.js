@@ -154,10 +154,11 @@ const updateItemById = async function (request, response) {
 
                     currentItem.type = request.body.type ? request.body.type : currentItem.type;
                     currentItem.name = request.body.name ? request.body.name : currentItem.name;
-                    if (request.body.anchor) {
-                        currentItem.anchor = request.body.anchor
-                    } else {
-                        currentItem.anchor = currentItem.anchor
+                    if (request.body.anchor === true) {
+                        currentItem.anchor = true
+                    }
+                    if (request.body.anchor === false) {
+                        currentItem.anchor = false
                     }
                     currentItem.description = request.body.description ? request.body.description : currentItem.description
                     currentItem.relativePos = request.body.relativePos ? request.body.relativePos : currentItem.relativePos

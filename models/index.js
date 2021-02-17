@@ -24,6 +24,7 @@ const Anchor = require("./anchor")
 const Item = require("./item")
 const Support = require("./support")
 const Category = require("./category")
+const Vibe = require("./vibes")
 module.exports = {
     Classroom,
     Collection,
@@ -50,5 +51,6 @@ module.exports = {
     Task,
     User,
     Support,
-    Category
+    Category,
+    Vibe
 }
