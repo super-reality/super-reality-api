@@ -1,24 +1,22 @@
-const {Category} = require("../models");
+const {Subcategory} = require("../models");
 
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
-const createCategory = async function (request, response) {
+const createSubCategory = async function (request, response) {
     const {
         name,
-        subcategories,
     } = request.body;
 
-    var category = Category()
-    category.name = name ? name : category.name
-    category.subcategories = subcategories ? subcategories : category.subcategories
-    category.createdBy = request.user._id
-    category.rating = category.rating
-    category.createdAt = new Date()
+    var subcategory = Subcategory()
+    subcategory.name = name ? name : subcategory.name
+    subcategory.createdBy = request.user._id
+    subcategory.rating = Subcategory.rating
+    subcategory.createdAt = new Date()
 
     // save subject document
-    category.save(async function (err, result) {
+    subcategory.save(async function (err, result) {
         if (err != null) {
             response.status(statusCodes.Bad_Request).json({
                 error: err
@@ -30,47 +28,47 @@ const createCategory = async function (request, response) {
 }
 
 
-const getCategoryById = async function (request, response) {
+const getSubCategoryById = async function (request, response) {
     try {
-        category = await Category.findById({_id: request.params.id}).populate('subcategories')
-        if (category) {
-            response.status(statusCodes.OK).send({err_code: 0, category})
+        subcategory = await Subcategory.findById({_id: request.params.id})
+        if (subcategory) {
+            response.status(statusCodes.OK).send({err_code: 0, subcategory})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
-                message: "This category does not exist"
+                message: "This sub category does not exist"
             })
         }
     } catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch category",
+            message: "Could not fetch sub category",
             internalError: error
         })
     }
 }
 
-const getAllCategory = async function (request, response) {
+const getAllSubCategory = async function (request, response) {
     try {
-        category = await Category.find({
+        const subcategories = await Subcategory.find({
             name: {
                 $regex: request.params.name,
                 $options: 'i'
             }
-        }).sort({'name': "asc"}).limit(10).populate('subcategories')
+        }, 'name').sort({'name': "asc"}).limit(10)
 
-        if (category) {
-            response.status(statusCodes.OK).send({err_code: 0, category})
+        if (subcategories) {
+            response.status(statusCodes.OK).send({err_code: 0, subcategories})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
-                message: "This category does not exist"
+                message: "This sub category does not exist"
             })
         }
     } catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch category",
+            message: "Could not fetch sub category",
             internalError: error
         })
     }
@@ -78,7 +76,7 @@ const getAllCategory = async function (request, response) {
 
 
 module.exports = {
-    getCategoryById, getAllCategory, createCategory
+    getSubCategoryById, getAllSubCategory, createSubCategory
 }
 
 

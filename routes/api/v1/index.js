@@ -48,6 +48,8 @@ router.use("/classroom", require("./classroom"))
 //file routes
 router.use("/file", require("./file"))
 router.use("/category", require("./category"))
+
+router.use("/subcategory", require("./subCategory"))
 //chapter routes
 router.use("/chapter", require("./chapter"))
 // skill routes

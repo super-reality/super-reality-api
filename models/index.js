@@ -25,6 +25,7 @@ const Item = require("./item")
 const Support = require("./support")
 const Category = require("./category")
 const Vibe = require("./vibes")
+const Subcategory = require("./subcategory")
 module.exports = {
     Classroom,
     Collection,
@@ -52,5 +53,6 @@ module.exports = {
     User,
     Support,
     Category,
-    Vibe
+    Vibe,
+    Subcategory
 }

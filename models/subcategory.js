@@ -2,7 +2,7 @@ const {Schema, model} = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 /* *** define tag schema *** */
-const categorySchema = new Schema({
+const subCategorySchema = new Schema({
     // tag name
     name: {
         type: String,
@@ -13,7 +13,6 @@ const categorySchema = new Schema({
         type: ObjectId,
         required: true,
     },
-    subcategories: [{ type: ObjectId, ref: 'Subcategory' }],
     createdAt: {
         type: Date,
         default: Date.now()
@@ -27,6 +26,5 @@ const categorySchema = new Schema({
     }
 });
 
-const Category = new model("Category", categorySchema);
-
-module.exports = Category;
+const Subcategory = new model("Subcategory", subCategorySchema);
+module.exports = Subcategory;
