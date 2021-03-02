@@ -48,7 +48,7 @@ const getSubCategoryById = async function (request, response) {
     }
 }
 
-const getAllSubCategory = async function (request, response) {
+const getSubCategoryBySearch = async function (request, response) {
     try {
         const subcategories = await Subcategory.find({
             name: {
@@ -74,9 +74,30 @@ const getAllSubCategory = async function (request, response) {
     }
 }
 
+const getAllSubCategory = async function (request, response) {
+    try {
+        const subcategories = await Subcategory.find({})
+
+        if (subcategories) {
+            response.status(statusCodes.OK).send({err_code: 0, subcategories})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This sub category does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch sub category",
+            internalError: error
+        })
+    }
+}
+
 
 module.exports = {
-    getSubCategoryById, getAllSubCategory, createSubCategory
+    getSubCategoryById, getAllSubCategory, createSubCategory,getSubCategoryBySearch
 }
 
 

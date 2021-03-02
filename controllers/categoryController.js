@@ -50,7 +50,7 @@ const getCategoryById = async function (request, response) {
     }
 }
 
-const getAllCategory = async function (request, response) {
+const getCategoryBySearch = async function (request, response) {
     try {
         category = await Category.find({
             name: {
@@ -76,9 +76,29 @@ const getAllCategory = async function (request, response) {
     }
 }
 
+const getAllCategory = async function (request, response) {
+    try {
+        category = await Category.find({}).populate('subcategories')
+
+        if (category) {
+            response.status(statusCodes.OK).send({err_code: 0, category})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This category does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch category",
+            internalError: error
+        })
+    }
+}
 
 module.exports = {
-    getCategoryById, getAllCategory, createCategory
+    getCategoryById, getAllCategory, createCategory,getCategoryBySearch
 }
 
 
