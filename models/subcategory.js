@@ -13,6 +13,7 @@ const subCategorySchema = new Schema({
         type: ObjectId,
         required: true,
     },
+    skills : [{type: ObjectId, ref :'Skill'}],
     createdAt: {
         type: Date,
         default: Date.now()

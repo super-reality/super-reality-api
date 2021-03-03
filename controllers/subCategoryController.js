@@ -7,12 +7,14 @@ const db = mongoose.connection
 const createSubCategory = async function (request, response) {
     const {
         name,
+        skills
     } = request.body;
 
     var subcategory = Subcategory()
     subcategory.name = name ? name : subcategory.name
     subcategory.createdBy = request.user._id
     subcategory.rating = Subcategory.rating
+    subcategory.skills = skills ? skills : subcategory.skills
     subcategory.createdAt = new Date()
 
     // save subject document
@@ -30,7 +32,7 @@ const createSubCategory = async function (request, response) {
 
 const getSubCategoryById = async function (request, response) {
     try {
-        subcategory = await Subcategory.findById({_id: request.params.id})
+        subcategory = await Subcategory.findById({_id: request.params.id}).populate('skills')
         if (subcategory) {
             response.status(statusCodes.OK).send({err_code: 0, subcategory})
         } else {
@@ -55,7 +57,7 @@ const getSubCategoryBySearch = async function (request, response) {
                 $regex: request.params.name,
                 $options: 'i'
             }
-        }, 'name').sort({'name': "asc"}).limit(10)
+        }, 'name').populate('skills').sort({'name': "asc"}).limit(10)
 
         if (subcategories) {
             response.status(statusCodes.OK).send({err_code: 0, subcategories})
@@ -76,7 +78,7 @@ const getSubCategoryBySearch = async function (request, response) {
 
 const getAllSubCategory = async function (request, response) {
     try {
-        const subcategories = await Subcategory.find({})
+        const subcategories = await Subcategory.find({}).populate('skills')
 
         if (subcategories) {
             response.status(statusCodes.OK).send({err_code: 0, subcategories})
