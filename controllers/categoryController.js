@@ -106,7 +106,7 @@ const getCategoryByIdWithSkills = async function (request, response) {
 
 const getAllCategory = async function (request, response) {
     try {
-        category = await Category.find({}).populate('subcategories')
+        category = await Category.find({}).populate('subcategories').limit(parseInt(request.query.limit))
 
         if (category) {
             response.status(statusCodes.OK).send({err_code: 0, category})
