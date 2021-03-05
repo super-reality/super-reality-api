@@ -30,16 +30,7 @@ const createCategory = async function (request, response) {
 
 const getCategoryById = async function (request, response) {
     try {
-        category = await Category.findById({_id: request.params.id}).populate('subcategories').populate('subcategories.skills')
-
-        for(i=0;i<category.subcategories.length;i++)
-        {
-           skillset = await Skill.find({_id: {$in: category.subcategories[i].skills}})
-            if(skillset)
-            {
-                category.subcategories[i]['skills']= skillset
-            }
-        }
+        category = await Category.findById({_id: request.params.id}).populate('subcategories')
         if (category) {
 
             response.status(statusCodes.OK).send({err_code: 0, category})
@@ -84,6 +75,35 @@ const getCategoryBySearch = async function (request, response) {
     }
 }
 
+
+const getCategoryByIdWithSkills = async function (request, response) {
+    try {
+        category = await Category.findById({_id: request.params.id}).populate('subcategories').populate('subcategories.skills')
+
+        for (i = 0; i < category.subcategories.length; i++) {
+            skillset = await Skill.find({_id: {$in: category.subcategories[i].skills}},'name')
+            if (skillset) {
+                category.subcategories[i]['skills'] = skillset
+            }
+        }
+        if (category) {
+
+            response.status(statusCodes.OK).send({err_code: 0, category})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This category does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch category",
+            internalError: error
+        })
+    }
+}
+
 const getAllCategory = async function (request, response) {
     try {
         category = await Category.find({}).populate('subcategories')
@@ -106,7 +126,7 @@ const getAllCategory = async function (request, response) {
 }
 
 module.exports = {
-    getCategoryById, getAllCategory, createCategory, getCategoryBySearch
+    getCategoryById, getAllCategory, createCategory, getCategoryBySearch, getCategoryByIdWithSkills
 }
 
 
