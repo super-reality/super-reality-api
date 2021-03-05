@@ -1,4 +1,4 @@
-const {Category} = require("../models");
+const {Category, Skill} = require("../models");
 
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
@@ -16,7 +16,6 @@ const createCategory = async function (request, response) {
     category.createdBy = request.user._id
     category.rating = category.rating
     category.createdAt = new Date()
-
     // save subject document
     category.save(async function (err, result) {
         if (err != null) {
@@ -29,11 +28,20 @@ const createCategory = async function (request, response) {
     })
 }
 
-
 const getCategoryById = async function (request, response) {
     try {
-        category = await Category.findById({_id: request.params.id}).populate('subcategories')
+        category = await Category.findById({_id: request.params.id}).populate('subcategories').populate('subcategories.skills')
+
+        for(i=0;i<category.subcategories.length;i++)
+        {
+           skillset = await Skill.find({_id: {$in: category.subcategories[i].skills}})
+            if(skillset)
+            {
+                category.subcategories[i]['skills']= skillset
+            }
+        }
         if (category) {
+
             response.status(statusCodes.OK).send({err_code: 0, category})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
@@ -98,7 +106,7 @@ const getAllCategory = async function (request, response) {
 }
 
 module.exports = {
-    getCategoryById, getAllCategory, createCategory,getCategoryBySearch
+    getCategoryById, getAllCategory, createCategory, getCategoryBySearch
 }
 
 
