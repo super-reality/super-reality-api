@@ -217,7 +217,6 @@ const getstepsById = async function (request, response) {
     try {
         steps = await Step.findOne({_id: request.params.id})
         if (steps) {
-
             response.status(200).send({err_code: 0, steps})
         } else {
             response.status(200).send({err_code: 0, steps: {}, message: "This step does not exist"})

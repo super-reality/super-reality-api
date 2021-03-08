@@ -216,12 +216,28 @@ const updateSupportTicketById = async function (request, response) {
 
 const getTicketBySearch = async function (request, response) {
     try {
-        tickets = await Support.find({
-            title: {
-                $regex: request.body.name
-            },
-            supportCategory: request.body.category
-        }).limit(request.body.limit)
+        if(request.body.category && request.body.name) {
+
+            tickets = await Support.find({
+                title: {
+                    $regex: request.body.name,
+                    $options: 'i'
+                },
+                supportCategory: request.body.category
+            }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
+        }
+        if(!request.body.category) {
+            tickets = await Support.find({
+                title: {
+                    $regex: request.body.name
+                }
+            }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
+        }
+        if(!request.body.name) {
+            tickets = await Support.find({
+                supportCategory: request.body.category
+            }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
+        }
 
         if (tickets) {
             response.status(statusCodes.OK).send({err_code: 0, tickets})
