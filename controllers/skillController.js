@@ -90,6 +90,30 @@ const getAllSkillBySearch = async function (request, response) {
         })
     }
 }
+const deleteSkillById = async function (request, response) {
+    try {
+        skill = await Skill.findOne({_id: request.params.id})
+        if (skill) {
+            deletedSkill = await Skill.deleteOne({_id: request.params.id})
+            if (deletedSkill) {
+                response.status(statusCodes.OK).send({err_code: 0, message: "The skill was deleted successfully"})
+            } else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: 0,
+                    message: "Could not delete this skill"
+                })
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This skill does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this skill",
+            internalError: error
+        })
+    }
+}
 module.exports = {
-    getSkillById, getAllSkillBySearch,createSkill,getAllSkill
+    getSkillById, getAllSkillBySearch,createSkill,getAllSkill,deleteSkillById
 }
