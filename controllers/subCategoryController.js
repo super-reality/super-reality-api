@@ -97,9 +97,30 @@ const getAllSubCategory = async function (request, response) {
     }
 }
 
+const deleteSubCategoryById = async function (request, response) {
+    try {
+        subCategory = await Subcategory.findOne({ _id: request.params.id })
+        if (subCategory) {
+            deletedsubCategory = await Subcategory.deleteOne({ _id: request.params.id })
+            if (deletedsubCategory) {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The sub category was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this sub category" })
+            }
+        }
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This sub category does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this sub category", internalError: error })
+    }
+}
+
 
 module.exports = {
-    getSubCategoryById, getAllSubCategory, createSubCategory,getSubCategoryBySearch
+    getSubCategoryById, getAllSubCategory, createSubCategory,getSubCategoryBySearch,deleteSubCategoryById
 }
 
 
