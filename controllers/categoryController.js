@@ -124,9 +124,30 @@ const getAllCategory = async function (request, response) {
         })
     }
 }
+const deleteCategoryById = async function (request, response) {
+    try {
+        category = await Category.findOne({ _id: request.params.id })
+        if (category) {
+            deletedCategory = await Category.deleteOne({ _id: request.params.id })
+            if (deletedCategory) {
+                response.status(statusCodes.OK).send({ err_code: 0, message: "The category was deleted successfully" })
+            }
+            else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: 0, message: "Could not delete this category" })
+            }
+        }
+        else {
+            response.status(statusCodes.NOT_FOUND).send({ err_code: 0, message: "This category does not exist" })
+        }
+    }
+    catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({ err_code: statusCodes.INTERNAL_SERVER_ERROR, message: "Could not delete this category", internalError: error })
+    }
+}
+
 
 module.exports = {
-    getCategoryById, getAllCategory, createCategory, getCategoryBySearch, getCategoryByIdWithSkills
+    getCategoryById, getAllCategory, createCategory, getCategoryBySearch, getCategoryByIdWithSkills,deleteCategoryById
 }
 
 
