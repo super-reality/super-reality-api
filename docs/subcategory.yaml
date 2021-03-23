@@ -7,81 +7,81 @@ securityDefinitions:
     name: Authorization
     in: header
 paths:
-  /category/create:         # path of the user from your endpoint
+  /subcategory/create:         # path of the user from your endpoint
     post: # endpoint request type (post request)
       tags:
-        - Category
+        - Sub category
       security:
         - Bearer: []
-      summary: Create category
+      summary: Create Sub category
       produces:
       - application/json
       parameters:
       - name:       # name of parameter passed
         type: string
       - in: body
-        name: create category
-        description: It enables a user to create category
+        name: create subcategory
+        description: It enables a user to create subcategory
         required: false
         schema:
-          $ref: '#/definitions/categoryCreate'
+          $ref: '#/definitions/subcategoryCreate'
       responses:
         201:
-          description: An object with a new category
+          description: An object with a new subcategory
           content:
             application/json:
               schema:
-                $ref: '#/definitions/categoryCreate'
+                $ref: '#/definitions/subcategoryCreate'
         401:
           description: Unauthorized users
           
-  /category:         # path of the user from your endpoint
+  /subcategory:         # path of the user from your endpoint
     get: # endpoint request type (post request)
       tags:
-        - Category
+        - Sub category
       security:
         - Bearer: []
-      summary: Get All category
+      summary: Get All subcategory
       produces:
       - application/json
       responses:
         200:
-          description: An object with a category list
+          description: An object with a subcategory list
         401:
           description: Unauthorized users
-  /category/{id}:         # path of the user from your endpoint
+  /subcategory/{id}:         # path of the user from your endpoint
     get: # endpoint request type (post request)
       tags:
-        - Category
+        - Sub category
       security:
         - Bearer: []
-      summary: Get category By Id
+      summary: Get Sub category By Id
       produces:
       - application/json
       parameters:  # name of parameter passed
         - in: path
           name: id
-          description: It enables a user to fetch a category
+          description: It enables a user to fetch a subcategory
           required: false
           type: string
       responses:
         200:
-          description: An object with a category values
+          description: An object with a subcategory values
         401:
           description: Unauthorized users
-  /category/{category_id}:         # path of the user from your endpoint
+  /subcategory/{subcategory_id}:         # path of the user from your endpoint
     delete: # endpoint request type (post request)
       tags:
-        - Category
+        - Sub category
       security:
         - Bearer: []
-      summary: Delete category By Id
+      summary: Delete subcategory By Id
       produces:
       - application/json
       parameters:  # name of parameter passed
         - in: path
-          name: category_id
-          description: It enables a user to delete a category
+          name: subcategory_id
+          description: It enables a user to delete a subcategory
           required: false
           type: string
       responses:
@@ -90,25 +90,25 @@ paths:
         401:
           description: Unauthorized users
 definitions:        # Schema definition for the request body
-  categoryCreate:
+  subcategoryCreate:
     type: object
     properties:
       name:
         type: string
         required: true
-      subcategories:
+      skills:
         type: array
         items:
           type: string
       rating:
         type: integer
-  categoryUpdate:
+  subcategoryUpdate:
     type: object
     properties:
       name:
         type: string
         required: true
-      subcategories:
+      skills:
         type: array
         items:
           type: string
