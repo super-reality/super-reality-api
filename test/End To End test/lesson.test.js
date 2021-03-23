@@ -16,7 +16,7 @@ const createLessonPayload = {
     "shortDescription": "again",
     "description": "will delete this",
     "medias": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
-    "visibility": [],
+    "visibility": false,
     "entry": 2,
     "setupFiles": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
     "setupScreenshots": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
@@ -32,7 +32,7 @@ const updateLessonPayload = {
     "shortDescription": "update short description",
     "description": "will update lesson ",
     "medias": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
-    "visibility": [],
+    "visibility": true,
     "entry": 2,
     "setupFiles": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
     "setupScreenshots": ["https://s3.us-west-1.amazonaws.com/openverse-lms/lesson-1601038233109.png"],
@@ -112,7 +112,7 @@ describe('API Tests', function () {
 
 
     describe('# Lessons', function () {
-        it('should get a lesson by its id ', function (done) {
+        it('should update a lesson by its id ', function (done) {
             request(app).put('/api/v1/lesson/').send(updateLessonPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     expect(res.statusCode).to.equal(200);
