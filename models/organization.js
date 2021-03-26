@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+ const { Schema, model } = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 /* *** define organization schema *** */

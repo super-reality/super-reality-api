@@ -121,6 +121,71 @@ const getTicketById = async function (request, response) {
     }
 }
 
+const upvoteSupportTicket = async function (request, response) {
+    try {
+        ticket = await Support.findById({_id: request.params.id}, ['votes','voters'])
+        if (ticket) {
+            console.log(ticket.voters)
+            console.log(ticket.voters[request.user._id])
+            if(ticket.voters[request.user._id] == 'upvoted')
+            {
+                response.status(statusCodes.OK).send({err_code: 0, message:" You have already upvoted this ticket"})
+            }
+            else {
+
+                ticket.votes = parseInt(ticket.votes) + 1
+                ticket.voters[request.user._id] = 'upvoted'
+                updatedTicket = await ticket.save()
+                if (updatedTicket) {
+                    response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
+                }
+            }
+
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This ticket does not exist or you have already upvoted this "
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch ticket",
+            internalError: error
+        })
+    }
+}
+
+const downVoteSupportTicket = async function (request, response) {
+    try {
+        ticket = await Support.findById({_id: request.params.id}, ['votes','voters'],)
+        if (ticket) {
+            console.log(ticket.voters)
+            ticket.votes = parseInt(ticket.votes) -1
+            console.log(ticket.voters)
+            if(ticket.voters[request.user._id]) {
+                ticket.voters[request.user._id] = 'downvoted'
+            }
+            updatedTicket = await ticket.save()
+            if (updatedTicket) {
+                response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
+            }
+
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This ticket does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch ticket",
+            internalError: error
+        })
+    }
+}
+
 const getAllSupportTicket = async function (request, response) {
     try {
         tickets = await Support.find({})
@@ -216,7 +281,7 @@ const updateSupportTicketById = async function (request, response) {
 
 const getTicketBySearch = async function (request, response) {
     try {
-        if(request.body.category && request.body.name) {
+        if (request.body.category && request.body.name) {
 
             tickets = await Support.find({
                 title: {
@@ -226,14 +291,14 @@ const getTicketBySearch = async function (request, response) {
                 supportCategory: request.body.category
             }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
         }
-        if(!request.body.category) {
+        if (!request.body.category) {
             tickets = await Support.find({
                 title: {
                     $regex: request.body.name
                 }
             }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
         }
-        if(!request.body.name) {
+        if (!request.body.name) {
             tickets = await Support.find({
                 supportCategory: request.body.category
             }).limit(request.body.limit ? parseInt(request.body.limit) : 10)
@@ -256,6 +321,12 @@ const getTicketBySearch = async function (request, response) {
     }
 }
 module.exports = {
-    createSupportTicket, getTicketById, getAllSupportTicket, updateSupportTicketById, getTicketBySearch
+    createSupportTicket,
+    getTicketById,
+    getAllSupportTicket,
+    updateSupportTicketById,
+    getTicketBySearch,
+    upvoteSupportTicket,
+    downVoteSupportTicket
 }
 
