@@ -80,7 +80,7 @@ paths:
       - application/json
       parameters:  # name of parameter passed
         - in: path
-          name: subcategory_id
+          name: board_id
           description: It enables a user to delete a board
           required: false
           type: string
