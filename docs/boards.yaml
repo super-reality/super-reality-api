@@ -96,13 +96,9 @@ definitions:        # Schema definition for the request body
       title:
         type: string
         required: true
-      lastSeenAt:
-        type: string
   boardUpdate:
     type: object
     properties:
       title:
         type: string
         required: true
-      lastSeenAt:
-        type: string
