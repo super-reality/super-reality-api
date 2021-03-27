@@ -27,7 +27,7 @@ paths:
           $ref: '#/definitions/boardCreate'
       responses:
         201:
-          description: An object with a new subcategory
+          description: An object with a new board
           content:
             application/json:
               schema:
@@ -46,7 +46,7 @@ paths:
       - application/json
       responses:
         200:
-          description: An object with a subcategory list
+          description: An object with a board list
         401:
           description: Unauthorized users
   /boards/{id}:         # path of the user from your endpoint
@@ -75,13 +75,13 @@ paths:
         - Boards
       security:
         - Bearer: []
-      summary: Delete subcategory By Id
+      summary: Delete board By Id
       produces:
       - application/json
       parameters:  # name of parameter passed
         - in: path
           name: subcategory_id
-          description: It enables a user to delete a subcategory
+          description: It enables a user to delete a board
           required: false
           type: string
       responses:
