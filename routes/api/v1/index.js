@@ -24,31 +24,27 @@ router.use("/auth", require("./auth"))
 
 // collection routes
 router.use("/collection", require("./collection"))
-
 // item routes
 router.use("/item", require("./item"))
-
+//support routes
 router.use("/support", require("./support"))
-
+//board routes
+router.use("/boards", require("./boards"))
 // subject routes
 router.use("/subject", require("./subject"))
-
 //lesson routes
 router.use("/lesson", require("./lesson"))
-
 // tag routes
 router.use("/tag", require("./tag"))
-
 // user routes
 router.use("/user", require("./user"))
-
 // clasroom routes
 router.use("/classroom", require("./classroom"))
-
 //file routes
 router.use("/file", require("./file"))
+//category
 router.use("/category", require("./category"))
-
+//subcategory
 router.use("/subcategory", require("./subCategory"))
 //chapter routes
 router.use("/chapter", require("./chapter"))
@@ -56,6 +52,7 @@ router.use("/chapter", require("./chapter"))
 router.use("/skill", require("./skill"))
 // step routes
 router.use("/step", require("./step"))
+//vibe routes
 router.use("/vibe", require("./vibe"))
 
 

@@ -1,0 +1,108 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /boards/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Create a board
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create board
+        description: It enables a user to create a trello board
+        required: false
+        schema:
+          $ref: '#/definitions/boardCreate'
+      responses:
+        201:
+          description: An object with a new subcategory
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/boardCreate'
+        401:
+          description: Unauthorized users
+          
+  /boards:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Get All board
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a subcategory list
+        401:
+          description: Unauthorized users
+  /boards/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Get board By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a board
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a board values
+        401:
+          description: Unauthorized users
+  /boards/{board_id}:         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Delete subcategory By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: subcategory_id
+          description: It enables a user to delete a subcategory
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  boardCreate:
+    type: object
+    properties:
+      title:
+        type: string
+        required: true
+      lastSeenAt:
+        type: string
+  boardUpdate:
+    type: object
+    properties:
+      title:
+        type: string
+        required: true
+      lastSeenAt:
+        type: string

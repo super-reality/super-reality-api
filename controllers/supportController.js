@@ -123,28 +123,26 @@ const getTicketById = async function (request, response) {
 
 const upvoteSupportTicket = async function (request, response) {
     try {
-        ticket = await Support.findById({_id: request.params.id}, ['votes','voters'])
+      const ticket = await Support.findById({_id: request.params.id})
         if (ticket) {
-            console.log(ticket.voters)
-            console.log(ticket.voters[request.user._id])
-            if(ticket.voters[request.user._id] == 'upvoted')
-            {
-                response.status(statusCodes.OK).send({err_code: 0, message:" You have already upvoted this ticket"})
-            }
-            else {
 
-                ticket.votes = parseInt(ticket.votes) + 1
+            console.log(ticket.voters[request.user._id])
+            if (ticket.voters[request.user._id]) {
                 ticket.voters[request.user._id] = 'upvoted'
+                ticket.votes = parseInt(ticket.votes) + 1
                 updatedTicket = await ticket.save()
+                console.log(updatedTicket)
                 if (updatedTicket) {
                     response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
                 }
+
             }
+
 
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
-                message: "This ticket does not exist or you have already upvoted this "
+                message: "This ticket does not exist"
             })
         }
     } catch (error) {
@@ -158,18 +156,21 @@ const upvoteSupportTicket = async function (request, response) {
 
 const downVoteSupportTicket = async function (request, response) {
     try {
-        ticket = await Support.findById({_id: request.params.id}, ['votes','voters'],)
+        const ticket = await Support.findById({_id: request.params.id}, ['votes', 'voters'],)
         if (ticket) {
-            console.log(ticket.voters)
-            ticket.votes = parseInt(ticket.votes) -1
-            console.log(ticket.voters)
-            if(ticket.voters[request.user._id]) {
+
+            console.log(ticket.voters[request.user._id])
+            if (ticket.voters[request.user._id]) {
                 ticket.voters[request.user._id] = 'downvoted'
+                ticket.votes = parseInt(ticket.votes) - 1
+                updatedTicket = await ticket.save()
+                console.log(updatedTicket)
+                if (updatedTicket) {
+                    response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
+                }
+
             }
-            updatedTicket = await ticket.save()
-            if (updatedTicket) {
-                response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
-            }
+
 
         } else {
             response.status(statusCodes.NOT_FOUND).send({
