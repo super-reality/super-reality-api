@@ -135,10 +135,7 @@ const upvoteSupportTicket = async function (request, response) {
                 if (updatedTicket) {
                     response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
                 }
-
             }
-
-
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,

@@ -26,8 +26,9 @@ const createBoard = async function (request, response) {
     })
 }
 const getAllBoards = async function (request, response) {
+    console.log()
     try {
-        const boards = await Boards.find({}).populate('ownerId',['firstname','lastname'])
+        const boards = await Boards.find({ownerId: request.user._id}).populate('ownerId',['firstname','lastname'])
         if (boards) {
             response.status(statusCodes.OK).send({err_code: 0, boards})
         } else {
