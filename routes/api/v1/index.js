@@ -54,6 +54,8 @@ router.use("/skill", require("./skill"))
 router.use("/step", require("./step"))
 //vibe routes
 router.use("/vibe", require("./vibe"))
+//card routes
+router.use("/cards", require("./cards"))
 
 
 module.exports = router
