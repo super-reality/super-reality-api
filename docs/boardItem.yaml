@@ -59,7 +59,7 @@ paths:
         - Boards
       security:
         - Bearer: []
-      summary: Delete board item By Id
+      summary: Delete board items By board Id
       produces:
         - application/json
       parameters:  # name of parameter passed
@@ -79,7 +79,7 @@ paths:
         - Boards
       security:
         - Bearer: []
-      summary: Get board item By board Id
+      summary: Get board item By item id
       produces:
       - application/json
       parameters:  # name of parameter passed
@@ -98,7 +98,7 @@ paths:
         - Boards
       security:
         - Bearer: []
-      summary: Delete board item By Id
+      summary: Delete board item By item Id
       produces:
       - application/json
       parameters:  # name of parameter passed
