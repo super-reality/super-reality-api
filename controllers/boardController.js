@@ -132,7 +132,7 @@ const getBoardById = async function (request, response) {
         })
     }
 }
-const getBoardItemsById = async function (request, response) {
+const getBoardItemsByBoardId = async function (request, response) {
     try {
         const boardItems = await BoardIds.find({boardId: request.params.boardId})
         if (boardItems) {
@@ -141,6 +141,26 @@ const getBoardItemsById = async function (request, response) {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
                 message: "This board does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch board item",
+            internalError: error
+        })
+    }
+}
+
+const getBoardItemsById = async function (request, response) {
+    try {
+        const boardItem = await BoardIds.find({_id: request.params.id})
+        if (boardItem) {
+            response.status(statusCodes.OK).send({err_code: 0, boardItem})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This board item does not exist"
             })
         }
     } catch (error) {
@@ -200,6 +220,30 @@ const deleteBoardItemByIds = async function (request, response) {
         })
     }
 }
+const deleteBoardItemsByBoardId = async function (request, response) {
+    try {
+        const boardId = await Boards.findOne({_id: request.params.boardId})
+        if (boardId) {
+            const deletedBoardIds = await BoardIds.deleteMany({boardId: request.params.boardId})
+            if (deletedBoardIds) {
+                response.status(statusCodes.OK).send({err_code: 0, message: "The board item was deleted successfully"})
+            } else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: 0,
+                    message: "Could not deleted this board item"
+                })
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This board item does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this board item",
+            internalError: error
+        })
+    }
+}
 
 module.exports = {
     getBoardById,
@@ -209,5 +253,7 @@ module.exports = {
     createBoardItem,
     deleteBoardItemByIds,
     getBoardItemsById,
+    deleteBoardItemsByBoardId,
+    getBoardItemsByBoardId,
     getAllBoardItemsById
 }

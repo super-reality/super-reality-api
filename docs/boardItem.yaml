@@ -34,19 +34,43 @@ paths:
                 $ref: '#/definitions/boardItemCreate'
         401:
           description: Unauthorized users
-          
-  /boards/item:         # path of the user from your endpoint
+  /boards/items/{board_id}:         # path of the user from your endpoint
     get: # endpoint request type (post request)
       tags:
         - Boards
       security:
         - Bearer: []
-      summary: Get All board
+      summary: Get board items By board Id
       produces:
-      - application/json
+        - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: board_id
+          description: It enables a user to fetch a particular board items
+          required: false
+          type: string
       responses:
         200:
-          description: An object with a board list
+          description: An object with a board item values for a specific board
+        401:
+          description: Unauthorized users         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Delete board item By Id
+      produces:
+        - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: board_id
+          description: It enables a user to delete all board items by board id
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
         401:
           description: Unauthorized users
   /boards/item/{id}:         # path of the user from your endpoint
