@@ -62,7 +62,7 @@ describe('API Tests', function () {
             });
         });
     });
-    describe('# Cateogory', function () {
+    describe('# Boards', function () {
         it('should get a Boards by its id ', function (done) {
             request(app).get('/api/v1/boards/' + BoardsId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
@@ -72,7 +72,7 @@ describe('API Tests', function () {
             });
         });
     });
-    describe('# Boardss', function () {
+    describe('# Boards', function () {
         it('should delete the Boards that was created', function (done) {
             request(app).delete('/api/v1/boards/' + BoardsId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {

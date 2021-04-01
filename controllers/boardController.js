@@ -1,4 +1,4 @@
-const {Boards} = require("../models");
+const {Boards, BoardIds} = require("../models");
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 
@@ -25,29 +25,97 @@ const createBoard = async function (request, response) {
         }
     })
 }
+const createBoardItem = async function (request, response) {
+    const {
+        boardId,
+        col,
+        title
+    } = request.body;
+
+    const boardIds = BoardIds()
+    boardIds.boardId = boardId
+    boardIds.col = col ? col : boardIds.col
+    boardIds.title = title
+    boardIds.createdAt = new Date()
+
+    // save subject document
+    boardIds.save(async function (err, result) {
+        if (err != null) {
+            response.status(statusCodes.Bad_Request).json({
+                error: err
+            });
+        } else {
+            response.status(statusCodes.CREATED).send(result)
+        }
+    })
+}
+const UpdateBoardItem = async function (request, response) {
+    const {
+        boardId,
+        col,
+        title
+    } = request.body;
+
+    const boardIds = BoardIds()
+    boardIds.boardId = boardId
+    boardIds.col = col ? col : boardIds.col
+    boardIds.title = title
+    boardIds.createdAt = new Date()
+
+    // save subject document
+    boardIds.save(async function (err, result) {
+        if (err != null) {
+            response.status(statusCodes.Bad_Request).json({
+                error: err
+            });
+        } else {
+            response.status(statusCodes.CREATED).send(result)
+        }
+    })
+}
+
 const getAllBoards = async function (request, response) {
-    console.log()
     try {
-        const boards = await Boards.find({ownerId: request.user._id}).populate('ownerId',['firstname','lastname'])
+        const boards = await Boards.find({ownerId: request.user._id}).populate('ownerId', ['firstname', 'lastname'])
         if (boards) {
             response.status(statusCodes.OK).send({err_code: 0, boards})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
                 err_code: statusCodes.NOT_FOUND,
-                message: "No board awas found"
+                message: "No board was found"
             })
         }
     } catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch category",
+            message: "Could not fetch board",
+            internalError: error
+        })
+    }
+}
+
+const getAllBoardItemsById = async function (request, response) {
+    try {
+        const boardItems = await BoardIds.find({boardId: request.params.boardId}).populate('boardId')
+        if (boards) {
+            response.status(statusCodes.OK).send({err_code: 0, boardItems})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "No board item was found"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch board item",
             internalError: error
         })
     }
 }
 const getBoardById = async function (request, response) {
     try {
-        const board = await Boards.findById({_id: request.params.id}).populate('ownerId',['firstname','lastname'])
+        const board = await Boards.findById({_id: request.params.id}).populate('ownerId', ['firstname', 'lastname'])
         if (board) {
             response.status(statusCodes.OK).send({err_code: 0, board})
         } else {
@@ -60,6 +128,25 @@ const getBoardById = async function (request, response) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Could not fetch board",
+            internalError: error
+        })
+    }
+}
+const getBoardItemsById = async function (request, response) {
+    try {
+        const boardItems = await BoardIds.find({boardId: request.params.boardId})
+        if (boardItems) {
+            response.status(statusCodes.OK).send({err_code: 0, boardItems})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This board does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch board item",
             internalError: error
         })
     }
@@ -89,6 +176,38 @@ const deleteBoardById = async function (request, response) {
         })
     }
 }
+const deleteBoardItemByIds = async function (request, response) {
+    try {
+        const boardId = await BoardIds.findOne({_id: request.params.id})
+        if (boardId) {
+            const deletedBoardIds = await BoardIds.deleteOne({_id: request.params.id})
+            if (deletedBoardIds) {
+                response.status(statusCodes.OK).send({err_code: 0, message: "The board item was deleted successfully"})
+            } else {
+                response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                    err_code: 0,
+                    message: "Could not deleted this board item"
+                })
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This board item does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this board item",
+            internalError: error
+        })
+    }
+}
+
 module.exports = {
-    getBoardById, getAllBoards, createBoard, deleteBoardById
+    getBoardById,
+    getAllBoards,
+    createBoard,
+    deleteBoardById,
+    createBoardItem,
+    deleteBoardItemByIds,
+    getBoardItemsById,
+    getAllBoardItemsById
 }

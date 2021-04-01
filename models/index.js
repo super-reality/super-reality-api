@@ -27,6 +27,7 @@ const Category = require("./category")
 const Vibe = require("./vibes")
 const Subcategory = require("./subcategory")
 const Boards = require("./boards")
+const BoardIds = require("./board_ids")
 module.exports = {
     Classroom,
     Collection,
@@ -56,5 +57,6 @@ module.exports = {
     Category,
     Vibe,
     Subcategory,
-    Boards
+    Boards,
+    BoardIds
 }

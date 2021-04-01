@@ -1,0 +1,115 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /boards/item/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Create a board item
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create board
+        description: It enables a user to create a trello board
+        required: false
+        schema:
+          $ref: '#/definitions/boardItemCreate'
+      responses:
+        201:
+          description: An object with a new board
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/boardItemCreate'
+        401:
+          description: Unauthorized users
+          
+  /boards/item:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Get All board
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a board list
+        401:
+          description: Unauthorized users
+  /boards/item/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Get board item By board Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a particular board items
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a board item values for a specific board
+        401:
+          description: Unauthorized users         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Delete board item By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: item_id
+          description: It enables a user to delete a board item
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  boardItemCreate:
+    type: object
+    properties:
+      boardId:
+        type: string
+        required: true
+      col:
+        type: integer
+        required: true
+      title:
+        type: string
+        required: true
+  boardItemUpdate:
+    type: object
+    properties:
+      boardId:
+        type: string
+        required: true
+      col:
+        type: integer
+        required: true
+      title:
+        type: string
+        required: true

@@ -2,13 +2,24 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {getBoardById, getAllBoards, createBoard,deleteBoardById} = require('../../../controllers/boardController')
+const {getBoardById, getAllBoards, createBoard, deleteBoardById, createBoardItem, getBoardItemsById, deleteBoardItemByIds} = require('../../../controllers/boardController')
 
 
 router.post("/create", auth(), function (req, res) {
     createBoard(req, res)
 })
-
+router.post("/item/create", auth(), function (req, res) {
+    createBoardItem(req, res)
+})
+router.get("/item/:id", auth(), function (req, res) {
+    getBoardItemsById(req, res)
+})
+router.get("/board/:boardId", auth(), function (req, res) {
+    getBoardItemsById(req, res)
+})
+router.delete("/item/:id", auth(), function (req, res) {
+    deleteBoardItemByIds(req, res)
+})
 router.get("/:id", auth(), function (req, res) {
     getBoardById(req, res)
 });
