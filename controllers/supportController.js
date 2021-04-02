@@ -1,4 +1,4 @@
-const {Support, Category, Skill} = require("../models");
+const {Support, SupportVoters, Category, Skill} = require("../models");
 
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
@@ -120,69 +120,95 @@ const getTicketById = async function (request, response) {
         })
     }
 }
+const updateSupportTicketVotesById = async function (request, response) {
+    const {
+        votes,
+        upvote,
+        downvote,
+    } = request.body;
 
-const upvoteSupportTicket = async function (request, response) {
+    const session = await db.startSession();
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
+    };
     try {
-      const ticket = await Support.findById({_id: request.params.id})
-        if (ticket) {
+        var ticketUpdated = false
+        var responses = {}
 
-            console.log(ticket.voters[request.user._id])
-            if (ticket.voters[request.user._id]) {
-                ticket.voters[request.user._id] = 'upvoted'
-                ticket.votes = parseInt(ticket.votes) + 1
-                updatedTicket = await ticket.save()
-                console.log(updatedTicket)
-                if (updatedTicket) {
-                    response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
+        const transactionResults = await session.withTransaction(async () => {
+
+            const currentSupportTicket = await Support.findById({_id: request.params.id, session})
+            if (currentSupportTicket) {
+                currentSupportTicket.votes = request.body.votes ? request.body.votes : currentSupportTicket.votes
+                getVotingInfoForUser = await SupportVoters.findOne({
+                    voter: request.user._id,
+                    ticketId: request.params.id
+                })
+                if (getVotingInfoForUser) {
+                    getVotingInfoForUser.upvote = request.body.upvote
+                     getVotingInfoForUser.ticketId = request.params.id
+                    getVotingInfoForUser.voter = request.user._id
+                    getVotingInfoForUser.downvote = request.body.downvote
+                    updateVotingInfo = await getVotingInfoForUser.save()
+                    if (updateVotingInfo) {
+                        console.log("previous vote has been updated")
+                    }
+
+                } else {
+                    const votingInfoForuser = new SupportVoters()
+                    votingInfoForuser.ticketId = request.params.id
+                    votingInfoForuser.voter = request.user._id
+                    votingInfoForuser.upvote = upvote
+                    votingInfoForuser.downvote = downvote
+                    newVoteSubmitted = await votingInfoForuser.save()
+                    if (newVoteSubmitted) {
+                        console.log("new vote added")
+                    }
                 }
+                updatedTicket = await currentSupportTicket.save({session})
+                if (updatedTicket) {
+                    ticketUpdated = true
+                    responses['ticket'] = updatedTicket
+                } else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Could not update this ticket"
+                    })
+                }
+            } else {
+                response.status(statusCodes.NOT_FOUND).send({
+                    err_code: statusCodes.NOT_FOUND,
+                    "message": "This ticket does not exist"
+                })
             }
+            // save collection document
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
         } else {
-            response.status(statusCodes.NOT_FOUND).send({
-                err_code: statusCodes.NOT_FOUND,
-                message: "This ticket does not exist"
+
+            console.log("The transaction was intentionally aborted.");
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Could not update this ticket"
             })
+
         }
-    } catch (error) {
+    } catch (err) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch ticket",
-            internalError: error
+            message: "Sorry we were not able to update this ticket",
+            internalError: err
         })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
     }
 }
 
-const downVoteSupportTicket = async function (request, response) {
-    try {
-        const ticket = await Support.findById({_id: request.params.id}, ['votes', 'voters'],)
-        if (ticket) {
-
-            console.log(ticket.voters[request.user._id])
-            if (ticket.voters[request.user._id]) {
-                ticket.voters[request.user._id] = 'downvoted'
-                ticket.votes = parseInt(ticket.votes) - 1
-                updatedTicket = await ticket.save()
-                console.log(updatedTicket)
-                if (updatedTicket) {
-                    response.status(statusCodes.OK).send({err_code: 0, updatedTicket})
-                }
-
-            }
-
-
-        } else {
-            response.status(statusCodes.NOT_FOUND).send({
-                err_code: statusCodes.NOT_FOUND,
-                message: "This ticket does not exist"
-            })
-        }
-    } catch (error) {
-        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
-            err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch ticket",
-            internalError: error
-        })
-    }
-}
 
 const getAllSupportTicket = async function (request, response) {
     try {
@@ -324,7 +350,6 @@ module.exports = {
     getAllSupportTicket,
     updateSupportTicketById,
     getTicketBySearch,
-    upvoteSupportTicket,
-    downVoteSupportTicket
+    updateSupportTicketVotesById
 }
 

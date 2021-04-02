@@ -37,10 +37,6 @@ const supportSchema = new Schema({
         type: Number,
         default: 0
     },
-    voters:{
-        type: Object,
-        default: {}
-    },
     vibesLevels: {
         type: Array,
         default: []

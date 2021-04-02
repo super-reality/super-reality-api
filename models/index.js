@@ -29,6 +29,7 @@ const Subcategory = require("./subcategory")
 const Boards = require("./boards")
 const BoardIds = require("./board_ids")
 const Cards = require('./cards')
+const SupportVoters = require("./supportVoters")
 module.exports = {
     Classroom,
     Collection,
@@ -57,6 +58,7 @@ module.exports = {
     Support,
     Category,
     Vibe,
+    SupportVoters,
     Subcategory,
     Boards,
     BoardIds,
