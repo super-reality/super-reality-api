@@ -148,7 +148,7 @@ const updateSupportTicketVotesById = async function (request, response) {
                 })
                 if (getVotingInfoForUser) {
                     getVotingInfoForUser.upvote = request.body.upvote
-                     getVotingInfoForUser.ticketId = request.params.id
+                    getVotingInfoForUser.ticketId = request.params.id
                     getVotingInfoForUser.voter = request.user._id
                     getVotingInfoForUser.downvote = request.body.downvote
                     updateVotingInfo = await getVotingInfoForUser.save()
@@ -208,8 +208,6 @@ const updateSupportTicketVotesById = async function (request, response) {
         session.endSession();
     }
 }
-
-
 const getAllSupportTicket = async function (request, response) {
     try {
         tickets = await Support.find({})

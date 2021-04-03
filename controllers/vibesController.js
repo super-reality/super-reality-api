@@ -70,7 +70,7 @@ const getAllVibes = async function (request, response) {
 const getVibesById = async function (request, response) {
     try {
         vibe = await Vibe.findById({_id: request.params.id})
-        if (skill) {
+        if (vibe) {
             response.status(statusCodes.OK).send({err_code: 0, vibe})
         } else {
             response.status(statusCodes.NOT_FOUND).send({
