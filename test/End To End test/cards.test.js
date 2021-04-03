@@ -7,10 +7,14 @@ const database = mongoose.connection;
 const expect = chai.expect;
 
 const createcardPayload = {
-    "ttile": "sample card"
+    "title": "sample card"
 }
 const createBoardPayload = {
-    "ttile": "sample board"
+    "title": "sample board"
+}
+const createBoardItemsPayload = {
+    "col": 1,
+    "title": "item1"
 }
 const loginPayload =
     {
@@ -20,6 +24,7 @@ const loginPayload =
 let boardId = null
 let boardColId = null
 let token = null
+let cardId = null
 
 describe('API Tests', function () {
 
@@ -46,12 +51,12 @@ describe('API Tests', function () {
         });
     });
     describe('## Boards ', function () {
-        it('should create a Boards', function (done) {
-            request(app).post('/api/v1/boards/create').send(createBoardsPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+        it('should create a Board', function (done) {
+            request(app).post('/api/v1/boards/create').send(createBoardPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     boardId = res.body._id
-                    createBoardPayload.boardId = boardId
-
+                    createBoardItemsPayload.boardId = boardId
+                    createcardPayload.boardId = boardId
                     expect(res.statusCode).to.equal(201);
                     done();
                 }
@@ -59,19 +64,31 @@ describe('API Tests', function () {
         });
     });
         describe('# Boards', function () {
-        it('should get all Boardss', function (done) {
-            request(app).post('/api/v1/boards/item/create').send(createBoardsPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+        it('should create a new board item', function (done) {
+            request(app).post('/api/v1/boards/item/create').send(createBoardItemsPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
-                    itemId = res.body._id
+                    boardColId = res.body._id
+                    createcardPayload.boardColId = boardColId
                     expect(res.statusCode).to.equal(201);
                     done();
                 }
             });
         });
     });
-    describe('# Cateogory', function () {
-        it('should get a category by its id ', function (done) {
-            request(app).get('/api/v1/category/' + categoryId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+    describe('# Cards', function () {
+        it('should create a new card ', function (done) {
+            request(app).post('/api/v1/cards/create').send(createcardPayload).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+                if (res) {
+                    cardId = res.body.card._id
+                    expect(res.statusCode).to.equal(201);
+                    done();
+                }
+            });
+        });
+    });
+    describe('# Cards', function () {
+        it('should get the card that was created', function (done) {
+            request(app).get('/api/v1/cards/' + cardId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     expect(res.statusCode).to.equal(200);
                     done();
@@ -79,9 +96,9 @@ describe('API Tests', function () {
             });
         });
     });
-    describe('# categorys', function () {
-        it('should delete the category that was created', function (done) {
-            request(app).delete('/api/v1/category/' + categoryId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
+       describe('# Cards', function () {
+        it('should delete the card that was created', function (done) {
+            request(app).delete('/api/v1/cards/' + cardId).set('Authorization', 'Bearer ' + token).end(function (err, res) {
                 if (res) {
                     expect(res.statusCode).to.equal(200);
                     done();
