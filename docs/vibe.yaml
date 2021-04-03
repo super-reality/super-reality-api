@@ -1,0 +1,79 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /vibe/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Vibe
+      security:
+        - Bearer: []
+      summary: Create vibe
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create vibe
+        description: It enables a user to create vibe
+        required: false
+        schema:
+          $ref: '#/definitions/vibeCreate'
+      responses:
+        201:
+          description: An object with a new vibe
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/vibeCreate'
+        401:
+          description: Unauthorized users
+          
+  /vibe:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Vibe
+      security:
+        - Bearer: []
+      summary: Get All vibes
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with a vibe values
+        401:
+          description: Unauthorized users
+  /vibe/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Vibe
+      security:
+        - Bearer: []
+      summary: Get vibe By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a vibe
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a vibe values
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  vibeCreate:
+    type: object
+    properties:
+      title:
+        type: string
+      emoji:
+        type: string
