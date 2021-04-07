@@ -7,13 +7,13 @@ securityDefinitions:
     name: Authorization
     in: header
 paths:
-  /cards/create:         # path of the user from your endpoint
+  /cardComment/create:         # path of the user from your endpoint
     post: # endpoint request type (post request)
       tags:
         - Cards
       security:
         - Bearer: []
-      summary: Create Card
+      summary: Create comment on a card
       produces:
       - application/json
       parameters:
@@ -21,41 +21,64 @@ paths:
         type: string
       - in: body
         name: Create card
-        description: It enables a user to create trello cards
+        description: It enables a user to create comment on trello cards
         required: false
         schema:
-          $ref: '#/definitions/cardCreate'
+          $ref: '#/definitions/cardCommentCreate'
       responses:
         201:
-          description: An object with a new card
+          description: An object with card comment
           content:
             application/json:
               schema:
-                $ref: '#/definitions/cardCreate'
+                $ref: '#/definitions/cardCommentCreate'
         401:
           description: Unauthorized users
-          
-  /cards:         # path of the user from your endpoint
+  /cardComment/card/{id}:  # path of the user from your endpoint
+    get:
+      tags:
+        - Cards
+      security:
+        - Bearer: []
+      summary: Get coment By card Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch comments on a card
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a card comments values
+        401:
+          description: Unauthorized users
+  /cardComment/{id}:  # path of the user from your endpoint
     put: # endpoint request type (post request)
       tags:
         - Cards
       security:
         - Bearer: []
-      summary: Update card
+      summary: Update comment on a card
       produces:
       - application/json
       parameters:
       - name:       # name of parameter passed
         type: string
       - in: body
-        name: update card
-        description: It enables a user to update trello cards
+        name: Create card
+        description: It enables a user to update comments on trello cards
         required: false
         schema:
-          $ref: '#/definitions/chapterUpdate'
+          $ref: '#/definitions/cardCommentCreate'
       responses:
-        200:
-          description: An object with card values
+        201:
+          description: An object with a new card
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/cardCommentCreate'
         401:
           description: Unauthorized users
     get: # endpoint request type (post request)
@@ -63,21 +86,7 @@ paths:
         - Cards
       security:
         - Bearer: []
-      summary: Get All cards
-      produces:
-      - application/json
-      responses:
-        200:
-          description: An object with a chapter values
-        401:
-          description: Unauthorized users
-  /cards/{id}:         # path of the user from your endpoint
-    get: # endpoint request type (post request)
-      tags:
-        - Cards
-      security:
-        - Bearer: []
-      summary: Get card By Id
+      summary: Get coment By Id
       produces:
       - application/json
       parameters:  # name of parameter passed
@@ -88,7 +97,7 @@ paths:
           type: string
       responses:
         200:
-          description: An object with a card values
+          description: An object with a chapter values
         401:
           description: Unauthorized users
     delete: # endpoint request type (post request)
@@ -96,7 +105,7 @@ paths:
         - Cards
       security:
         - Bearer: []
-      summary: Delete card By Id
+      summary: Delete card comment By Id
       produces:
       - application/json
       parameters:  # name of parameter passed
@@ -111,46 +120,12 @@ paths:
         401:
           description: Unauthorized users
 definitions:        # Schema definition for the request body
-  cardCreate:
+  cardCommentCreate:
     type: object
     properties:
-      boardId:
+      cardId:
         type: string
         required: true
-      boardColId:
+      body:
         type: string
         required: true
-      title:
-        type: string
-        required: true
-      row:
-        type: integer
-        deafult: 0
-      description:
-        type: string
-        default: ''
-      coverImage:
-        type: string
-        deafult: null
-        
-  cardUpdate:
-    type: object
-    properties:
-      boardId:
-        type: string
-        required: true
-      boardColId:
-        type: string
-        required: true
-      title:
-        type: string
-        required: true
-      row:
-        type: integer
-        deafult: 0
-      description:
-        type: string
-        default: ''
-      coverImage:
-        type: string
-        deafult: null
