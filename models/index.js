@@ -30,6 +30,7 @@ const Boards = require("./boards")
 const BoardIds = require("./board_ids")
 const Cards = require('./cards')
 const SupportVoters = require("./supportVoters")
+const CardComments = require("./cardComment")
 module.exports = {
     Classroom,
     Collection,
@@ -60,6 +61,7 @@ module.exports = {
     Vibe,
     SupportVoters,
     Subcategory,
+    CardComments,
     Boards,
     BoardIds,
     Cards

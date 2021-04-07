@@ -56,6 +56,7 @@ router.use("/step", require("./step"))
 router.use("/vibe", require("./vibe"))
 //card routes
 router.use("/cards", require("./cards"))
-
+//card Comments
+router.use("/cardComment", require("./cardComment"))
 
 module.exports = router
