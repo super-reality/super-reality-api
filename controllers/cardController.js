@@ -181,14 +181,31 @@ const getCardById = async function (request, response) {
 
 const getCards = async function (request, response) {
     try {
-        cards = await Cards.find({}).populate('boardId').populate('boardColId').populate('createdBy')
-        if (steps) {
+        cards = await Cards.find({}).populate('boardId').populate('boardColId').populate('createdBy',['firstname','lastname'])
+        if (cards) {
             response.status(200).send({err_code: 0, cards})
         }
     } catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Could not fetch steps",
+            internalError: error
+        })
+        console.error(error)
+    }
+
+}
+
+const getCardsByBoardId = async function (request, response) {
+    try {
+        cards = await Cards.find({boardId:request.params.id}).populate('boardId').populate('boardColId').populate('createdBy',['firstname','lastname'])
+        if (cards) {
+            response.status(200).send({err_code: 0, cards})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch cards",
             internalError: error
         })
         console.error(error)
@@ -222,5 +239,6 @@ module.exports = {
     getCardById,
     getCards,
     updateCardById,
+    getCardsByBoardId,
     deleteCardById,
 }
