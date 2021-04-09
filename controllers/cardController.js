@@ -212,6 +212,22 @@ const getCardsByBoardId = async function (request, response) {
     }
 
 }
+const getCardsByBoardColId = async function (request, response) {
+    try {
+        cards = await Cards.find({boardColId:request.params.id}).populate('boardId').populate('createdBy',['firstname','lastname'])
+        if (cards) {
+            response.status(200).send({err_code: 0, cards})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch cards",
+            internalError: error
+        })
+        console.error(error)
+    }
+
+}
 const deleteCardById = async function (request, response) {
     try {
         card = await Cards.findOne({_id: request.params.id})
@@ -240,5 +256,6 @@ module.exports = {
     getCards,
     updateCardById,
     getCardsByBoardId,
+    getCardsByBoardColId,
     deleteCardById,
 }
