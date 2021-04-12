@@ -2,7 +2,7 @@ const {Schema, model} = require("mongoose");
 const ObjectId = Schema.Types.ObjectId
 
 /* *** define tag schema *** */
-const sharedCardSchema = new Schema({
+const trelloAttachmentsSchema = new Schema({
     cardId: {
         type: ObjectId, ref: 'cards',
         required: true,
@@ -16,6 +16,10 @@ const sharedCardSchema = new Schema({
         type: String,
         required: true
     },
+    uploadedBy: {
+        type: ObjectId,
+        ref: 'User',
+    },
     createdAt: {
         type: Date,
         default: new Date()
@@ -25,6 +29,6 @@ const sharedCardSchema = new Schema({
     }
 });
 
-const sharedCards = new model("sharedCard", sharedCardSchema);
+const trelloAttachments = new model("trelloAttachment", trelloAttachmentsSchema);
 
-module.exports = sharedCards;
+module.exports = trelloAttachments;

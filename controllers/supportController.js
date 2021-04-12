@@ -210,7 +210,8 @@ const updateSupportTicketVotesById = async function (request, response) {
 }
 const getAllSupportTicket = async function (request, response) {
     try {
-        tickets = await Support.find({})
+        const skipCount = 10 * (parseInt(request.query.page) - 1)
+        const tickets = await Support.find({}).skip(parseInt(skipCount)).limit(10)
         if (tickets) {
             response.status(statusCodes.OK).send({err_code: 0, tickets})
 

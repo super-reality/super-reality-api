@@ -31,6 +31,8 @@ const BoardIds = require("./board_ids")
 const Cards = require('./cards')
 const SupportVoters = require("./supportVoters")
 const CardComments = require("./cardComment")
+const SharedCards = require("./sharedCard")
+const TrelloAttachments = require("./trelloAttachments")
 module.exports = {
     Classroom,
     Collection,
@@ -58,11 +60,13 @@ module.exports = {
     User,
     Support,
     Category,
+    TrelloAttachments,
     Vibe,
     SupportVoters,
     Subcategory,
     CardComments,
     Boards,
     BoardIds,
+    SharedCards,
     Cards
 }

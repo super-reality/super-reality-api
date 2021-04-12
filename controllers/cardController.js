@@ -1,4 +1,4 @@
-const {Cards} = require("../models")
+const {Cards, SharedCards} = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -74,6 +74,70 @@ const createCard = async function (request, response) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Sorry we were not able to create this card",
+            internalError: err
+
+        })
+        console.error("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
+    }
+}
+
+const createSharedCard = async function (request, response) {
+    const {
+        cardId,
+        sharedUserId
+    } = request.body;
+
+    // Name should be atleast 4 character
+    if (!cardId || cardId.length < 1) {
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "A vailid card  is required"
+        })
+    }
+    if (!sharedUserId || sharedUserId.length < 1) {
+        response.status(statusCodes.BAD_REQUEST).send({
+            err_code: statusCodes.BAD_REQUEST,
+            message: "A vailid user is required"
+        })
+    }
+
+    const session = await db.startSession();
+    const responses = {};
+
+    const sharedCard = SharedCards()
+
+    sharedCard.cardId = cardId
+    sharedCard.sharedUserId = sharedUserId
+    sharedCard.createdAt = new Date()
+
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
+    };
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            const sharedCardItem = await sharedCard.save({session})
+            responses['card'] = sharedCardItem
+
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.CREATED).send(responses)
+
+        } else {
+            console.message("The transaction was intentionally aborted.");
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Sorry we were not able to share this card"
+            })
+        }
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to share this card",
             internalError: err
 
         })
@@ -164,7 +228,7 @@ const updateCardById = async function (request, response) {
 
 const getCardById = async function (request, response) {
     try {
-        card = await Cards.findById({_id: request.params.id}).populate('boardId').populate('boardColId').populate('createdBy',['firstname','lastname'])
+        card = await Cards.findById({_id: request.params.id}).populate('boardId').populate('boardColId').populate('createdBy', ['firstname', 'lastname'])
         if (card) {
             response.status(200).send({err_code: 0, card})
         } else {
@@ -181,14 +245,14 @@ const getCardById = async function (request, response) {
 
 const getCards = async function (request, response) {
     try {
-        cards = await Cards.find({}).populate('boardId').populate('boardColId').populate('createdBy',['firstname','lastname'])
+        const cards = await Cards.find({}).populate('boardId').populate('boardColId').populate('createdBy', ['firstname', 'lastname'])
         if (cards) {
             response.status(200).send({err_code: 0, cards})
         }
     } catch (error) {
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
-            message: "Could not fetch steps",
+            message: "Could not fetch cards",
             internalError: error
         })
         console.error(error)
@@ -196,9 +260,25 @@ const getCards = async function (request, response) {
 
 }
 
+const getSharedCardsWithUser = async function (request, response) {
+    try {
+        const cards = await SharedCards.find({sharedUserId: request.params.id}).populate('cardId').populate('sharedUserId', ['firstname', 'lastname'])
+        if (cards) {
+            response.status(200).send({err_code: 0, cards})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch cards",
+            internalError: error
+        })
+        console.error(error)
+    }
+
+}
 const getCardsByBoardId = async function (request, response) {
     try {
-        cards = await Cards.find({boardId:request.params.id}).populate('boardId').populate('boardColId').populate('createdBy',['firstname','lastname'])
+        cards = await Cards.find({boardId: request.params.id}).populate('boardId').populate('boardColId').populate('createdBy', ['firstname', 'lastname'])
         if (cards) {
             response.status(200).send({err_code: 0, cards})
         }
@@ -214,7 +294,7 @@ const getCardsByBoardId = async function (request, response) {
 }
 const getCardsByBoardColId = async function (request, response) {
     try {
-        cards = await Cards.find({boardColId:request.params.id}).populate('boardId').populate('createdBy',['firstname','lastname'])
+        cards = await Cards.find({boardColId: request.params.id}).populate('boardId').populate('createdBy', ['firstname', 'lastname'])
         if (cards) {
             response.status(200).send({err_code: 0, cards})
         }
@@ -248,14 +328,37 @@ const deleteCardById = async function (request, response) {
             internalError: error
         })
     }
-
+}
+const unshareAllCardsSharedWithUser = async function (request, response) {
+    try {
+        card = await SharedCards.find({sharedUserId: request.params.id})
+        if (card) {
+            deletedCard = await SharedCards.deleteMany({sharedUserId: request.params.id})
+            if (deletedCard) {
+                response.status(statusCodes.OK).send({err_code: 0, message: "The cards was unshared successfully"})
+            } else {
+                response.status(statusCodes.OK).send({err_code: 0, message: "Could not delete this card"})
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This card does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this card",
+            internalError: error
+        })
+    }
 }
 module.exports = {
     createCard,
+    createSharedCard,
+    getSharedCardsWithUser,
     getCardById,
     getCards,
     updateCardById,
     getCardsByBoardId,
+    unshareAllCardsSharedWithUser,
     getCardsByBoardColId,
     deleteCardById,
 }

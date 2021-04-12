@@ -58,5 +58,7 @@ router.use("/vibe", require("./vibe"))
 router.use("/cards", require("./cards"))
 //card Comments
 router.use("/cardComment", require("./cardComment"))
+//attachment router for trello
+router.use("/trelloAttachment", require("./trelloAttachments"))
 
 module.exports = router
