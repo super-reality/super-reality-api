@@ -8,13 +8,8 @@ const sharedCardSchema = new Schema({
         required: true,
         index: true
     },
-    fileName: {
-        type: String,
-        required: true,
-    },
-    link: {
-        type: String,
-        required: true
+    sharedUserId: {
+        type: ObjectId, ref: 'User',
     },
     createdAt: {
         type: Date,

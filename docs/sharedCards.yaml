@@ -1,0 +1,83 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /cards/sharedCard:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Cards
+      security:
+        - Bearer: []
+      summary: Share Card
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: Create card
+        description: It enables a user to share trello cards
+        required: false
+        schema:
+          $ref: '#/definitions/cardShare'
+      responses:
+        201:
+          description: An object with a new card
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/cardShare'
+        401:
+          description: Unauthorized users
+          
+  /cards/sharedCard/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Cards
+      security:
+        - Bearer: []
+      summary: Get All shared cards with a user
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+      responses:
+        200:
+          description: An object with a chapter values
+        401:
+          description: Unauthorized users         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Cards
+      security:
+        - Bearer: []
+      summary: Remove all cards shared with a user
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to unshare a card
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a card values
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  cardShare:
+    type: object
+    properties:
+      cardId:
+        type: string
+        required: true
+      sharedUserId:
+        type: string
+        required: true
