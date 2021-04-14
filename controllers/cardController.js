@@ -290,7 +290,6 @@ const getCardsByBoardId = async function (request, response) {
         })
         console.error(error)
     }
-
 }
 const getCardsByBoardColId = async function (request, response) {
     try {

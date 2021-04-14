@@ -71,6 +71,26 @@ paths:
           description: An object with a chapter values
         401:
           description: Unauthorized users
+  /cards/board/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Cards
+      security:
+        - Bearer: []
+      summary: Get card By board Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a card
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a card values
+        401:
+          description: Unauthorized users
   /cards/{id}:         # path of the user from your endpoint
     get: # endpoint request type (post request)
       tags:
