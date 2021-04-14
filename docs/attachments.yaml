@@ -1,0 +1,69 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /trelloAttachment/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Trello Attachment
+      security:
+        - Bearer: []
+      summary: Create skill
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create skill
+        description: It enables a user to create skill
+        required: false
+        schema:
+          $ref: '#/definitions/attachmentCreate'
+      responses:
+        201:
+          description: An object with a new skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/attachmentCreate'
+        401:
+          description: Unauthorized users
+  /trelloAttachment/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Trello Attachment
+      security:
+        - Bearer: []
+      summary: Get trello attachments By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a skill
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a skill values
+        401:
+          description: Unauthorized users
+
+definitions:        # Schema definition for the request body
+  attachmentCreate:
+    type: object
+    properties:
+      cardId:
+        type: string
+        required: true
+      fileName:
+        type: string
+        required: true
+      link:
+        type: string
