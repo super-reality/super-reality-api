@@ -13,21 +13,21 @@ paths:
         - Trello Attachment
       security:
         - Bearer: []
-      summary: Create skill
+      summary: Create Attachment
       produces:
       - application/json
       parameters:
       - name:       # name of parameter passed
         type: string
       - in: body
-        name: create skill
-        description: It enables a user to create skill
+        name: Create attachment
+        description: It enables a user to create attachment
         required: false
         schema:
           $ref: '#/definitions/attachmentCreate'
       responses:
         201:
-          description: An object with a new skill
+          description: An object with a new attachment
           content:
             application/json:
               schema:
@@ -46,14 +46,34 @@ paths:
       parameters:  # name of parameter passed
         - in: path
           name: id
-          description: It enables a user to fetch a skill
+          description: It enables a user to fetch a attachment
           required: false
           type: string
       responses:
         200:
-          description: An object with a skill values
+          description: An object with a attachment values
+        401:
+          description: Unauthorized users        # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Trello Attachment
+      security:
+        - Bearer: []
+      summary: Delete trello attachments By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a delete an attachment
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with delete confirmation
         401:
           description: Unauthorized users
+          
 
 definitions:        # Schema definition for the request body
   attachmentCreate:
