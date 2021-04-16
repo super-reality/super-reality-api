@@ -93,7 +93,29 @@ const getAttachmentById = async function (request, response) {
         })
     }
 }
+const deleteAttachmentId = async function (request, response) {
+    try {
+        const attachment = await TrelloAttachments.findOne({_id: request.params.id})
+        if (attachment) {
+            const deletedAttachment = await TrelloAttachments.deleteOne({_id: request.params.id})
+            if (deletedAttachment) {
+                response.status(statusCodes.OK).send({err_code: 0, message: "The attachment was deleted successfully"})
+            } else {
+                response.status(statusCodes.OK).send({err_code: 0, message: "Could not delete this attachment"})
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({err_code: 0, message: "This attachment does not exist"})
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not delete this card",
+            internalError: error
+        })
+    }
+}
 module.exports = {
     createAttachmentForTrello,
-    getAttachmentById
+    getAttachmentById,
+    deleteAttachmentId
 }
