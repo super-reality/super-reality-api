@@ -5,12 +5,14 @@ const statusCodes = require("http-status-codes")
 const createBoard = async function (request, response) {
     const {
         title,
-        lastSeenAt
+        lastSeenAt,
+        public,
     } = request.body;
 
     const board = Boards()
     board.title = title
     board.lastSeenAt = lastSeenAt ? lastSeenAt : null
+    board.public = public
     board.ownerId = request.user._id
     board.createdAt = new Date()
 
@@ -24,6 +26,7 @@ const createBoard = async function (request, response) {
             response.status(statusCodes.CREATED).send(result)
         }
     })
+
 }
 const createBoardItem = async function (request, response) {
     const {
@@ -77,6 +80,26 @@ const UpdateBoardItem = async function (request, response) {
 const getAllBoards = async function (request, response) {
     try {
         const boards = await Boards.find({ownerId: request.user._id}).populate('ownerId', ['firstname', 'lastname'])
+        if (boards) {
+            response.status(statusCodes.OK).send({err_code: 0, boards})
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "No board was found"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch board",
+            internalError: error
+        })
+    }
+}
+
+const getAllPublicBoards = async function (request, response) {
+    try {
+        const boards = await Boards.find({public: true}).populate('ownerId', ['firstname', 'lastname'])
         if (boards) {
             response.status(statusCodes.OK).send({err_code: 0, boards})
         } else {
@@ -247,6 +270,7 @@ const deleteBoardItemsByBoardId = async function (request, response) {
 
 module.exports = {
     getBoardById,
+    getAllPublicBoards,
     getAllBoards,
     createBoard,
     deleteBoardById,

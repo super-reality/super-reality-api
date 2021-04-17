@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {getBoardById, getAllBoards, createBoard, deleteBoardById, createBoardItem, getBoardItemsById, deleteBoardItemByIds, getBoardItemsByBoardId, deleteBoardItemsByBoardId} = require('../../../controllers/boardController')
+const {getBoardById, getAllBoards, createBoard, deleteBoardById, createBoardItem, getBoardItemsById, deleteBoardItemByIds, getBoardItemsByBoardId, deleteBoardItemsByBoardId,getAllPublicBoards} = require('../../../controllers/boardController')
 
 
 router.post("/create", auth(), function (req, res) {
@@ -25,6 +25,9 @@ router.delete("/items/:boardId", auth(), function (req, res) {
 })
 router.get("/:id", auth(), function (req, res) {
     getBoardById(req, res)
+});
+router.post("/public/", auth(), function (req, res) {
+    getAllPublicBoards(req, res)
 });
 router.get("/", auth(), function (req, res) {
     getAllBoards(req, res)

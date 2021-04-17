@@ -12,6 +12,10 @@ const boardSchema = new Schema({
     ownerId: {
         type: ObjectId, ref: 'User'
     },
+    public: {
+        type: Boolean,
+        default: false
+    },
     lastSeenAt: {
         type: Date
     },

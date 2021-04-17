@@ -34,6 +34,20 @@ paths:
                 $ref: '#/definitions/boardCreate'
         401:
           description: Unauthorized users
+  /boards/public:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Boards
+      security:
+        - Bearer: []
+      summary: Get All public board
+      produces:
+      - application/json
+      responses:
+        200:
+          description: An object with public board list
+        401:
+          description: Unauthorized users
           
   /boards:         # path of the user from your endpoint
     get: # endpoint request type (post request)
