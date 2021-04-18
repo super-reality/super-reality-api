@@ -12,7 +12,7 @@ const boardSchema = new Schema({
     ownerId: {
         type: ObjectId, ref: 'User'
     },
-    public: {
+    isPublic: {
         type: Boolean,
         default: false
     },

@@ -6,13 +6,13 @@ const createBoard = async function (request, response) {
     const {
         title,
         lastSeenAt,
-        public,
+        isPublic,
     } = request.body;
 
     const board = Boards()
     board.title = title
     board.lastSeenAt = lastSeenAt ? lastSeenAt : null
-    board.public = public
+    board.isPublic = isPublic
     board.ownerId = request.user._id
     board.createdAt = new Date()
 
@@ -99,7 +99,7 @@ const getAllBoards = async function (request, response) {
 
 const getAllPublicBoards = async function (request, response) {
     try {
-        const boards = await Boards.find({public: true}).populate('ownerId', ['firstname', 'lastname'])
+        const boards = await Boards.find({isPublic: true}).populate('ownerId', ['firstname', 'lastname'])
         if (boards) {
             response.status(statusCodes.OK).send({err_code: 0, boards})
         } else {
