@@ -52,7 +52,7 @@ paths:
         description: It enables a user to update trello cards
         required: false
         schema:
-          $ref: '#/definitions/chapterUpdate'
+          $ref: '#/definitions/cardUpdate'
       responses:
         200:
           description: An object with card values
