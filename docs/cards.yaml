@@ -68,7 +68,7 @@ paths:
       - application/json
       responses:
         200:
-          description: An object with a chapter values
+          description: An object with a card values
         401:
           description: Unauthorized users
   /cards/board/{id}:         # path of the user from your endpoint
@@ -156,6 +156,8 @@ definitions:        # Schema definition for the request body
   cardUpdate:
     type: object
     properties:
+      card_id:
+        type: string
       boardId:
         type: string
         required: true
