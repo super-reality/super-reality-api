@@ -208,6 +208,39 @@ const updateSupportTicketVotesById = async function (request, response) {
         session.endSession();
     }
 }
+
+const getVotedTicketsByUser = async function (request, response) {
+    try {
+        let downvotes = []
+        let upvotes = []
+        const tickets = await SupportVoters.find({voter: request.user._id})
+        tickets.filter((ticket) => {
+            if (ticket.downvote === true) {
+                downvotes.push(ticket.ticketId)
+            }
+        })
+        tickets.filter((ticket) => {
+            if (ticket.upvote === true) {
+                upvotes.push(ticket.ticketId)
+            }
+        })
+        if (tickets) {
+            response.status(statusCodes.OK).send({err_code: 0, upvotes, downvotes})
+
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "No ticket found"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch ticket",
+            internalError: error
+        })
+    }
+}
 const getAllSupportTicket = async function (request, response) {
     try {
         const skipCount = 10 * (parseInt(request.query.page) - 1)
@@ -347,6 +380,7 @@ module.exports = {
     createSupportTicket,
     getTicketById,
     getAllSupportTicket,
+    getVotedTicketsByUser,
     updateSupportTicketById,
     getTicketBySearch,
     updateSupportTicketVotesById

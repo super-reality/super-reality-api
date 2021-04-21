@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createSupportTicket, getTicketById, getAllSupportTicket ,updateSupportTicketById ,getTicketBySearch,updateSupportTicketVotesById} = require('../../../controllers/supportController')
+const {createSupportTicket, getTicketById, getAllSupportTicket ,updateSupportTicketById ,getTicketBySearch,updateSupportTicketVotesById,getVotedTicketsByUser} = require('../../../controllers/supportController')
 
 router.post("/create", auth(), function (req, res) {
 
@@ -17,7 +17,9 @@ router.put("/vote/:id", auth(), function (req, res) {
 router.get("/", auth(), function (req, res) {
     getAllSupportTicket(req, res)
 })
-
+router.post("/votes", auth(), function (req, res) {
+    getVotedTicketsByUser(req, res)
+})
 router.put("/", auth(), function (req, res) {
 
     updateSupportTicketById(req, res)
