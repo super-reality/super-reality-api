@@ -155,6 +155,42 @@ const getBoardById = async function (request, response) {
         })
     }
 }
+const updateBoardById = async function (request, response) {
+    try {
+        const board = await Boards.findById({_id: request.body.boardId}).populate('ownerId', ['firstname', 'lastname'])
+        if (board) {
+            board.title = request.body.title ? request.body.title : board.title
+            board.lastSeenAt = request.body.lastSeenAt ? request.body.lastSeenAt : board.lastSeenAt
+            if (request.body.archived === true) {
+                board.archived = true
+            } else {
+                board.archived = false
+            }
+            if (request.body.isPublic === true) {
+                board.isPublic = true
+            } else {
+                board.isPublic = false
+            }
+            board.udpatedAt = new Date()
+            const updatedBoard = await board.save({})
+            if (updatedBoard) {
+                response.status(statusCodes.OK).send(updatedBoard)
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "This board does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch board",
+            internalError: error
+        })
+    }
+}
+
 const getBoardItemsByBoardId = async function (request, response) {
     try {
         const boardItems = await BoardIds.find({boardId: request.params.boardId})
@@ -274,6 +310,7 @@ module.exports = {
     getAllBoards,
     createBoard,
     deleteBoardById,
+    updateBoardById,
     createBoardItem,
     deleteBoardItemByIds,
     getBoardItemsById,
