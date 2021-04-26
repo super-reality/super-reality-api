@@ -226,6 +226,57 @@ const updateCardById = async function (request, response) {
 
 }
 
+
+//update bulk card positions
+const updateCardPositionsById = async function (request, response) {
+    try {
+
+        var cardUpdated = false
+        const responseResult = request.body.cards.map(async (cardItem, i) => {
+
+            const currentCard = await Cards.findById({_id: cardItem.id})
+            if (currentCard) {
+
+                currentCard.row = cardItem.position.order ? cardItem.position.order : currentCard.row
+                currentCard.boardColId = cardItem.position.columnId ? cardItem.position.columnId : currentCard.boardColId
+                currentCard.updatedAt = new Date()
+                currentCard.updatedAt = new Date()
+                let updatedCard = currentCard.save({})
+                if (updatedCard) {
+                    cardUpdated = true
+                } else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Could not update this card"
+                    })
+                }
+            } else {
+                response.status(statusCodes.NOT_FOUND).send({
+                    err_code: statusCodes.NOT_FOUND,
+                    "message": "This card does not exist"
+                })
+            }
+
+        })
+        if (responseResult) {
+            response.status(statusCodes.OK).send({
+                err_code: statusCodes.OK,
+                message: "All the positions updated",
+
+            })
+        }
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to update this step",
+            internalError: err
+
+        })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    }
+
+}
+
 const getCardById = async function (request, response) {
     try {
         card = await Cards.findById({_id: request.params.id}).populate('boardId').populate('boardColId').populate('createdBy', ['firstname', 'lastname'])
@@ -358,6 +409,7 @@ module.exports = {
     updateCardById,
     getCardsByBoardId,
     unshareAllCardsSharedWithUser,
+    updateCardPositionsById,
     getCardsByBoardColId,
     deleteCardById,
 }

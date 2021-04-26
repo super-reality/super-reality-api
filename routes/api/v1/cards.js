@@ -2,7 +2,7 @@
 const express = require('express')
 var router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createCard, getCards, getCardById, updateCardById, deleteCardById, getCardsByBoardId, getCardsByBoardColId, createSharedCard, getSharedCardsWithUser,unshareAllCardsSharedWithUser} = require('../../../controllers/cardController')
+const {createCard, getCards, getCardById, updateCardById, deleteCardById, getCardsByBoardId, getCardsByBoardColId, createSharedCard, getSharedCardsWithUser, unshareAllCardsSharedWithUser, updateCardPositionsById} = require('../../../controllers/cardController')
 router.post("/create", auth(), function (req, res) {
     createCard(req, res)
 })
@@ -30,6 +30,9 @@ router.get("/col/:id", auth(), function (req, res) {
 })
 router.delete("/:id", auth(), function (req, res) {
     deleteCardById(req, res)
+})
+router.post("/move", function (req, res) {
+    updateCardPositionsById(req, res)
 })
 
 module.exports = router
