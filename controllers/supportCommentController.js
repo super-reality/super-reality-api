@@ -20,9 +20,9 @@ const createComment = async function (request, response) {
 
     var supportComment = SupportComments()
 
-    supportComment.userId = userId
+    supportComment.userId = request.user._id
     supportComment.ticketId = ticketId
-    supportComment.username = username
+    supportComment.username = request.user.username
     supportComment.timePosted = timePosted ? timePosted : new Date()
     supportComment.ranking = ranking ? ranking : supportComment.ranking
     supportComment.comment = comment
