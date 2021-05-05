@@ -33,6 +33,7 @@ const SupportVoters = require("./supportVoters")
 const CardComments = require("./cardComment")
 const SharedCards = require("./sharedCard")
 const TrelloAttachments = require("./trelloAttachments")
+const SupportComments  = require("./supportComments")
 module.exports = {
     Classroom,
     Collection,
@@ -61,6 +62,7 @@ module.exports = {
     Support,
     Category,
     TrelloAttachments,
+    SupportComments,
     Vibe,
     SupportVoters,
     Subcategory,

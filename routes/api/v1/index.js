@@ -60,5 +60,7 @@ router.use("/cards", require("./cards"))
 router.use("/cardComment", require("./cardComment"))
 //attachment router for trello
 router.use("/trelloAttachment", require("./trelloAttachments"))
+//support comment
+router.use("/supportComment",require("./supportComment"))
 
 module.exports = router
