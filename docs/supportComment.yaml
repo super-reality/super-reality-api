@@ -1,0 +1,87 @@
+schemes:
+  - http
+  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /supportComment/create:         # path of the user from your endpoint
+    post: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Create support comment
+      produces:
+      - application/json
+      parameters:
+      - name:       # name of parameter passed
+        type: string
+      - in: body
+        name: create support comment
+        description: It enables a user to create support comment
+        required: false
+        schema:
+          $ref: '#/definitions/supportCommentCreate'
+      responses:
+        201:
+          description: An object with a new support
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/supportCreate'
+        401:
+          description: Unauthorized users
+          
+  /supportComment/{id}:         # path of the user from your endpoint
+    get: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Get support comment By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: id
+          description: It enables a user to fetch a support comment by ticket id
+          required: false
+          type: string
+      responses:
+        200:
+          description: An object with a support comment values
+        401:
+          description: Unauthorized users
+  /support/{support_id}:         # path of the user from your endpoint
+    delete: # endpoint request type (post request)
+      tags:
+        - Support
+      security:
+        - Bearer: []
+      summary: Delete support By Id
+      produces:
+      - application/json
+      parameters:  # name of parameter passed
+        - in: path
+          name: support_id
+          description: It enables a user to delete a support
+          required: false
+          type: string
+      responses:
+        200:
+          description: Delete Confirmation
+        401:
+          description: Unauthorized users
+definitions:        # Schema definition for the request body
+  supportCommentCreate:
+    type: object
+    properties:
+      ticketId:
+        type: string
+        required: true
+      comment:
+        type : string
+        required: true
