@@ -1,10 +1,11 @@
-const {SupportComments} = require("../models")
+const {SupportChildComment, SupportComments} = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
 
 const createComment = async function (request, response) {
     const {
+        parentId,
         timePosted,
         ranking,
         ticketId,
@@ -16,15 +17,15 @@ const createComment = async function (request, response) {
     const session = await db.startSession();
     const responses = {};
 
-    var supportComment = SupportComments()
-
+    var supportComment = SupportChildComment()
+    supportComment.parentId = parentId
     supportComment.userId = request.user._id
     supportComment.ticketId = ticketId
     supportComment.username = request.user.username
     supportComment.timePosted = timePosted ? timePosted : new Date()
     supportComment.ranking = ranking ? ranking : supportComment.ranking
     supportComment.comment = comment
-    supportComment.nestedCommentsCount = nestedCommentsCount ? nestedComments :supportComment.nestedCommentsCount
+    supportComment.nestedCommentsCount = nestedCommentsCount ? nestedComments : supportComment.nestedCommentsCount
     supportComment.nestedComments = nestedComments
     supportComment.createdBy = request.user._id
 
@@ -36,7 +37,23 @@ const createComment = async function (request, response) {
     try {
         const transactionResults = await session.withTransaction(async () => {
             const createdComment = await supportComment.save({session})
-            responses['comment'] = createdComment
+            if (createdComment) {
+                const parentComment = await SupportComments.findById({_id: parentId})
+                if (parentComment) {
+                    parentComment.nestedCommentsCount = parentComment.nestedCommentsCount + 1
+                }
+                const updateParentComment = await parentComment.save({});
+                if (updateParentComment) {
+                    responses['comment'] = createdComment
+                } else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Sorry we were not able to create this comment"
+                    })
+
+                }
+
+            }
 
         }, transactionOptions)
         if (transactionResults) {
@@ -64,7 +81,7 @@ const createComment = async function (request, response) {
 }
 const getCommentsByTicket = async function (request, response) {
     try {
-        comments = await SupportComments.find({ticketId: request.params.id}).populate('ticketId')
+        comments = await SupportChildComment.find({parentId: request.params.id}).populate('ticketId')
         if (comments) {
             response.status(statusCodes.OK).send({err_code: 0, comments})
         } else {

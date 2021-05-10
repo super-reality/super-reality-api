@@ -62,5 +62,6 @@ router.use("/cardComment", require("./cardComment"))
 router.use("/trelloAttachment", require("./trelloAttachments"))
 //support comment
 router.use("/supportComment",require("./supportComment"))
+router.use("/supportNestedComment",require("./supportCommentChild"))
 
 module.exports = router

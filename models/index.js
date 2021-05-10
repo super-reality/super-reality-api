@@ -34,6 +34,7 @@ const CardComments = require("./cardComment")
 const SharedCards = require("./sharedCard")
 const TrelloAttachments = require("./trelloAttachments")
 const SupportComments  = require("./supportComments")
+const SupportChildComment = require("./supportCommentChild")
 module.exports = {
     Classroom,
     Collection,
@@ -70,5 +71,6 @@ module.exports = {
     Boards,
     BoardIds,
     SharedCards,
+    SupportChildComment,
     Cards
 }
