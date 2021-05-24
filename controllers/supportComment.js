@@ -1,4 +1,4 @@
-const {SupportChildComment, SupportComments} = require("../models")
+const { SupportChildComment, Support} = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -9,6 +9,8 @@ const createComment = async function (request, response) {
         timePosted,
         ranking,
         ticketId,
+        base,
+        child,
         comment,
         nestedCommentsCount,
         nestedComments
@@ -38,21 +40,40 @@ const createComment = async function (request, response) {
         const transactionResults = await session.withTransaction(async () => {
             const createdComment = await supportComment.save({session})
             if (createdComment) {
-                const parentComment = await SupportComments.findById({_id: parentId})
-                if (parentComment) {
-                    parentComment.nestedCommentsCount = parentComment.nestedCommentsCount + 1
-                }
-                const updateParentComment = await parentComment.save({});
-                if (updateParentComment) {
-                    responses['comment'] = createdComment
-                } else {
-                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
-                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
-                        message: "Sorry we were not able to create this comment"
-                    })
+                if (child) {
+                    const parentComment = await SupportChildComment.findById({_id: parentId})
+                    if (parentComment) {
+                        parentComment.nestedCommentsCount = parentComment.nestedCommentsCount + 1
+                    }
+                    const updateParentComment = await parentComment.save({});
+                    if (updateParentComment) {
+                        responses['comment'] = createdComment
+                    } else {
+                        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                            message: "Sorry we were not able to create this comment"
+                        })
+
+                    }
 
                 }
+                if (base) {
+                    const parentComment = await Support.findById({_id: parentId})
+                    if (parentComment) {
+                        parentComment.nestedCommentsCount = parentComment.nestedCommentsCount + 1
+                    }
+                    const updateParentComment = await parentComment.save({});
+                    if (updateParentComment) {
+                        responses['comment'] = createdComment
+                    } else {
+                        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                            message: "Sorry we were not able to create this comment"
+                        })
 
+                    }
+
+                }
             }
 
         }, transactionOptions)
@@ -81,7 +102,7 @@ const createComment = async function (request, response) {
 }
 const getCommentsByTicket = async function (request, response) {
     try {
-        comments = await SupportChildComment.find({parentId: request.params.id}).populate('ticketId')
+        comments = await SupportChildComment.find({parentId: request.params.id})
         if (comments) {
             response.status(statusCodes.OK).send({err_code: 0, comments})
         } else {
@@ -98,6 +119,8 @@ const getCommentsByTicket = async function (request, response) {
         })
     }
 }
+
+
 
 module.exports = {
     createComment,

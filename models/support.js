@@ -46,6 +46,10 @@ const supportSchema = new Schema({
         type: Object,
         default: {}
     },
+    nestedCommentsCount: {
+        type: Number,
+        default: 0
+    },
     createdBy: {type: ObjectId},
     // created date
     createdAt: {type: Date, default: Date.now}

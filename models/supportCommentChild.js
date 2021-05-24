@@ -4,7 +4,6 @@ const ObjectId = Schema.Types.ObjectId
 /* *** define project schema *** */
 const supportCommentChildSchema = new Schema({
     parentId: {type: ObjectId},
-    ticketId: [{type: ObjectId, ref: 'support'}],
     userId: {
         type: String,
         index: true,
