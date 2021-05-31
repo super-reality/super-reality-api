@@ -1,4 +1,4 @@
-const { SupportChildComment, Support} = require("../models")
+const {SupportChildComment, Support} = require("../models")
 const mongoose = require("mongoose")
 const statusCodes = require("http-status-codes")
 const db = mongoose.connection
@@ -120,10 +120,36 @@ const getCommentsByTicket = async function (request, response) {
     }
 }
 
+const deleteCommentsByTicket = async function (request, response) {
+    try {
+        child = await SupportChildComment.deleteMany({parentId: request.params.id})
+        if (child) {
+            parent = await SupportChildComment.delete({_id: request.params.id})
+            if (parent) {
+                response.status(statusCodes.OK).send({
+                    err_code: 0,
+                    message: "All comments were deleted successfully"
+                })
+            }
+        } else {
+            response.status(statusCodes.NOT_FOUND).send({
+                err_code: statusCodes.NOT_FOUND,
+                message: "These comments does not exist"
+            })
+        }
+    } catch (error) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Could not fetch comments",
+            internalError: error
+        })
+    }
+}
 
 
 module.exports = {
     createComment,
-    getCommentsByTicket
+    getCommentsByTicket,
+    deleteCommentsByTicket,
 
 }
