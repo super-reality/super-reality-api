@@ -218,5 +218,6 @@ module.exports = {
     createComment,
     getCommentsByTicket,
     deleteCommentsByTicket,
+    updateCommentById
 
 }

@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const auth = require("../../../middleware/auth")
-const {createComment, getCommentsByTicket, deleteCommentsByTicket} = require('../../../controllers/supportComment')
+const {createComment, getCommentsByTicket, deleteCommentsByTicket,updateCommentById} = require('../../../controllers/supportComment')
 
 router.post("/create", auth(), function (req, res) {
 
@@ -22,7 +22,7 @@ router.delete("/:id", auth(), function (req, res) {
 
 router.put("/:id", auth(), function (req, res) {
 
-    deleteCommentsByTicket(req, res)
+    updateCommentById(req, res)
 
 })
 
