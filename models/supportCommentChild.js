@@ -32,7 +32,8 @@ const supportCommentChildSchema = new Schema({
     },
     createdBy: [{type: ObjectId, ref: 'User'}],
     // created date
-    createdAt: {type: Date, default: Date.now}
+    createdAt: {type: Date, default: Date.now},
+    updatedAt: {type:Date}
 });
 
 const supportChildComment = new model("supportCommentChild", supportCommentChildSchema);

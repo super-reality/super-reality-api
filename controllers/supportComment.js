@@ -100,6 +100,73 @@ const createComment = async function (request, response) {
         session.endSession();
     }
 }
+
+const updateCommentById = async function (request, response) {
+
+    const session = await db.startSession();
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: {level: 'local'},
+        writeConcern: {w: 'majority'}
+    };
+
+    try {
+
+        var updatedComment = false
+        var responses = {}
+
+        const transactionResults = await session.withTransaction(async () => {
+
+            const currentComment = await SupportChildComment.findById({_id: request.params.id, session})
+            if (currentComment) {
+                currentComment.comment = request.body.comment ? request.body.comment : currentComment.comment
+                currentComment.ranking = request.body.ranking ? request.body.ranking : currentComment.ranking
+                currentComment.nestedCommentsCount = request.Body.nestedCommentsCount ? request.Body.nestedCommentsCount : currentComment.nestedCommentsCount
+                currentComment.updatedAt = new Date()
+                updatedComment = await currentComment.save({session})
+                if (updatedStep) {
+                    updatedComment = true
+                    responses['comment'] = updatedComment
+                } else {
+                    response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                        err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Could not update this comment"
+                    })
+                }
+            } else {
+                response.status(statusCodes.NOT_FOUND).send({
+                    err_code: statusCodes.NOT_FOUND,
+                    "message": "This comment does not exist"
+                })
+            }
+            // save collection document
+        }, transactionOptions)
+        if (transactionResults) {
+            responses['err_code'] = 0
+            response.status(statusCodes.OK).send(responses)
+        } else {
+
+            console.log("The transaction was intentionally aborted.");
+            response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+                err_code: statusCodes.INTERNAL_SERVER_ERROR,
+                message: "Could not update this step"
+            })
+
+        }
+    } catch (err) {
+        response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
+            err_code: statusCodes.INTERNAL_SERVER_ERROR,
+            message: "Sorry we were not able to update this step",
+            internalError: err
+
+        })
+        console.log("The transaction was aborted due to an unexpected error: " + err);
+    } finally {
+        session.endSession();
+    }
+
+}
+
 const getCommentsByTicket = async function (request, response) {
     try {
         comments = await SupportChildComment.find({parentId: request.params.id})
