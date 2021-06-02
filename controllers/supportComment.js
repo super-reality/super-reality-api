@@ -37,6 +37,7 @@ const createComment = async function (request, response) {
         writeConcern: {w: 'majority'}
     };
     try {
+        const responses = {};
         const transactionResults = await session.withTransaction(async () => {
             const createdComment = await supportComment.save({session})
             if (createdComment) {
@@ -112,7 +113,7 @@ const updateCommentById = async function (request, response) {
 
     try {
 
-        var updatedComment = false
+        var commentUpdated = false
         var responses = {}
 
         const transactionResults = await session.withTransaction(async () => {
@@ -121,11 +122,10 @@ const updateCommentById = async function (request, response) {
             if (currentComment) {
                 currentComment.comment = request.body.comment ? request.body.comment : currentComment.comment
                 currentComment.ranking = request.body.ranking ? request.body.ranking : currentComment.ranking
-                currentComment.nestedCommentsCount = request.Body.nestedCommentsCount ? request.Body.nestedCommentsCount : currentComment.nestedCommentsCount
                 currentComment.updatedAt = new Date()
                 updatedComment = await currentComment.save({session})
-                if (updatedStep) {
-                    updatedComment = true
+                if (updatedComment) {
+                    commentUpdated = true
                     responses['comment'] = updatedComment
                 } else {
                     response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
