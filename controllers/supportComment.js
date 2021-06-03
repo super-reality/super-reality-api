@@ -37,9 +37,9 @@ const createComment = async function (request, response) {
         writeConcern: {w: 'majority'}
     };
     try {
-        const responses = {};
         const transactionResults = await session.withTransaction(async () => {
             const createdComment = await supportComment.save({session})
+            responses['comment'] = createdComment
             if (createdComment) {
                 if (child) {
                     const parentComment = await SupportChildComment.findById({_id: parentId})
@@ -189,22 +189,37 @@ const getCommentsByTicket = async function (request, response) {
 
 const deleteCommentsByTicket = async function (request, response) {
     try {
-        child = await SupportChildComment.deleteMany({parentId: request.params.id})
+        console.log(request.params.id)
+        child = await SupportChildComment.find({parentId: request.params.id})
+        console.log(child)
         if (child) {
-            parent = await SupportChildComment.delete({_id: request.params.id})
+            deleteChilds = await SupportChildComment.deleteMany({parentId: request.params.id})
+            if (deleteChilds) {
+                parent = await SupportChildComment.deleteOne({_id: request.params.id})
+                if (parent) {
+                    response.status(statusCodes.OK).send({
+                        err_code: 0,
+                        message: "All comments were deleted successfully"
+                    })
+                }
+            }
+
+        } else {
+            parent = await SupportChildComment.deleteOne({_id: request.params.id})
             if (parent) {
                 response.status(statusCodes.OK).send({
                     err_code: 0,
                     message: "All comments were deleted successfully"
                 })
+            } else {
+                response.status(statusCodes.NOT_FOUND).send({
+                    err_code: 0,
+                    message: "This comment is not found"
+                })
             }
-        } else {
-            response.status(statusCodes.NOT_FOUND).send({
-                err_code: statusCodes.NOT_FOUND,
-                message: "These comments does not exist"
-            })
         }
     } catch (error) {
+        console.log(error);
         response.status(statusCodes.INTERNAL_SERVER_ERROR).send({
             err_code: statusCodes.INTERNAL_SERVER_ERROR,
             message: "Could not fetch comments",
